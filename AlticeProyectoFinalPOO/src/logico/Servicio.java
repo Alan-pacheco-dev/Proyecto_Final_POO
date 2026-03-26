@@ -6,8 +6,16 @@ public class Servicio {
 	
 	private String idServicio;
 	private String tipoServicio;
-	private boolean isActivo=false;
+	private boolean isActivo;
 	private float precioServicio; //Precio por cada servicio individual que ayudará a calcular el total del plan
+	
+	public Servicio(String idServicio, String tipoServicio, float precioServicio) {
+		super();
+		this.idServicio = idServicio;
+		this.tipoServicio = tipoServicio;
+		this.precioServicio = precioServicio;
+		this.isActivo = false;
+	}
 	
 	public String getIdServicio() {
 		return idServicio;
@@ -34,11 +42,5 @@ public class Servicio {
 		this.precioServicio = precioServicio;
 	}
 	
-	public Servicio(String idServicio, String tipoServicio, boolean isActivo, float precioServicio) {
-		super();
-		this.idServicio = idServicio;
-		this.tipoServicio = tipoServicio;
-		this.precioServicio = precioServicio;
-	}
 	
 }
