@@ -1,8 +1,11 @@
 package logico;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Servicio {
+public class Servicio implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
 	
 	private String idServicio;
 	private String tipoServicio;
@@ -16,7 +19,7 @@ public class Servicio {
 		this.precioServicio = precioServicio;
 		this.isActivo = false;
 	}
-	
+	 
 	public String getIdServicio() {
 		return idServicio;
 	}

@@ -1,6 +1,10 @@
 package logico;
 
-public class Persona {
+import java.io.Serializable;
+
+public class Persona implements Serializable{
+	
+	private static final long serialVersionUID = 1L;
 	
 	private String idPersona;
 	private String nombre;
@@ -10,6 +14,8 @@ public class Persona {
 		this.setIdPersona(idPersona);
 		this.setNombre(nombre);
 	}
+	
+	
 
 	public String getIdPersona() {
 		return idPersona;
