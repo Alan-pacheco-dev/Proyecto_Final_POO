@@ -12,4 +12,45 @@ public class Plan {
 	private float precioTotal; //Este será el total de la sumatoria de los servicios
 	private ArrayList<Servicio>serviciosPlan;
 	
+	public String getIdPlan() {
+		return idPlan;
+	}
+	public void setIdPlan(String idPlan) {
+		this.idPlan = idPlan;
+	}
+	public String getNombrePlan() {
+		return nombrePlan;
+	}
+	public void setNombrePlan(String nombrePlan) {
+		this.nombrePlan = nombrePlan;
+	}
+	public String getDescripcionCuota() {
+		return descripcionCuota;
+	}
+	public void setDescripcionCuota(String descripcionCuota) {
+		this.descripcionCuota = descripcionCuota;
+	}
+	public float getPrecioTotal() {
+		return precioTotal;
+	}
+	public void setPrecioTotal(float precioTotal) {
+		this.precioTotal = precioTotal;
+	}
+	public ArrayList<Servicio> getServiciosPlan() {
+		return serviciosPlan;
+	}
+	public void setServiciosPlan(ArrayList<Servicio> serviciosPlan) {
+		this.serviciosPlan = serviciosPlan;
+	}
+	
+	public Plan(String idPlan, String nombrePlan, String descripcionCuota, float precioTotal,
+			ArrayList<Servicio> serviciosPlan) {
+		super();
+		this.idPlan = idPlan;
+		this.nombrePlan = nombrePlan;
+		this.descripcionCuota = descripcionCuota;
+		this.precioTotal = precioTotal;
+		this.serviciosPlan = serviciosPlan;
+	}
+	
 }
