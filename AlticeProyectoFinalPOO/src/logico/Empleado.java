@@ -1,6 +1,14 @@
 package logico;
 
-public class Empleado {
+import java.io.Serializable;
+
+public class Empleado implements Serializable{
+	
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String codigoEmpleado;
 	private float salario;
 	private float comisiones;
