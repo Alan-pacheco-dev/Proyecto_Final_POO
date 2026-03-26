@@ -14,8 +14,6 @@ public class Persona implements Serializable{
 		this.setIdPersona(idPersona);
 		this.setNombre(nombre);
 	}
-	
-	
 
 	public String getIdPersona() {
 		return idPersona;

@@ -5,13 +5,15 @@ public class Empleado {
 	private float salario;
 	private float comisiones;
 	private float ventas;
+	private Usuario miUsuario;
 	
-	public Empleado(String codigoEmpleado, float salario, float comisiones, float ventas) {
+	public Empleado(String codigoEmpleado, float salario, float comisiones, float ventas, Usuario miUsuario) {
 		super();
 		this.codigoEmpleado = codigoEmpleado;
 		this.salario = salario;
 		this.comisiones = comisiones;
 		this.ventas = ventas;
+		this.miUsuario = miUsuario;
 	}
 
 	public String getCodigoEmpleado() {
@@ -44,6 +46,14 @@ public class Empleado {
 
 	public void setVentas(float ventas) {
 		this.ventas = ventas;
+	}
+	
+	public Usuario getMiUsuario() {
+		return miUsuario;
+	}
+
+	public void setMiUsuario(Usuario miUsuario) {
+		this.miUsuario = miUsuario;
 	}
 	
 	
