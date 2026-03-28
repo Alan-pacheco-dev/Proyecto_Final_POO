@@ -24,6 +24,4 @@ public class ServicioInternet {
 		this.tieneRouter = tieneRouter;
 	}
 	
-	
-	
 }
