@@ -23,7 +23,7 @@ public class EmpresaAltice implements Serializable{
 	private ArrayList<Servicio>misServicios;
 	private ArrayList<Usuario>misUsuarios;
 	private ArrayList<Contrato>misContratos;
-	private ArrayList<Pagos>pagos;
+	private ArrayList<Pagos>pagosClientes;
 
 	public EmpresaAltice() {
 		super();
@@ -33,7 +33,7 @@ public class EmpresaAltice implements Serializable{
 		this.misServicios = new ArrayList<Servicio>();
 		this.misUsuarios = new ArrayList<Usuario>();
 		this.misContratos = new ArrayList<Contrato>();
-		this.pagos = new ArrayList<Pagos>();
+		this.pagosClientes = new ArrayList<Pagos>();
 	}
 
 	public EmpresaAltice getEmpresaAltice() {
@@ -93,11 +93,11 @@ public class EmpresaAltice implements Serializable{
 	}
 
 	public ArrayList<Pagos> getPagos() {
-		return pagos;
+		return pagosClientes;
 	}
 
 	public void setPagos(ArrayList<Pagos> pagos) {
-		this.pagos = pagos;
+		this.pagosClientes = pagos;
 	}
 
 	public static long getSerialversionuid() {
