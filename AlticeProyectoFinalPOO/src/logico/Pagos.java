@@ -12,10 +12,10 @@ public class Pagos implements Serializable{
 	private LocalDate fechaInicioPago;
 	private LocalDate fechaVencimientoPago;
 	private boolean isPagado; //Boolean que si es falso indica que falta por pagar, y si es verdadero es que ha sido pagado totalmente
+	private float pagoDelCliente;
 	private float totalPorPagar;
-	private Plan planPorpagar;
 	
-	public Pagos(String idPago, Contrato contrato, LocalDate fechaInicioPago, LocalDate fechaVencimientoPago,float totalPorPagar, Plan planPorpagar) {
+	public Pagos(String idPago, Contrato contrato, LocalDate fechaInicioPago, LocalDate fechaVencimientoPago,float pagoDelCliente, float totalPorPagar) {
 		super();
 		this.idPago = idPago;
 		this.contrato = contrato;
@@ -23,7 +23,8 @@ public class Pagos implements Serializable{
 		this.fechaVencimientoPago = fechaVencimientoPago;
 		this.isPagado = false;
 		this.totalPorPagar = totalPorPagar;
-		this.planPorpagar = planPorpagar;
+		this.pagoDelCliente = pagoDelCliente;
+		this.totalPorPagar = totalPorPagar;
 	}
 	
 	public String getIdPago() {
@@ -62,10 +63,10 @@ public class Pagos implements Serializable{
 	public void setTotalPorPagar(float totalPorPagar) {
 		this.totalPorPagar = totalPorPagar;
 	}
-	public Plan getPlanPorpagar() {
-		return planPorpagar;
+	public float getPagoDelCliente() {
+		return pagoDelCliente;
 	}
-	public void setPlanPorpagar(Plan planPorpagar) {
-		this.planPorpagar = planPorpagar;
+	public void setPagoDelCliente(float pagoDelCliente) {
+		this.pagoDelCliente = pagoDelCliente;
 	}
 }
