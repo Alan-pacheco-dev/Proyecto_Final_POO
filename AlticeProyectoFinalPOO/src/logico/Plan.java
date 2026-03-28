@@ -9,17 +9,17 @@ public class Plan implements Serializable {
 	
 	private String idPlan;
 	private String nombrePlan;
-	private String descripcionCuota; //Aquí se indica cada qué tiempo debe ser pagado el plan. Ejemplo: Cada 5 meses
+	private String tiempoCuota; //Aquí se indica si es mensual o anual
 	
 	//En el precio total se incluirá el cálculo por ITBIS 18%
 	private float precioTotal; //Este será el total de la sumatoria de los servicios
 	private ArrayList<Servicio>serviciosPlan;
 	
-	public Plan(String idPlan, String nombrePlan, String descripcionCuota, float precioTotal) {
+	public Plan(String idPlan, String nombrePlan, String tiempoCuota, float precioTotal) {
 		super();
 		this.idPlan = idPlan;
 		this.nombrePlan = nombrePlan;
-		this.descripcionCuota = descripcionCuota;
+		this.tiempoCuota = tiempoCuota;
 		this.precioTotal = precioTotal;
 		this.serviciosPlan = new ArrayList<Servicio>();
 	}
@@ -36,11 +36,11 @@ public class Plan implements Serializable {
 	public void setNombrePlan(String nombrePlan) {
 		this.nombrePlan = nombrePlan;
 	}
-	public String getDescripcionCuota() {
-		return descripcionCuota;
+	public String getTiempoCuota() {
+		return tiempoCuota;
 	}
-	public void setDescripcionCuota(String descripcionCuota) {
-		this.descripcionCuota = descripcionCuota;
+	public void setTiempoCuota(String descripcionCuota) {
+		this.tiempoCuota = descripcionCuota;
 	}
 	public float getPrecioTotal() {
 		return precioTotal;

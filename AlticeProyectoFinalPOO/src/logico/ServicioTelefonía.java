@@ -1,5 +1,7 @@
 package logico;
 
+//ESTA AUN NO SE IMPLEMENTA
+
 public class ServicioTelefonía {
 
 	private boolean llamadasIlimitadas;
