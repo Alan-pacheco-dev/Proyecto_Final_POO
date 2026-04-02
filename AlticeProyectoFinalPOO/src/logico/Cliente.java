@@ -152,6 +152,7 @@ public class Cliente extends Persona{
 		for(Contrato c: misContratos) {
 			if(c.getIdContrato().equalsIgnoreCase(idContrato)) {
 				c.setActivo(false);
+				c.setFechaFinContrato(LocalDate.now());
 				cancelado = true;
 			}
 		}
