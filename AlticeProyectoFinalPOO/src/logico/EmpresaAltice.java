@@ -10,13 +10,21 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class EmpresaAltice implements Serializable{
-	
+
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+
+	public static int idPagos = 1;
+	public static int idContratos = 1;
+	public static int idPlanes = 1;
+	public static int idEmpleados = 1;
+	public static int idClientes = 1;
+	public static int idServicios = 1;
+	public static int idUsuarios = 1;
 	
-	private EmpresaAltice empresaAltice = null;
+	private static EmpresaAltice empresaAltice = null;
 	private ArrayList<Cliente>misClientes;
 	private ArrayList<Empleado>misEmpleados;
 	private ArrayList<Plan>misPlanes;
@@ -24,6 +32,7 @@ public class EmpresaAltice implements Serializable{
 	private ArrayList<Usuario>misUsuarios;
 	private ArrayList<Contrato>misContratos;
 	private ArrayList<Pagos>pagosClientes;
+	private static Usuario loginUser;
 
 	public EmpresaAltice() {
 		super();
@@ -103,15 +112,15 @@ public class EmpresaAltice implements Serializable{
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
-	
-	public EmpresaAltice getInstance() {
-		
+
+	public static EmpresaAltice getInstance() {
+
 		if(empresaAltice == null) {
 			empresaAltice = new EmpresaAltice();
 		}
 		return empresaAltice;
 	}
-	
+
 	public void GuardarDatos(ArrayList<Cliente> clientes, ArrayList<Empleado> empleados, 
 			ArrayList<Plan> planes, ArrayList<Servicio> servicios, ArrayList<Usuario> usuarios, ArrayList<Contrato> contratos, 
 			ArrayList<Pagos> pagos) 
@@ -129,43 +138,83 @@ public class EmpresaAltice implements Serializable{
 			file.writeObject(usuarios);
 			file.writeObject(contratos);
 			file.writeObject(pagos);
-			
+
 		}catch(IOException e) {
 			System.out.println("No se pudo guardar los datos");
 		}
-		
+
 	}
-	
+
 	public void CargarDatos(ArrayList<Cliente> clientes, ArrayList<Empleado> empleados, 
 			ArrayList<Plan> planes, ArrayList<Servicio> servicios, ArrayList<Usuario> usuarios, ArrayList<Contrato> contratos, 
 			ArrayList<Pagos> pagos) 
 	{
 		File archivo = new File("Datos.txt");
-		
+
 		if(!archivo.exists()) {
 			System.out.println("No hay informacion previa");
 			return;
 		}
-		
+
 		//ObjectInputStream lo mismo que su contraparte pero para leer
 		//new ObjectInputStream        ||                 ||
 		//new FileInputStream          ||                 ||
 		try(ObjectInputStream file= new ObjectInputStream(new FileInputStream(archivo))){
-			
+
 			//Los warnings son por que java automaticamente va a volver los objetos que lee al tipo que tiene ArrayList de forma automatica
 			//Se tiene que leer en el mismo orden con el cual se escribio
 			//abierto a cambios aqui
 			clientes.addAll((ArrayList<Cliente>) file.readObject());
-	        empleados.addAll((ArrayList<Empleado>) file.readObject());
-	        planes.addAll((ArrayList<Plan>) file.readObject());
-	        servicios.addAll((ArrayList<Servicio>) file.readObject());
-	        usuarios.addAll((ArrayList<Usuario>) file.readObject());
-	        contratos.addAll((ArrayList<Contrato>) file.readObject());
-			
+			empleados.addAll((ArrayList<Empleado>) file.readObject());
+			planes.addAll((ArrayList<Plan>) file.readObject());
+			servicios.addAll((ArrayList<Servicio>) file.readObject());
+			usuarios.addAll((ArrayList<Usuario>) file.readObject());
+			contratos.addAll((ArrayList<Contrato>) file.readObject());
+			pagos.addAll((ArrayList<Pagos>) file.readObject());
+
 		}catch (Exception e) {
 			System.out.println("no se pudo cargar los datos");
 		}
-		
+
+	}
+
+
+	public boolean registrarCliente(Empleado empleado, Cliente cliente) {
+		boolean registrado = false;
+		if (empleado.getMiUsuario() == null) {
+			throw new RuntimeException("El empleado no tiene un usuario asignado");
+		}
+		if (!empleado.getMiUsuario().getRolEmpleado().equalsIgnoreCase("Comercial")) {
+			throw new RuntimeException("Solo empleados comerciales pueden registrar clientes");
+		}
+
+		// l�gica de registro
+		misClientes.add(cliente);
+		//Usuario usuarioCliente = new Usuario()
+		registrado = true;
+		return registrado;
 	}
 	
+	public boolean crearUsuario(Empleado emp) {
+		boolean usuarioCreado = false;
+		
+		if(emp != null) {
+			//La contrasenia debe ser pedida en la parte visual al igual que el nombre de usuario
+			Usuario nuevoUsuario = new Usuario(emp.getRolEmpleado(), "username", "*********");
+			misUsuarios.add(nuevoUsuario);
+			usuarioCreado = true;
+		}
+		
+		return usuarioCreado;
+	}
+
+	public static Usuario getLoginUser() {
+		return loginUser;
+	}
+
+	public static void setLoginUser(Usuario loginUser) {
+		EmpresaAltice.loginUser = loginUser;
+	}
+
+
 }

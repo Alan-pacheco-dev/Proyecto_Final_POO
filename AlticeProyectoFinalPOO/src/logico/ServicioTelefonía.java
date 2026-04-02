@@ -1,9 +1,10 @@
 package logico;
 
-//ESTA AUN NO SE IMPLEMENTA
-
 public class ServicioTelefonía {
-
+	
+	private int datosGb;
+	private int minutos;
+	private int sms;
 	private boolean llamadasIlimitadas;
 	private float costoPorMinuto;
 	

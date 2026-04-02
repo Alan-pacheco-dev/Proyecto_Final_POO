@@ -1,5 +1,7 @@
 package logico;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 
 public class Cliente extends Persona{
@@ -11,21 +13,26 @@ public class Cliente extends Persona{
 	private String codigoCliente;
 	private String direccion;
 	private String email;
-	private Contrato miContrato;
+	private ArrayList<Contrato> misContratos;
 	private float deuda;
 	private boolean esEmpresa;
 	private String rnc;
 	private ArrayList<Pagos>misPagos;
 
-	public Cliente(String idPersona, String nombre, String codigoCliente, String direccion, String email, float deuda, boolean esEmpresa, String rnc) {
+	public Cliente(String idPersona, String nombre, String direccion, String email, float deuda, boolean esEmpresa, String rnc) {
 		super(idPersona, nombre);
-		this.codigoCliente = codigoCliente;
+		
+		String anioActual = String.valueOf(LocalDate.now().getYear());
+		
+		this.codigoCliente = "CLTE-" + anioActual + "-" +  EmpresaAltice.getInstance().idClientes;
+		this.setIdPersona("C - " + EmpresaAltice.getInstance().idClientes++);
 		this.direccion = direccion;
 		this.email = email;
 		this.deuda = deuda;
 		this.setEsEmpresa(esEmpresa);
 		this.setRnc(rnc);
 		this.misPagos = new ArrayList<Pagos>();
+		this.misContratos = new ArrayList<Contrato>();
 	}
 
 	public String getCodigoCliente() {
@@ -60,14 +67,6 @@ public class Cliente extends Persona{
 		this.deuda = deuda;
 	}
 
-	public Contrato getMiContrato() {
-		return miContrato;
-	}
-
-	public void setMiContrato(Contrato miContrato) {
-		this.miContrato = miContrato;
-	}
-
 	public boolean isEsEmpresa() {
 		return esEmpresa;
 	}
@@ -84,15 +83,16 @@ public class Cliente extends Persona{
 		this.rnc = rnc;
 	}
 	
-	public void actualizarPagosAcumulados() {
-		float pagoAcumulado = 0;
-		for(Pagos p: misPagos) {
-			pagoAcumulado = p.getPagoDelCliente();
-		}
-		misPagos.get(misPagos.size()-1).setPagoAcumulado(pagoAcumulado);
+	public ArrayList<Contrato> getMisContratos() {
+		return misContratos;
 	}
 	
-	public void verResumenMiInfo() {
+	public void setMisContratos(ArrayList<Contrato> misContratos) {
+		this.misContratos = misContratos;
+	}
+	
+
+	public void verResumenMiInfo(Contrato miContrato) {
 		System.out.println("ID del Contrato: " + miContrato.getIdContrato());
 		System.out.println("Fecha de inicio del contrato" + miContrato.getFechaInicioContrato());
 		System.out.println("Fecha de fin del contrato" + miContrato.getFechaFinContrato());
@@ -101,19 +101,13 @@ public class Cliente extends Persona{
 		System.out.println("Nombre del plan: " + miContrato.getPlanContrato().getNombrePlan());
 		
 		float precioTotalPlan = miContrato.getPlanContrato().getPrecioTotal();
-		float duracionContrato = miContrato.getDuracionContrato();
+		int duracionContratoDias = (int) ChronoUnit.DAYS.between(miContrato.getFechaInicioContrato(), LocalDate.now());
 		
-		if(miContrato.getPlazoContrato().equalsIgnoreCase("Mensual")) {
-			System.out.println("Duración en meses del contrato: " + duracionContrato);
-			System.out.println("Cuotas mensuales: " + precioTotalPlan / duracionContrato);
-		}
-		else if(miContrato.getPlazoContrato().equalsIgnoreCase("Anual")) {
-			System.out.println("Duración en meses del contrato: " + duracionContrato * 12);
-			System.out.println("Cuotas anuales: " + precioTotalPlan / duracionContrato);
-		}
+		System.out.println("Cuotas mensuales: " + precioTotalPlan);
+		System.out.println("Días con el contrato: " + duracionContratoDias);
+			
 		if(misPagos.size() > 0) {
-			actualizarPagosAcumulados();
-			System.out.println("Total pagado: " + misPagos.get(misPagos.size()-1).getPagoAcumulado());
+			System.out.println("Total pagado: " + misPagos.get(misPagos.size()-1).getPagoDelCliente());
 		}
 		System.out.println("Total por pagar: " + miContrato.getPlanContrato().getPrecioTotal());
 	}
@@ -123,9 +117,73 @@ public class Cliente extends Persona{
 			System.out.println("Id del pago" + p.getIdPago());
 			System.out.println("Fecha del pago: " + p.getFechaPagoDelCliente());
 			System.out.println("Monto del pago: " + p.getPagoDelCliente());
-			System.out.println("Total del plan por pagar: " + p.getTotalPorPagar());
+			System.out.println("Cuota mensual por pagar: " + p.getTotalPorPagar());
 		}
 	}
+	
+	public void agregarContrato(Contrato cont) {
+		misContratos.add(cont);
+	}
+	
+	public int getCantContratosActivos() {
+		int cantContratosActivos = 0;
+		for(Contrato c: misContratos) {
+			if(c.isActivo()) {
+				cantContratosActivos++;
+			}
+		}
+		return cantContratosActivos;
+	}
+	
+	public int getTotalServiciosActivos() {
+		int cantServiciosActivos = 0;
+		for(Contrato c: misContratos){
+			for(int ind = 0; ind < c.getPlanContrato().getServiciosPlan().size(); ind++)
+			if(c.getPlanContrato().getServiciosPlan().get(ind).isActivo()) {
+				cantServiciosActivos++;
+			}
+		}
+		return cantServiciosActivos;
+	}
+	
+	public boolean cancelarContratoByID(String idContrato) {
+		boolean cancelado = false;
+		//En la parte visual emitir un mensaje que diga que el cliente ha decidido cancelar el contrato
+		for(Contrato c: misContratos) {
+			if(c.getIdContrato().equalsIgnoreCase(idContrato)) {
+				c.setActivo(false);
+				cancelado = true;
+			}
+		}
+		
+		return cancelado;
+	}
+	
+	public boolean solicitarReactivarContratoById(String idContrato) {
+		boolean reactivado = false;
+		//Este metodo debe ser editado luego en la parte visual para que sea Altice quien decida si reactivarlo o no
+		for(Contrato c: misContratos) {
+			if(c.getIdContrato().equalsIgnoreCase(idContrato)) {
+				c.setActivo(true);
+				reactivado = true;
+			}
+		}
+		
+		return reactivado;
+	}
+	
+	public String getIdentificadorUnicoCliente() {
+
+		if(esEmpresa == true) {
+			return "RNC: " + rnc;
+		}
+		else {
+			return "Cedula: " + rnc;
+		}
+	}
+	
+
+	
 	
 	
 }

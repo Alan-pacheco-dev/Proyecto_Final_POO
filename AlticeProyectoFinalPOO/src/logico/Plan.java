@@ -9,19 +9,16 @@ public class Plan implements Serializable {
 	
 	private String idPlan;
 	private String nombrePlan;
-	private String tiempoCuota; //Aquí se indica si es mensual o anual
-	
-	//En el precio total se incluirá el cálculo por ITBIS 18%
-	private float precioTotal; //Este será el total de la sumatoria de los servicios
+	//En el precio total se incluiría el cálculo por ITBIS 18%
+	private float precioMensual; //Este sería el total de la sumatoria de los servicios mensualmente
 	private ArrayList<Servicio>serviciosPlan;
 	
-	public Plan(String idPlan, String nombrePlan, String tiempoCuota, float precioTotal) {
+	public Plan(String nombrePlan, String tiempoCuota, float precioTotal) {
 		super();
-		this.idPlan = idPlan;
+		this.idPlan = "P - " + EmpresaAltice.getInstance().idPlanes++;
 		this.nombrePlan = nombrePlan;
-		this.tiempoCuota = tiempoCuota;
-		this.precioTotal = precioTotal;
 		this.serviciosPlan = new ArrayList<Servicio>();
+		this.precioMensual = calcularPrecioTotal();
 	}
 	
 	public String getIdPlan() {
@@ -36,17 +33,11 @@ public class Plan implements Serializable {
 	public void setNombrePlan(String nombrePlan) {
 		this.nombrePlan = nombrePlan;
 	}
-	public String getTiempoCuota() {
-		return tiempoCuota;
-	}
-	public void setTiempoCuota(String descripcionCuota) {
-		this.tiempoCuota = descripcionCuota;
-	}
 	public float getPrecioTotal() {
-		return precioTotal;
+		return precioMensual;
 	}
-	public void setPrecioTotal(float precioTotal) {
-		this.precioTotal = precioTotal;
+	public void setPrecioTotal(float precioMensual) {
+		this.precioMensual = precioMensual;
 	}
 	public ArrayList<Servicio> getServiciosPlan() {
 		return serviciosPlan;
@@ -55,5 +46,14 @@ public class Plan implements Serializable {
 		this.serviciosPlan = serviciosPlan;
 	}
 	
+	public float calcularPrecioTotal() {
+		float precioTotal = 0;
+		if (serviciosPlan != null) {
+			for (Servicio servis : serviciosPlan) {
+				precioTotal += servis.getPrecioServicio();
+			}
+		}
+		return precioTotal;
+	}
 	
 }

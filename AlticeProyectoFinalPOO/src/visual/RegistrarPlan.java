@@ -9,6 +9,7 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 import javax.swing.border.LineBorder;
@@ -16,6 +17,8 @@ import java.awt.Color;
 import javax.swing.JComboBox;
 import javax.swing.JTextPane;
 import javax.swing.JRadioButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class RegistrarPlan extends JDialog {
 
@@ -26,7 +29,6 @@ public class RegistrarPlan extends JDialog {
 	private JTextField txtDireccionCliente;
 	private JTextField txtAnNoHa;
 	private JTextField textField;
-	private JTextField txtEditarEstoPara;
 
 	/**
 	 * Launch the application.
@@ -111,48 +113,51 @@ public class RegistrarPlan extends JDialog {
 			panel.add(textField);
 			
 			JTextPane txtpnSeCalculaCon = new JTextPane();
-			txtpnSeCalculaCon.setText("Se calcula con el precio de los servicios");
-			txtpnSeCalculaCon.setBounds(20, 508, 250, 20);
+			txtpnSeCalculaCon.setText("Se calcula colocando el precio de cada uno de los servicios");
+			txtpnSeCalculaCon.setBounds(20, 508, 405, 20);
 			panel.add(txtpnSeCalculaCon);
 			
 			JLabel label = new JLabel("Servicios del Plan");
 			label.setBounds(20, 292, 222, 34);
 			panel.add(label);
 			
-			JButton button = new JButton("Crear");
-			button.setBounds(20, 364, 95, 23);
-			panel.add(button);
-			
-			JButton button_1 = new JButton("Escoger");
-			button_1.setBounds(125, 364, 95, 23);
-			panel.add(button_1);
-			
-			JLabel lblCuotas = new JLabel("Cuotas del Plan");
-			lblCuotas.setBounds(313, 292, 198, 34);
-			panel.add(lblCuotas);
-			
-			JComboBox comboBox = new JComboBox();
-			comboBox.setBounds(313, 337, 185, 20);
-			panel.add(comboBox);
-			
-			JRadioButton rdbtnMensual = new JRadioButton("Mensual");
-			rdbtnMensual.setBounds(313, 375, 85, 23);
-			panel.add(rdbtnMensual);
-			
-			JRadioButton rdbtnAnual = new JRadioButton("Anual");
-			rdbtnAnual.setBounds(410, 375, 109, 23);
-			panel.add(rdbtnAnual);
-			
 			JButton btnVerServiciosEscogidos = new JButton("Ver servicios escogidos");
-			btnVerServiciosEscogidos.setBounds(20, 398, 200, 23);
+			btnVerServiciosEscogidos.setBounds(146, 386, 200, 23);
 			panel.add(btnVerServiciosEscogidos);
 			
-			txtEditarEstoPara = new JTextField();
-			txtEditarEstoPara.setText("Poner aqui la cantidad de servicios escogidos");
-			txtEditarEstoPara.setEditable(false);
-			txtEditarEstoPara.setColumns(10);
-			txtEditarEstoPara.setBounds(20, 333, 200, 20);
-			panel.add(txtEditarEstoPara);
+			JRadioButton rdbtnInternet = new JRadioButton("Internet");
+			rdbtnInternet.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					//Mostrar servicio de internet
+				}
+			});
+			rdbtnInternet.setBounds(20, 334, 109, 23);
+			panel.add(rdbtnInternet);
+			
+			JRadioButton rdbtnCable = new JRadioButton("Cable");
+			rdbtnCable.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					//Mostrar servicio de Cable
+				}
+			});
+			rdbtnCable.setBounds(214, 333, 109, 23);
+			panel.add(rdbtnCable);
+			
+			JRadioButton rdbtnMovil = new JRadioButton("M\u00F3vil");
+			rdbtnMovil.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					//Mostrar servicio Movil
+					//JOptionPane.showMessageDialog(null, "Has ingresado a este botón", "Información", JOptionPane.INFORMATION_MESSAGE);
+					
+				}
+			});
+			rdbtnMovil.setBounds(401, 334, 109, 23);
+			panel.add(rdbtnMovil);
+			
+			JTextPane txtpnSiCualquieraDe = new JTextPane();
+			txtpnSiCualquieraDe.setText("Si cualquiera de los servicios es seleccionado, mostrar su ventana de creaci\u00F3n");
+			txtpnSiCualquieraDe.setBounds(20, 414, 405, 20);
+			panel.add(txtpnSiCualquieraDe);
 		}
 		{
 			JPanel buttonPane = new JPanel();

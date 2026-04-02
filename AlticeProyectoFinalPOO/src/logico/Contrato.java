@@ -10,21 +10,18 @@ public class Contrato implements Serializable {
 	private String idContrato;
 	private Cliente cliente;
 	private LocalDate fechaInicioContrato;
-	private String plazoContrato; //Si es mensual o anual
-	private int duracionContrato; //Tiempo en anios o meses que durará el contrato
 	private LocalDate fechaFinContrato;
 	private boolean isActivo;
 	private Plan planContrato;
 	
-	public Contrato(String idContrato, Cliente cliente, LocalDate fechaInicioContrato,String plazoContrato ,int duracionContrato,LocalDate fechaFinContrato, Plan planContrato) {
+	public Contrato(Cliente cliente, LocalDate fechaInicioContrato,LocalDate fechaFinContrato, Plan planContrato) {
 		super();
-		this.idContrato = idContrato;
+		this.idContrato = "Cto - " + EmpresaAltice.getInstance().idContratos++;
 		this.cliente = cliente;
 		this.fechaInicioContrato = fechaInicioContrato;
-		this.setPlazoContrato(plazoContrato);
-		this.setDuracionContrato(duracionContrato);
 		this.fechaFinContrato = fechaFinContrato;
-		this.isActivo = false;
+		//Inicia en verdadero porque a la hora de crearse un contrato este debe estar activo
+		this.isActivo = true;
 		this.planContrato = planContrato;
 	}
 	
@@ -63,22 +60,6 @@ public class Contrato implements Serializable {
 	}
 	public void setPlanContrato(Plan planContrato) {
 		this.planContrato = planContrato;
-	}
-
-	public String getPlazoContrato() {
-		return plazoContrato;
-	}
-
-	public void setPlazoContrato(String plazoContrato) {
-		this.plazoContrato = plazoContrato;
-	}
-
-	public int getDuracionContrato() {
-		return duracionContrato;
-	}
-
-	public void setDuracionContrato(int duracionContrato) {
-		this.duracionContrato = duracionContrato;
 	}
 	
 }

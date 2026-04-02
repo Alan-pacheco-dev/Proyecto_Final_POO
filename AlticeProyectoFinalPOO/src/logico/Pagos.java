@@ -7,28 +7,27 @@ public class Pagos implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 	
+	//Eliminé pagoAcumulado ya que los pagos serían mensuales y los contratos no tienen tiempo fijo, es decir pagarías mensualmente hasta que canceles el contrato
+	
 	private String idPago;
 	private Contrato contrato;
-	private LocalDate fechaInicioPago;
-	private LocalDate fechaVencimientoPago;
-	private boolean isPagado; //Boolean que si es falso indica que falta por pagar, y si es verdadero es que ha sido pagado totalmente
+	private LocalDate fechaInicioPago; //Fecha del mes en el que debe de pagar el cliente
+	private LocalDate fechaVencimientoPago;//Fecha limite para que el cliente pague
+	private boolean isPagadoTotal; //Boolean que si es falso indica que falta por pagar, y si es verdadero es que ha sido pagado totalmente
 	private LocalDate fechaPagoDelCliente;
 	private float pagoDelCliente;
-	private float pagoAcumulado;
 	private float totalPorPagar;
 	
-	public Pagos(String idPago, Contrato contrato, LocalDate fechaInicioPago, LocalDate fechaVencimientoPago,LocalDate fechaPagoDelCliente, float pagoAcumulado ,float pagoDelCliente, float totalPorPagar) {
+	public Pagos(Contrato contrato, LocalDate fechaInicioPago, LocalDate fechaVencimientoPago,LocalDate fechaPagoDelCliente, float pagoAcumulado ,float pagoDelCliente, float totalPorPagar) {
 		super();
-		this.idPago = idPago;
+		this.idPago = "P - " + EmpresaAltice.getInstance().idPagos++;
 		this.contrato = contrato;
 		this.fechaInicioPago = fechaInicioPago;
 		this.fechaVencimientoPago = fechaVencimientoPago;
-		this.isPagado = false;
-		this.totalPorPagar = totalPorPagar - pagoAcumulado;
+		this.setPagadoTotal(false);
 		this.fechaPagoDelCliente = fechaPagoDelCliente;
 		this.pagoDelCliente = pagoDelCliente;
-		this.totalPorPagar = totalPorPagar;
-		this.pagoAcumulado = 0;
+		this.totalPorPagar = totalPorPagar - pagoAcumulado;
 	}
 	
 	public String getIdPago() {
@@ -55,12 +54,7 @@ public class Pagos implements Serializable{
 	public void setFechaVencimientoPago(LocalDate fechaVencimientoPago) {
 		this.fechaVencimientoPago = fechaVencimientoPago;
 	}
-	public boolean isEstadoPagado() {
-		return isPagado;
-	}
-	public void setEstadoPagado(boolean isPagado) {
-		this.isPagado = isPagado;
-	}
+
 	public float getTotalPorPagar() {
 		return totalPorPagar;
 	}
@@ -74,19 +68,19 @@ public class Pagos implements Serializable{
 		this.pagoDelCliente = pagoDelCliente;
 	}
 
-	public float getPagoAcumulado() {
-		return pagoAcumulado;
-	}
-
-	public void setPagoAcumulado(float pagoAcumulado) {
-		this.pagoAcumulado = pagoAcumulado;
-	}
-
 	public LocalDate getFechaPagoDelCliente() {
 		return fechaPagoDelCliente;
 	}
 
 	public void setFechaPagoDelCliente(LocalDate fechaPagoDelCliente) {
 		this.fechaPagoDelCliente = fechaPagoDelCliente;
+	}
+
+	public boolean isPagadoTotal() {
+		return isPagadoTotal;
+	}
+
+	public void setPagadoTotal(boolean isPagadoTotal) {
+		this.isPagadoTotal = isPagadoTotal;
 	}
 }

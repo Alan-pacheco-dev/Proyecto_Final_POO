@@ -12,9 +12,9 @@ public class Servicio implements Serializable {
 	private boolean isActivo;
 	private float precioServicio; //Precio por cada servicio individual que ayudará a calcular el total del plan
 	
-	public Servicio(String idServicio, String tipoServicio, float precioServicio) {
+	public Servicio(String tipoServicio, float precioServicio) {
 		super();
-		this.idServicio = idServicio;
+		this.idServicio = "S - " + EmpresaAltice.getInstance().idServicios++;
 		this.tipoServicio = tipoServicio;
 		this.precioServicio = precioServicio;
 		this.isActivo = false;
