@@ -6,40 +6,39 @@ import java.awt.FlowLayout;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
+
+import logico.Usuario;
+
 import javax.swing.border.LineBorder;
 import java.awt.Color;
 import java.awt.event.ActionListener;
+import java.security.acl.Owner;
+import java.util.ArrayList;
 import java.awt.event.ActionEvent;
+import javax.swing.JPasswordField;
 
 public class Login extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
 	private Dimension dim;
 	private JTextField txtNombreDeUsuario;
-	private JTextField txtNombreEmpleado;
+	private JPasswordField txtContrsenia;
+	private ArrayList<Usuario> usuarios;
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		try {
-			Login dialog = new Login();
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			dialog.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 
 	/**
 	 * Create the dialog.
 	 */
-	public Login() {
+	public Login(JFrame owner, ArrayList<Usuario> usuarios) {
+		super(owner, true);
+		this.usuarios =usuarios;
 		setBounds(100, 100, 450, 300);
 		dim = getToolkit().getScreenSize();
 		setSize(403, 323);
@@ -67,23 +66,54 @@ public class Login extends JDialog {
 			lblContrasenia.setBounds(20, 113, 148, 34);
 			panel.add(lblContrasenia);
 			
-			txtNombreEmpleado = new JTextField();
-			txtNombreEmpleado.setColumns(10);
-			txtNombreEmpleado.setBounds(20, 158, 333, 20);
-			panel.add(txtNombreEmpleado);
-			
 			JButton btnIngresar = new JButton("Ingresar");
 			btnIngresar.setBounds(20, 208, 89, 23);
+			btnIngresar.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					String nombre= txtNombreDeUsuario.getText().trim();
+					char[] con= txtContrsenia.getPassword();
+					String contrsenia = new String(con);
+					boolean encontrado=false; 
+					boolean correcto=false;
+					for(Usuario u:usuarios) {
+						if(u.getNombreUsuario().equals(nombre)) {
+							encontrado=true;
+							break;
+						}
+					}
+					
+					for(Usuario u: usuarios) {
+						if(u.getContrasenia().equals(contrsenia)) {
+							correcto=true;
+							break;
+						}
+					}
+					
+					if(!encontrado){
+					    JOptionPane.showMessageDialog(btnIngresar, "El usuario ingresado no existe", "Error", JOptionPane.ERROR_MESSAGE);
+					}else if(!correcto){
+					    JOptionPane.showMessageDialog(btnIngresar, "La contraseña es incorrecta", "Error", JOptionPane.ERROR_MESSAGE);
+					}else {
+					    dispose();
+					}
+					
+					
+				}
+			});
 			panel.add(btnIngresar);
 			
 			JButton btnSalir = new JButton("Salir");
 			btnSalir.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					dispose();
+					System.exit(0);
 				}
 			});
 			btnSalir.setBounds(264, 208, 89, 23);
 			panel.add(btnSalir);
+			
+			txtContrsenia = new JPasswordField();
+			txtContrsenia.setBounds(20, 148, 333, 20);
+			panel.add(txtContrsenia);
 		}
 	}
 }

@@ -6,6 +6,7 @@ import java.awt.FlowLayout;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
@@ -25,23 +26,13 @@ public class RegistrarEmpleado extends JDialog {
 	private JTextField textField_1;
 	private JTextField textField_2;
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		try {
-			RegistrarEmpleado dialog = new RegistrarEmpleado();
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			dialog.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+	
 
 	/**
 	 * Create the dialog.
 	 */
-	public RegistrarEmpleado() {
+	public RegistrarEmpleado(JFrame owner) {
+		super(owner, true);
 		setBounds(100, 100, 450, 300);
 		dim = getToolkit().getScreenSize();
 		setSize(553, 493);
