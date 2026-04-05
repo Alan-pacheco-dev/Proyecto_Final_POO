@@ -3,6 +3,8 @@ package visual;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -10,8 +12,13 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
+
+import logico.EmpresaAltice;
+import logico.Usuario;
+
 import javax.swing.border.LineBorder;
 import java.awt.Color;
 
@@ -42,6 +49,9 @@ public class RegistrarUsuario extends JDialog {
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(new BorderLayout(0, 0));
+		final JTextField txtNombreDeUsuarioEmp= new JTextField();
+		final JTextField txtContraseniaUsuarioEmp = new JTextField();
+		
 		{
 			JPanel panel = new JPanel();
 			panel.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
@@ -98,7 +108,7 @@ public class RegistrarUsuario extends JDialog {
 			lblComision.setBounds(288, 189, 222, 34);
 			panel.add(lblComision);
 			
-			txtNombreDeUsuarioEmp = new JTextField();
+			
 			txtNombreDeUsuarioEmp.setColumns(10);
 			txtNombreDeUsuarioEmp.setBounds(20, 315, 185, 20);
 			panel.add(txtNombreDeUsuarioEmp);
@@ -107,7 +117,7 @@ public class RegistrarUsuario extends JDialog {
 			lblNombreDeUsuario.setBounds(20, 270, 117, 34);
 			panel.add(lblNombreDeUsuario);
 			
-			txtContraseniaUsuarioEmp = new JTextField();
+			
 			txtContraseniaUsuarioEmp.setColumns(10);
 			txtContraseniaUsuarioEmp.setBounds(288, 315, 185, 20);
 			panel.add(txtContraseniaUsuarioEmp);
@@ -124,12 +134,41 @@ public class RegistrarUsuario extends JDialog {
 			{
 				JButton btnRegistrar = new JButton("Registrar");
 				btnRegistrar.setActionCommand("OK");
+				btnRegistrar.addActionListener(new ActionListener() {
+					
+					public void actionPerformed(ActionEvent e) {
+						EmpresaAltice empresa= EmpresaAltice.getInstance();
+						
+						String nombreUsuario = txtNombreDeUsuarioEmp.getText().trim();
+				        String contrasenia = txtContraseniaUsuarioEmp.getText().trim();
+				        String rol = "Comercial";
+				        
+				        Usuario usr = new Usuario(rol, nombreUsuario, contrasenia);
+				        empresa.getMisUsuarios().add(usr);
+				        empresa.GuardarDatos(
+				            empresa.getMisClientes(), empresa.getMisEmpleados(),
+				            empresa.getMisPlanes(), empresa.getMisServicios(),
+				            empresa.getMisUsuarios(), empresa.getMisContratos(),
+				            empresa.getPagos()
+				        );
+				        JOptionPane.showMessageDialog(null, "Usuario registrado con éxito");
+				        dispose();
+						
+					}
+				});
 				buttonPane.add(btnRegistrar);
 				getRootPane().setDefaultButton(btnRegistrar);
 			}
 			{
 				JButton btnCancelar = new JButton("Cancelar");
 				btnCancelar.setActionCommand("Cancel");
+				btnCancelar.addActionListener(new ActionListener() {
+					
+					public void actionPerformed(ActionEvent e) {
+						dispose();
+						
+					}
+				});
 				buttonPane.add(btnCancelar);
 			}
 		}

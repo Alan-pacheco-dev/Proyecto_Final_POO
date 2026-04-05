@@ -3,6 +3,8 @@ package visual;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -10,8 +12,13 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
+
+import logico.Empleado;
+import logico.EmpresaAltice;
+
 import javax.swing.border.LineBorder;
 import java.awt.Color;
 import javax.swing.JComboBox;
@@ -41,6 +48,9 @@ public class RegistrarEmpleado extends JDialog {
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(new BorderLayout(0, 0));
+		final JSpinner spinner = new JSpinner();
+		final JSpinner spinner_1 = new JSpinner();
+		final JComboBox cbxRolEmpleado = new JComboBox();
 		{
 			JPanel panel = new JPanel();
 			panel.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
@@ -86,16 +96,15 @@ public class RegistrarEmpleado extends JDialog {
 			lblRolDelEmpleado.setBounds(20, 216, 148, 34);
 			panel.add(lblRolDelEmpleado);
 			
-			JComboBox cbxRolEmpleado = new JComboBox();
 			cbxRolEmpleado.setModel(new DefaultComboBoxModel(new String[] {"Administrativo", "Comercial", "Vendedor"}));
 			cbxRolEmpleado.setBounds(20, 261, 200, 20);
 			panel.add(cbxRolEmpleado);
 			
-			JSpinner spinner = new JSpinner();
+			
 			spinner.setBounds(20, 337, 185, 20);
 			panel.add(spinner);
 			
-			JSpinner spinner_1 = new JSpinner();
+	
 			spinner_1.setBounds(288, 337, 185, 20);
 			panel.add(spinner_1);
 		}
@@ -107,12 +116,40 @@ public class RegistrarEmpleado extends JDialog {
 			{
 				JButton btnRegistrar = new JButton("Registrar");
 				btnRegistrar.setActionCommand("OK");
+				btnRegistrar.addActionListener(new ActionListener() {
+					
+					public void actionPerformed(ActionEvent e) {
+						EmpresaAltice empresa = EmpresaAltice.getInstance();
+						
+						String nombre= textField_2.getText().trim();
+						float salario= ((Number)spinner.getValue()).floatValue();
+						float comision=((Number)spinner_1.getValue()).floatValue();
+						String rol =cbxRolEmpleado.getSelectedItem().toString();
+						
+						Empleado emp = new Empleado(null, nombre, salario, comision, 0, rol);
+						empresa.getMisEmpleados().add(emp);
+						empresa.GuardarDatos(
+							empresa.getMisClientes(), empresa.getMisEmpleados(),
+							empresa.getMisPlanes(), empresa.getMisServicios(),
+							empresa.getMisUsuarios(), empresa.getMisContratos(),
+							empresa.getPagos()
+						);
+						JOptionPane.showMessageDialog(null, "Empleado registrado con éxito");
+						dispose();
+						
+					}
+				});
 				buttonPane.add(btnRegistrar);
 				getRootPane().setDefaultButton(btnRegistrar);
 			}
 			{
 				JButton btnCancelar = new JButton("Cancelar");
 				btnCancelar.setActionCommand("Cancel");
+				btnCancelar.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						dispose();
+					}
+				});
 				buttonPane.add(btnCancelar);
 			}
 		}

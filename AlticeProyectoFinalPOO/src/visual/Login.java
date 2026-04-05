@@ -14,6 +14,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
+import logico.EmpresaAltice;
 import logico.Usuario;
 
 import javax.swing.border.LineBorder;
@@ -70,32 +71,26 @@ public class Login extends JDialog {
 			btnIngresar.setBounds(20, 208, 89, 23);
 			btnIngresar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					String nombre= txtNombreDeUsuario.getText().trim();
-					char[] con= txtContrsenia.getPassword();
-					String contrsenia = new String(con);
-					boolean encontrado=false; 
-					boolean correcto=false;
-					for(Usuario u:usuarios) {
-						if(u.getNombreUsuario().equals(nombre)) {
-							encontrado=true;
-							break;
-						}
-					}
-					
-					for(Usuario u: usuarios) {
-						if(u.getContrasenia().equals(contrsenia)) {
-							correcto=true;
-							break;
-						}
-					}
-					
-					if(!encontrado){
-					    JOptionPane.showMessageDialog(btnIngresar, "El usuario ingresado no existe", "Error", JOptionPane.ERROR_MESSAGE);
-					}else if(!correcto){
-					    JOptionPane.showMessageDialog(btnIngresar, "La contraseña es incorrecta", "Error", JOptionPane.ERROR_MESSAGE);
-					}else {
-					    dispose();
-					}
+					String nombre = txtNombreDeUsuario.getText().trim();
+			        char[] con = txtContrsenia.getPassword();
+			        String contrasenia = new String(con);
+			        
+			        Usuario usuarioEncontrado = null;
+			        for (Usuario u : usuarios) {
+			            if (u.getNombreUsuario().equals(nombre)) {
+			                usuarioEncontrado = u;
+			                break;
+			            }
+			        }
+			        
+			        if (usuarioEncontrado == null) {
+			            JOptionPane.showMessageDialog(null, "El usuario ingresado no existe", "Error", JOptionPane.ERROR_MESSAGE);
+			        } else if (!usuarioEncontrado.getContrasenia().equals(contrasenia)) {
+			            JOptionPane.showMessageDialog(null, "La contraseña es incorrecta", "Error", JOptionPane.ERROR_MESSAGE);
+			        } else {
+			            EmpresaAltice.setLoginUser(usuarioEncontrado);
+			            dispose();
+			        }
 					
 					
 				}

@@ -11,6 +11,8 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import logico.EmpresaAltice;
+import logico.Usuario;
+
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -40,7 +42,7 @@ public class Principal extends JFrame {
 	 * Create the frame.
 	 */
 	public Principal() {
-		EmpresaAltice empresa= new EmpresaAltice();
+		EmpresaAltice empresa= EmpresaAltice.getInstance();
 		empresa.CargarDatos(empresa.getMisClientes(), 
 				empresa.getMisEmpleados(), 
 				empresa.getMisPlanes(), 
@@ -96,6 +98,13 @@ public class Principal extends JFrame {
 		            dialog.setVisible(true);
 			 }
 		});
+		
+		Usuario usuarioActual = EmpresaAltice.getLoginUser();
+	    if (!usuarioActual.getRolEmpleado().equalsIgnoreCase("Administrativo")) {
+	        mnNewMenu_1.setVisible(false);
+	        mnNewMenu_2.setVisible(false); 
+	    }
+		
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));

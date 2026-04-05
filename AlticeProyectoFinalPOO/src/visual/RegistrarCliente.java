@@ -3,6 +3,8 @@ package visual;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -10,8 +12,13 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
+
+import logico.Cliente;
+import logico.EmpresaAltice;
+
 import javax.swing.border.LineBorder;
 import java.awt.Color;
 import javax.swing.JComboBox;
@@ -43,6 +50,9 @@ public class RegistrarCliente extends JDialog {
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(new BorderLayout(0, 0));
+		final JTextField txtNombreCliente = new JTextField();
+		final JTextField txtEmailCliente = new JTextField();
+		final JTextField txtDireccionCliente = new JTextField();
 		{
 			JPanel panel = new JPanel();
 			panel.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
@@ -71,7 +81,7 @@ public class RegistrarCliente extends JDialog {
 			lblNombreDelEmpleado.setBounds(20, 129, 148, 34);
 			panel.add(lblNombreDelEmpleado);
 			
-			txtNombreCliente = new JTextField();
+			
 			txtNombreCliente.setColumns(10);
 			txtNombreCliente.setBounds(20, 174, 453, 20);
 			panel.add(txtNombreCliente);
@@ -89,7 +99,7 @@ public class RegistrarCliente extends JDialog {
 			lblComision.setBounds(288, 390, 222, 34);
 			panel.add(lblComision);
 			
-			txtEmailCliente = new JTextField();
+			
 			txtEmailCliente.setColumns(10);
 			txtEmailCliente.setBounds(20, 250, 453, 20);
 			panel.add(txtEmailCliente);
@@ -98,7 +108,7 @@ public class RegistrarCliente extends JDialog {
 			lblEmail.setBounds(20, 205, 148, 34);
 			panel.add(lblEmail);
 			
-			txtDireccionCliente = new JTextField();
+			
 			txtDireccionCliente.setColumns(10);
 			txtDireccionCliente.setBounds(20, 338, 453, 20);
 			panel.add(txtDireccionCliente);
@@ -124,14 +134,46 @@ public class RegistrarCliente extends JDialog {
 			{
 				JButton btnRegistrar = new JButton("Registrar");
 				btnRegistrar.setActionCommand("OK");
+				btnRegistrar.addActionListener(new ActionListener() {
+				
+					public void actionPerformed(ActionEvent e) {
+						EmpresaAltice empresa= EmpresaAltice.getInstance();
+						
+						String nombre= txtNombreCliente.getText().trim();
+						String direccion= txtDireccionCliente.getText().trim();
+						String email= txtEmailCliente.getText().trim();
+						
+						Cliente cli = new Cliente(null, nombre, direccion, email, 0, false, "");
+				        empresa.getMisClientes().add(cli);
+				        empresa.GuardarDatos(
+				            empresa.getMisClientes(), empresa.getMisEmpleados(),
+				            empresa.getMisPlanes(), empresa.getMisServicios(),
+				            empresa.getMisUsuarios(), empresa.getMisContratos(),
+				            empresa.getPagos()
+				        );
+				        JOptionPane.showMessageDialog(null, "Cliente registrado con éxito");
+				        dispose();
+				    
+						
+					}
+				});
 				buttonPane.add(btnRegistrar);
 				getRootPane().setDefaultButton(btnRegistrar);
 			}
 			{
 				JButton btnCancelar = new JButton("Cancelar");
 				btnCancelar.setActionCommand("Cancel");
+				btnCancelar.addActionListener(new ActionListener() {
+					
+					public void actionPerformed(ActionEvent e) {
+						dispose();
+						
+					}
+				});
 				buttonPane.add(btnCancelar);
 			}
+			
+			
 		}
 	}
 }
