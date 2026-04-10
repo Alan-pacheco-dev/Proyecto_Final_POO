@@ -75,24 +75,31 @@ public class Login extends JDialog {
 			        char[] con = txtContrsenia.getPassword();
 			        String contrasenia = new String(con);
 			        
-			        Usuario usuarioEncontrado = null;
-			        for (Usuario u : usuarios) {
-			            if (u.getNombreUsuario().equals(nombre)) {
-			                usuarioEncontrado = u;
-			                break;
-			            }
-			        }
 			        
+			        Usuario usuarioEncontrado = null;
+			        
+			        boolean encontrado = false;
+			        int ind = 0;
+
+			        while(ind < usuarios.size() && !encontrado) {
+			            if(usuarios.get(ind).getNombreUsuario().equals(nombre)) {
+			                usuarioEncontrado = usuarios.get(ind);
+			                encontrado = true;
+			            }
+			            ind++;
+			        }
+
 			        if (usuarioEncontrado == null) {
-			            JOptionPane.showMessageDialog(null, "El usuario ingresado no existe", "Error", JOptionPane.ERROR_MESSAGE);
-			        } else if (!usuarioEncontrado.getContrasenia().equals(contrasenia)) {
-			            JOptionPane.showMessageDialog(null, "La contraseña es incorrecta", "Error", JOptionPane.ERROR_MESSAGE);
-			        } else {
-			            EmpresaAltice.setLoginUser(usuarioEncontrado);
+			            JOptionPane.showMessageDialog(null, "El usuario ingresado no existe");
+			        } 
+			        else if (!usuarioEncontrado.getContrasenia().equals(contrasenia)) {
+			            JOptionPane.showMessageDialog(null, "Contraseña incorrecta");
+			        } 
+			        else {
+			            EmpresaAltice.getInstance().setLoginUser(usuarioEncontrado);
 			            dispose();
 			        }
-					
-					
+	
 				}
 			});
 			panel.add(btnIngresar);

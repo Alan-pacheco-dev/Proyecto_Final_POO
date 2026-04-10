@@ -27,10 +27,6 @@ public class RegistrarUsuario extends JDialog {
 	private final JPanel contentPanel = new JPanel();
 	private Dimension dim;
 	private JTextField txtIdEmpleado;
-	private JTextField txtCodigoEmpleado;
-	private JTextField txtNombreEmpleado;
-	private JTextField txtSalarioEmpleado;
-	private JTextField textField_4;
 	private JTextField txtNombreDeUsuarioEmp;
 	private JTextField txtContraseniaUsuarioEmp;
 
@@ -39,11 +35,11 @@ public class RegistrarUsuario extends JDialog {
 	/**
 	 * Create the dialog.
 	 */
-	public RegistrarUsuario(JFrame owner) {
-		super(owner, true);
+	public RegistrarUsuario() {
+		super();
 		setBounds(100, 100, 450, 300);
 		dim = getToolkit().getScreenSize();
-		setSize(553, 469);
+		setSize(553, 326);
 		setLocationRelativeTo(null);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -58,73 +54,43 @@ public class RegistrarUsuario extends JDialog {
 			contentPanel.add(panel, BorderLayout.CENTER);
 			panel.setLayout(null);
 			
-			JLabel lblNewLabel = new JLabel("ID del Empleado");
-			lblNewLabel.setBounds(20, 37, 117, 34);
+			JLabel lblNewLabel = new JLabel("Empleado seleccionado");
+			lblNewLabel.setBounds(20, 23, 185, 34);
 			panel.add(lblNewLabel);
 			
 			txtIdEmpleado = new JTextField();
 			txtIdEmpleado.setEditable(false);
-			txtIdEmpleado.setBounds(20, 82, 185, 20);
+			txtIdEmpleado.setBounds(20, 68, 457, 20);
 			panel.add(txtIdEmpleado);
 			txtIdEmpleado.setColumns(10);
 			
-			JLabel label = new JLabel("C\u00F3digo del empleado");
-			label.setBounds(288, 37, 222, 34);
-			panel.add(label);
-			
-			txtCodigoEmpleado = new JTextField();
-			txtCodigoEmpleado.setEditable(false);
-			txtCodigoEmpleado.setColumns(10);
-			txtCodigoEmpleado.setBounds(288, 82, 185, 20);
-			panel.add(txtCodigoEmpleado);
-			
-			JLabel lblNombreDelEmpleado = new JLabel("Nombre del Empleado");
-			lblNombreDelEmpleado.setBounds(20, 113, 148, 34);
-			panel.add(lblNombreDelEmpleado);
-			
-			txtNombreEmpleado = new JTextField();
-			txtNombreEmpleado.setEditable(false);
-			txtNombreEmpleado.setColumns(10);
-			txtNombreEmpleado.setBounds(20, 158, 453, 20);
-			panel.add(txtNombreEmpleado);
-			
-			JLabel lblSalario = new JLabel("Salario del empleado");
-			lblSalario.setBounds(20, 189, 117, 34);
-			panel.add(lblSalario);
-			
-			txtSalarioEmpleado = new JTextField();
-			txtSalarioEmpleado.setEditable(false);
-			txtSalarioEmpleado.setColumns(10);
-			txtSalarioEmpleado.setBounds(20, 234, 185, 20);
-			panel.add(txtSalarioEmpleado);
-			
-			textField_4 = new JTextField();
-			textField_4.setEditable(false);
-			textField_4.setColumns(10);
-			textField_4.setBounds(288, 234, 185, 20);
-			panel.add(textField_4);
-			
-			JLabel lblComision = new JLabel("Porcentaje de comisi\u00F3n por venta");
-			lblComision.setBounds(288, 189, 222, 34);
-			panel.add(lblComision);
-			
 			
 			txtNombreDeUsuarioEmp.setColumns(10);
-			txtNombreDeUsuarioEmp.setBounds(20, 315, 185, 20);
+			txtNombreDeUsuarioEmp.setBounds(20, 188, 185, 20);
 			panel.add(txtNombreDeUsuarioEmp);
 			
 			JLabel lblNombreDeUsuario = new JLabel("Nombre de Usuario");
-			lblNombreDeUsuario.setBounds(20, 270, 117, 34);
+			lblNombreDeUsuario.setBounds(20, 143, 117, 34);
 			panel.add(lblNombreDeUsuario);
 			
 			
 			txtContraseniaUsuarioEmp.setColumns(10);
-			txtContraseniaUsuarioEmp.setBounds(288, 315, 185, 20);
+			txtContraseniaUsuarioEmp.setBounds(288, 188, 185, 20);
 			panel.add(txtContraseniaUsuarioEmp);
 			
 			JLabel lblContrasea = new JLabel("Contrase\u00F1a");
-			lblContrasea.setBounds(288, 270, 117, 34);
+			lblContrasea.setBounds(288, 143, 117, 34);
 			panel.add(lblContrasea);
+			
+			JButton btnNewButton = new JButton("Seleccionar empleado");
+			btnNewButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					//Aqui debe de llamarse a una lista de empleados para que se pueda seleccionar alguno y crearle un usuario a este
+					//El formato de presentación del empleado seleccionado sería: ID - Nombre - Rol
+				}
+			});
+			btnNewButton.setBounds(20, 99, 178, 23);
+			panel.add(btnNewButton);
 		}
 		{
 			JPanel buttonPane = new JPanel();
@@ -166,7 +132,6 @@ public class RegistrarUsuario extends JDialog {
 					
 					public void actionPerformed(ActionEvent e) {
 						dispose();
-						
 					}
 				});
 				buttonPane.add(btnCancelar);

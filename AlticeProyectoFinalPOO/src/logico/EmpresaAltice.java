@@ -175,7 +175,16 @@ public class EmpresaAltice implements Serializable{
 		//new ObjectInputStream        ||                 ||
 		//new FileInputStream          ||                 ||
 		try(ObjectInputStream file= new ObjectInputStream(new FileInputStream(archivo))){
-
+			
+			//Limpiar para que no hayan duplicados con addAll
+			clientes.clear();
+            empleados.clear();
+            planes.clear();
+            servicios.clear();
+            usuarios.clear();
+            contratos.clear();
+            pagos.clear();
+			
 			//Los warnings son por que java automaticamente va a volver los objetos que lee al tipo que tiene ArrayList de forma automatica
 			//Se tiene que leer en el mismo orden con el cual se escribio
 			//abierto a cambios aqui
@@ -229,6 +238,45 @@ public class EmpresaAltice implements Serializable{
 
 	public static void setLoginUser(Usuario loginUser) {
 		EmpresaAltice.loginUser = loginUser;
+	}
+
+	public Contrato buscarContratoById(String idContrato) {
+		Contrato encontrado = null;
+		for(Contrato c: misContratos) {
+			if(c.getIdContrato().equalsIgnoreCase(idContrato)) {
+				encontrado =  c;
+			}
+		}
+		return encontrado;
+	}
+
+	public Cliente buscarClienteById(String idCliente) {
+		Cliente encontrado = null;
+		for(Cliente cli: misClientes) {
+			if(cli.getIdPersona().equalsIgnoreCase(idCliente)) {
+				encontrado =  cli;
+			}
+		}
+		return encontrado;
+	}
+
+	public boolean eliminarCliente(Cliente selected) {
+		boolean eliminado = false;
+		if(selected.getCantContratosActivos() == 0) {
+			misClientes.remove(selected);
+			eliminado = true;
+		}
+		return eliminado;
+	}
+
+	public Empleado buscarEmpleadoById(String idEmpleado) {
+		Empleado encontrado = null;
+		for(Empleado emp: misEmpleados) {
+			if(emp.getIdPersona().equalsIgnoreCase(idEmpleado)) {
+				encontrado =  emp;
+			}
+		}
+		return encontrado;
 	}
 
 

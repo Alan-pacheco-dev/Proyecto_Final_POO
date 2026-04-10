@@ -11,8 +11,13 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
+
+import logico.Contrato;
+
 import javax.swing.border.LineBorder;
 import java.awt.Color;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
 
 public class PagosPorContrato extends JDialog {
 
@@ -25,13 +30,15 @@ public class PagosPorContrato extends JDialog {
 	private JTextField textField_4;
 	private JTextField txtNombreDeUsuarioEmp;
 	private JTextField txtContraseniaUsuarioEmp;
+	private JTextField textField;
+	private Contrato miCto = null;
 
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
 		try {
-			PagosPorContrato dialog = new PagosPorContrato();
+			PagosPorContrato dialog = new PagosPorContrato(null);
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
 		} catch (Exception e) {
@@ -42,10 +49,11 @@ public class PagosPorContrato extends JDialog {
 	/**
 	 * Create the dialog.
 	 */
-	public PagosPorContrato() {
+	public PagosPorContrato(Contrato cto) {
+		miCto = cto;
 		setBounds(100, 100, 450, 300);
 		dim = getToolkit().getScreenSize();
-		setSize(553, 712);
+		setSize(553, 595);
 		setLocationRelativeTo(null);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -78,13 +86,13 @@ public class PagosPorContrato extends JDialog {
 			panel.add(txtCodigoEmpleado);
 			
 			JLabel lblNombreDelClienteDelContrato = new JLabel("Nombre del Cliente con el contrato");
-			lblNombreDelClienteDelContrato.setBounds(20, 113, 245, 34);
+			lblNombreDelClienteDelContrato.setBounds(20, 220, 245, 34);
 			panel.add(lblNombreDelClienteDelContrato);
 			
 			txtNombreEmpleado = new JTextField();
 			txtNombreEmpleado.setEditable(false);
 			txtNombreEmpleado.setColumns(10);
-			txtNombreEmpleado.setBounds(20, 158, 453, 20);
+			txtNombreEmpleado.setBounds(20, 265, 453, 20);
 			panel.add(txtNombreEmpleado);
 			
 			JLabel lblSalario = new JLabel("Fecha de inicio del pago");
@@ -116,16 +124,35 @@ public class PagosPorContrato extends JDialog {
 			txtContraseniaUsuarioEmp = new JTextField();
 			txtContraseniaUsuarioEmp.setEditable(false);
 			txtContraseniaUsuarioEmp.setColumns(10);
-			txtContraseniaUsuarioEmp.setBounds(20, 259, 185, 20);
+			txtContraseniaUsuarioEmp.setBounds(20, 175, 185, 20);
 			panel.add(txtContraseniaUsuarioEmp);
 			
 			JLabel lblIdPlanPorPagar = new JLabel("ID del plan por pagar");
-			lblIdPlanPorPagar.setBounds(20, 214, 117, 34);
+			lblIdPlanPorPagar.setBounds(20, 130, 117, 34);
 			panel.add(lblIdPlanPorPagar);
 			
 			JLabel lblFechaDeVencimiento = new JLabel("Fecha de vencimiento del pago");
 			lblFechaDeVencimiento.setBounds(287, 308, 186, 34);
 			panel.add(lblFechaDeVencimiento);
+			
+			textField = new JTextField();
+			textField.setEditable(false);
+			textField.setColumns(10);
+			textField.setBounds(288, 175, 185, 20);
+			panel.add(textField);
+			
+			JLabel lblIdDelClientepor = new JLabel("ID del cliente");
+			lblIdDelClientepor.setBounds(288, 130, 117, 34);
+			panel.add(lblIdDelClientepor);
+			
+			JLabel lblPago = new JLabel("Monto a pagar");
+			lblPago.setBounds(288, 401, 117, 34);
+			panel.add(lblPago);
+			
+			JSpinner spinner = new JSpinner();
+			spinner.setModel(new SpinnerNumberModel(new Float(0), new Float(0), null, new Float(1)));
+			spinner.setBounds(288, 446, 185, 20);
+			panel.add(spinner);
 		}
 		{
 			JPanel buttonPane = new JPanel();

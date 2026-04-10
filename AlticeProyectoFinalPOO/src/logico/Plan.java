@@ -1,6 +1,7 @@
 package logico;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class Plan implements Serializable {
@@ -54,6 +55,38 @@ public class Plan implements Serializable {
 			}
 		}
 		return precioTotal;
+	}
+	
+	public void actualizarPrecioPlan(float nuevoPrecio) {
+	    EmpresaAltice altice = EmpresaAltice.getInstance();
+	    
+	    this.setPrecioTotal(nuevoPrecio);
+	    
+	    ArrayList<Contrato> contratosRenovados = new ArrayList<>();
+	    
+	    for(Contrato c : altice.getMisContratos()) {
+	        if(c.getPlanContrato().getIdPlan().equalsIgnoreCase(this.idPlan) && c.isActivo()) {
+	            
+	        	c.setActivo(false); 
+	        	c.setFechaFinContrato(LocalDate.now());
+	            
+	            Contrato nuevo = new Contrato(
+	                c.getCliente(), 
+	                c.getEmpConsiguioContrato(), 
+	                c.getPorcentajeComisionAplicado(), 
+	                nuevoPrecio,
+	                LocalDate.now(), 
+	                null, 
+	                this
+	            );
+	            
+	            contratosRenovados.add(nuevo);
+	            
+	            c.getCliente().getMisContratos().add(nuevo);
+	        }
+	    }
+	    
+	    altice.getMisContratos().addAll(contratosRenovados);
 	}
 	
 }

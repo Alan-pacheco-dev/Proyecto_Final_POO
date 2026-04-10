@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.LocalDate;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -24,22 +25,26 @@ import java.awt.Color;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
 
 public class RegistrarEmpleado extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
 	private Dimension dim;
-	private JTextField textField;
-	private JTextField textField_1;
-	private JTextField textField_2;
+	private JTextField txtIdEmpleado;
+	private JTextField txtCodigoEmpleado;
+	private JTextField txtNombreEmpleado;
+	private JSpinner spnSalarioEmpleado;
+	private JSpinner spnPorcentajeComisionEmp;
+	private JComboBox cbxRolEmpleado;
 
 	
 
 	/**
 	 * Create the dialog.
 	 */
-	public RegistrarEmpleado(JFrame owner) {
-		super(owner, true);
+	public RegistrarEmpleado() {
+		super();
 		setBounds(100, 100, 450, 300);
 		dim = getToolkit().getScreenSize();
 		setSize(553, 493);
@@ -48,41 +53,47 @@ public class RegistrarEmpleado extends JDialog {
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(new BorderLayout(0, 0));
-		final JSpinner spinner = new JSpinner();
-		final JSpinner spinner_1 = new JSpinner();
-		final JComboBox cbxRolEmpleado = new JComboBox();
+		spnSalarioEmpleado = new JSpinner();
+		spnPorcentajeComisionEmp = new JSpinner();
+		spnPorcentajeComisionEmp.setModel(new SpinnerNumberModel(0, null, 100, 1));
+		cbxRolEmpleado = new JComboBox();
 		{
 			JPanel panel = new JPanel();
 			panel.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 			contentPanel.add(panel, BorderLayout.CENTER);
 			panel.setLayout(null);
 			
-			JLabel lblNewLabel = new JLabel("ID");
-			lblNewLabel.setBounds(20, 37, 117, 34);
-			panel.add(lblNewLabel);
+			JLabel lblIDEmpleado = new JLabel("ID del Empleado");
+			lblIDEmpleado.setBounds(20, 37, 117, 34);
+			panel.add(lblIDEmpleado);
 			
-			textField = new JTextField();
-			textField.setBounds(20, 82, 185, 20);
-			panel.add(textField);
-			textField.setColumns(10);
+			txtIdEmpleado = new JTextField();
+			txtIdEmpleado.setEditable(false);
+			txtIdEmpleado.setText("E - " + EmpresaAltice.getInstance().idEmpleados);
+			txtIdEmpleado.setBounds(20, 82, 185, 20);
+			panel.add(txtIdEmpleado);
+			txtIdEmpleado.setColumns(10);
 			
 			JLabel label = new JLabel("C\u00F3digo del empleado");
 			label.setBounds(288, 37, 222, 34);
 			panel.add(label);
 			
-			textField_1 = new JTextField();
-			textField_1.setColumns(10);
-			textField_1.setBounds(288, 82, 185, 20);
-			panel.add(textField_1);
+			txtCodigoEmpleado = new JTextField();
+			txtCodigoEmpleado.setEditable(false);
+			txtCodigoEmpleado.setColumns(10);
+			String anioActual = String.valueOf(LocalDate.now().getYear());
+			txtCodigoEmpleado.setText("EMP-" + anioActual + "-" + EmpresaAltice.getInstance().idEmpleados);
+			txtCodigoEmpleado.setBounds(288, 82, 185, 20);
+			panel.add(txtCodigoEmpleado);
 			
 			JLabel lblNombreDelEmpleado = new JLabel("Nombre del Empleado");
 			lblNombreDelEmpleado.setBounds(20, 129, 148, 34);
 			panel.add(lblNombreDelEmpleado);
 			
-			textField_2 = new JTextField();
-			textField_2.setColumns(10);
-			textField_2.setBounds(20, 174, 453, 20);
-			panel.add(textField_2);
+			txtNombreEmpleado = new JTextField();
+			txtNombreEmpleado.setColumns(10);
+			txtNombreEmpleado.setBounds(20, 174, 453, 20);
+			panel.add(txtNombreEmpleado);
 			
 			JLabel lblVentas = new JLabel("Salario");
 			lblVentas.setBounds(20, 292, 117, 34);
@@ -101,12 +112,12 @@ public class RegistrarEmpleado extends JDialog {
 			panel.add(cbxRolEmpleado);
 			
 			
-			spinner.setBounds(20, 337, 185, 20);
-			panel.add(spinner);
+			spnSalarioEmpleado.setBounds(20, 337, 185, 20);
+			panel.add(spnSalarioEmpleado);
 			
 	
-			spinner_1.setBounds(288, 337, 185, 20);
-			panel.add(spinner_1);
+			spnPorcentajeComisionEmp.setBounds(288, 337, 185, 20);
+			panel.add(spnPorcentajeComisionEmp);
 		}
 		{
 			JPanel buttonPane = new JPanel();
@@ -121,9 +132,9 @@ public class RegistrarEmpleado extends JDialog {
 					public void actionPerformed(ActionEvent e) {
 						EmpresaAltice empresa = EmpresaAltice.getInstance();
 						
-						String nombre= textField_2.getText().trim();
-						float salario= ((Number)spinner.getValue()).floatValue();
-						float comision=((Number)spinner_1.getValue()).floatValue();
+						String nombre= txtNombreEmpleado.getText().trim();
+						float salario= ((Number)spnSalarioEmpleado.getValue()).floatValue();
+						float comision=((Number)spnPorcentajeComisionEmp.getValue()).floatValue();
 						String rol =cbxRolEmpleado.getSelectedItem().toString();
 						
 						Empleado emp = new Empleado(null, nombre, salario, comision, 0, rol);
@@ -135,8 +146,7 @@ public class RegistrarEmpleado extends JDialog {
 							empresa.getPagos()
 						);
 						JOptionPane.showMessageDialog(null, "Empleado registrado con éxito");
-						dispose();
-						
+						clean();
 					}
 				});
 				buttonPane.add(btnRegistrar);
@@ -153,5 +163,13 @@ public class RegistrarEmpleado extends JDialog {
 				buttonPane.add(btnCancelar);
 			}
 		}
+	}
+	private void clean() {
+		txtIdEmpleado.setText("E - " + EmpresaAltice.getInstance().idEmpleados);
+		String anioActual = String.valueOf(LocalDate.now().getYear());
+		txtCodigoEmpleado.setText("EMP-" + anioActual + "-" + EmpresaAltice.getInstance().idEmpleados);
+		txtNombreEmpleado.setText("");
+		spnSalarioEmpleado.setValue(new Float(0));
+		cbxRolEmpleado.setSelectedIndex(0);
 	}
 }

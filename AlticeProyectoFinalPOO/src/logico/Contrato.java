@@ -9,20 +9,26 @@ public class Contrato implements Serializable {
 	
 	private String idContrato;
 	private Cliente cliente;
+	private Empleado empConsiguioContrato;
+	private float porcentajeComisionAplicado;
+	private float precioMensualAcordado;
 	private LocalDate fechaInicioContrato;
 	private LocalDate fechaFinContrato;
 	private boolean isActivo;
 	private Plan planContrato;
 	
-	public Contrato(Cliente cliente, LocalDate fechaInicioContrato,LocalDate fechaFinContrato, Plan planContrato) {
+	public Contrato(Cliente cliente, Empleado empConsiguioContrato, float porcentajeComisionAplicado, float precioMensualAcordado, LocalDate fechaInicioContrato,LocalDate fechaFinContrato, Plan planContrato) {
 		super();
 		this.idContrato = "Cto - " + EmpresaAltice.getInstance().idContratos++;
 		this.cliente = cliente;
+		this.empConsiguioContrato = empConsiguioContrato;
+		this.porcentajeComisionAplicado = porcentajeComisionAplicado;
 		this.fechaInicioContrato = fechaInicioContrato;
 		this.fechaFinContrato = fechaFinContrato;
 		//Inicia en verdadero porque a la hora de crearse un contrato este debe estar activo
 		this.isActivo = true;
 		this.planContrato = planContrato;
+		this.precioMensualAcordado = planContrato.getPrecioTotal();
 	}
 	
 	public String getIdContrato() {
@@ -60,6 +66,30 @@ public class Contrato implements Serializable {
 	}
 	public void setPlanContrato(Plan planContrato) {
 		this.planContrato = planContrato;
+	}
+
+	public Empleado getEmpConsiguioContrato() {
+		return empConsiguioContrato;
+	}
+
+	public void setEmpConsiguioContrato(Empleado empConsiguioContrato) {
+		this.empConsiguioContrato = empConsiguioContrato;
+	}
+
+	public float getPorcentajeComisionAplicado() {
+		return porcentajeComisionAplicado;
+	}
+
+	public void setPorcentajeComisionAplicado(float porcentajeComisionAplicado) {
+		this.porcentajeComisionAplicado = porcentajeComisionAplicado;
+	}
+
+	public float getPrecioMensualAcordado() {
+		return precioMensualAcordado;
+	}
+
+	public void setPrecioMensualAcordado(float precioMensualAcordado) {
+		this.precioMensualAcordado = precioMensualAcordado;
 	}
 	
 }
