@@ -167,7 +167,7 @@ public class ListarContratos extends JDialog {
 
                         JOptionPane.showMessageDialog(null, "Contrato cancelado con éxito", "Información", JOptionPane.INFORMATION_MESSAGE);
                         loadContratos();
-                        btnCancelarContrato.setEnabled(false);
+                        btnCancelarContrato.setEnabled(true);
                         selected = null;
                     }
                 }

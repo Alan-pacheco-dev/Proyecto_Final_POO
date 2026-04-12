@@ -55,10 +55,6 @@ public class RegistrarContrato extends JDialog {
 		this.clienteActual = cliente;
 		this.empleadoLogueado = empleadoSesion;
 		
-		if(clienteActual == null) {
-			JOptionPane.showMessageDialog(null, "Error crítico: El cliente recibido es nulo.", "Error", JOptionPane.ERROR_MESSAGE);
-			dispose(); 
-		}
 		
 		setTitle("Generar Nuevo Contrato");
 		setBounds(100, 100, 450, 300);
@@ -178,7 +174,6 @@ public class RegistrarContrato extends JDialog {
 			JButton btnEscogerPlan = new JButton("Escoger Plan");
 			btnEscogerPlan.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					// Abrimos la ventana de planes en Modo Selección (true)
 					ListarPlanes ventanaPlanes = new ListarPlanes(true); 
 					ventanaPlanes.setVisible(true);
 
@@ -265,9 +260,34 @@ public class RegistrarContrato extends JDialog {
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
+				JButton btnEscogerCliente = new JButton("Buscar Cliente");
+				btnEscogerCliente.addActionListener(new ActionListener() {
+				    public void actionPerformed(ActionEvent e) {
+				        ListarClientes ventanaClientes = new ListarClientes(true);
+				        ventanaClientes.setModal(true);
+				        ventanaClientes.setVisible(true);
+
+				        Cliente clienteElegido = ventanaClientes.getClienteSeleccionado();
+				        if (clienteElegido != null) {
+				            clienteActual = clienteElegido;
+				            txtCodigoCliente.setText(clienteActual.getCodigoCliente());
+				            txtNombreCliente.setText(clienteActual.getNombre());
+				            txtEmailCliente.setText(clienteActual.getEmail());
+				            txtDireccionCliente.setText(clienteActual.getDireccion());
+				            txtDeudaCliente.setText("$ " + clienteActual.calcularDeuda());
+				        }
+				    }
+				});
+				buttonPane.add(btnEscogerCliente);
+				
 				JButton btnRegistrar = new JButton("Registrar");
 				btnRegistrar.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
+						
+						if (clienteActual == null) {
+						    JOptionPane.showMessageDialog(null, "Debe seleccionar un cliente.", "Error", JOptionPane.ERROR_MESSAGE);
+						    return;
+						}
 						
 						if (planEscogido == null) {
 							JOptionPane.showMessageDialog(null, "Debe seleccionar un plan para el contrato.", "Error", JOptionPane.ERROR_MESSAGE);

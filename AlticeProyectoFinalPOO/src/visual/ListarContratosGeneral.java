@@ -8,8 +8,11 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Arrays;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -23,6 +26,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
+import logico.Cliente;
 import logico.Contrato;
 import logico.EmpresaAltice;
 
@@ -32,12 +36,14 @@ public class ListarContratosGeneral extends JDialog {
 	private JTable table;
 	private DefaultTableModel model;
 	private JTextField txtBuscar;
+	private JComboBox<String> cbxClientes;
 	private TableRowSorter<DefaultTableModel> sorter;
-	
+
 	private JButton btnSeleccionar;
-	private JButton btnCancelarContrato; 
-	private JButton btnVerServiciosPlan; // NUEVO BOTÓN
-	
+	private JButton btnCancelarContrato;
+	private JButton btnReactivarContrato;
+	private JButton btnVerServiciosPlan;
+
 	private Contrato contratoSeleccionado = null;
 
 	public ListarContratosGeneral(boolean modoSeleccion) {
@@ -51,18 +57,32 @@ public class ListarContratosGeneral extends JDialog {
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(new BorderLayout(0, 10));
 
-		// --- PANEL SUPERIOR: BÚSQUEDA ---
+		// Panel de búsqueda
 		JPanel panelBusqueda = new JPanel();
 		panelBusqueda.setLayout(new BorderLayout(10, 0));
 		contentPanel.add(panelBusqueda, BorderLayout.NORTH);
 
-		JLabel lblBuscar = new JLabel("Buscar Contrato (Cliente, Plan, Empleado): ");
-		panelBusqueda.add(lblBuscar, BorderLayout.WEST);
+		JPanel panelFiltros = new JPanel();
+		panelFiltros.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 0));
+		panelBusqueda.add(panelFiltros, BorderLayout.CENTER);
 
-		txtBuscar = new JTextField();
-		panelBusqueda.add(txtBuscar, BorderLayout.CENTER);
+		JLabel lblBuscar = new JLabel("Buscar: ");
+		panelFiltros.add(lblBuscar);
 
-		// --- PANEL CENTRAL: TABLA ---
+		txtBuscar = new JTextField(15);
+		panelFiltros.add(txtBuscar);
+
+		JLabel lblCliente = new JLabel("Cliente: ");
+		panelFiltros.add(lblCliente);
+
+		cbxClientes = new JComboBox<>();
+		cbxClientes.setPrototypeDisplayValue("Seleccionar cliente      ");
+		panelFiltros.add(cbxClientes);
+
+		JButton btnLimpiar = new JButton("Limpiar filtros");
+		panelFiltros.add(btnLimpiar);
+
+		// Panel de la tabla
 		JPanel panelTabla = new JPanel();
 		panelTabla.setLayout(new BorderLayout(0, 0));
 		contentPanel.add(panelTabla, BorderLayout.CENTER);
@@ -72,42 +92,42 @@ public class ListarContratosGeneral extends JDialog {
 
 		table = new JTable();
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		
+
 		table.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				int indexVisual = table.getSelectedRow();
-				if(indexVisual != -1) {
+				if (indexVisual != -1) {
 					int indexReal = table.convertRowIndexToModel(indexVisual);
-					
+
 					String idClienteStr = (String) model.getValueAt(indexReal, 0);
 					String nombrePlanStr = (String) model.getValueAt(indexReal, 2);
-					
+
 					contratoSeleccionado = null;
-					
-					for(Contrato cto : EmpresaAltice.getInstance().getMisContratos()) {
-						if(cto.getCliente().getCodigoCliente().equals(idClienteStr) && 
-						   cto.getPlanContrato().getNombrePlan().equals(nombrePlanStr)) {
+
+					for (Contrato cto : EmpresaAltice.getInstance().getMisContratos()) {
+						if (cto.getCliente().getCodigoCliente().equals(idClienteStr) &&
+							cto.getPlanContrato().getNombrePlan().equals(nombrePlanStr)) {
 							contratoSeleccionado = cto;
 							break;
 						}
 					}
-					
+
 					if (contratoSeleccionado != null) {
 						btnSeleccionar.setEnabled(true);
-						btnVerServiciosPlan.setEnabled(true); // Encendemos el nuevo botón
-						
-						if (contratoSeleccionado.isActivo() == true) {
-							btnCancelarContrato.setEnabled(true);
-						} else {
-							btnCancelarContrato.setEnabled(false);
-						}
+						btnVerServiciosPlan.setEnabled(true);
+						btnCancelarContrato.setEnabled(contratoSeleccionado.isActivo());
+						btnReactivarContrato.setEnabled(!contratoSeleccionado.isActivo());
 					}
 				}
 			}
 		});
 
-		model = new DefaultTableModel();
+		model = new DefaultTableModel() {
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
 		String[] headers = {"Cód. Cliente", "Nombre Cliente", "Plan", "Estado", "Vendedor", "Mensualidad Total"};
 		model.setColumnIdentifiers(headers);
 		table.setModel(model);
@@ -116,23 +136,35 @@ public class ListarContratosGeneral extends JDialog {
 		sorter = new TableRowSorter<>(model);
 		table.setRowSorter(sorter);
 
+		// Filtro por texto en tiempo real
 		txtBuscar.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent e) {
-				String textoBusqueda = txtBuscar.getText();
-				if (textoBusqueda.trim().isEmpty()) {
-					sorter.setRowFilter(null);
-				} else {
-					sorter.setRowFilter(RowFilter.regexFilter("(?i)" + textoBusqueda));
-				}
+				aplicarFiltros();
 			}
 		});
 
-		// --- PANEL INFERIOR: BOTONES ---
+		// Filtro por cliente al seleccionar del desplegable
+		cbxClientes.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				aplicarFiltros();
+			}
+		});
+
+		// Limpiar filtros
+		btnLimpiar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				txtBuscar.setText("");
+				cbxClientes.setSelectedIndex(0);
+				sorter.setRowFilter(null);
+			}
+		});
+
+		// Panel de botones
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
-		
+
 		btnSeleccionar = new JButton("Seleccionar");
 		btnSeleccionar.setEnabled(false);
 		btnSeleccionar.addActionListener(new ActionListener() {
@@ -140,61 +172,86 @@ public class ListarContratosGeneral extends JDialog {
 				dispose();
 			}
 		});
-		
-		// CONFIGURACIÓN DEL NUEVO BOTÓN
+
 		btnVerServiciosPlan = new JButton("Ver Servicios del Plan");
 		btnVerServiciosPlan.setEnabled(false);
 		btnVerServiciosPlan.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(contratoSeleccionado != null) {
-					// Abrimos el visor reciclando la clase que ya existe, pasándole la lista del plan
+				if (contratoSeleccionado != null) {
 					ListarServiciosXPlan visorServicios = new ListarServiciosXPlan(contratoSeleccionado.getPlanContrato().getServiciosPlan());
 					visorServicios.setVisible(true);
 				}
 			}
 		});
-		
+
 		btnCancelarContrato = new JButton("Desactivar Contrato");
 		btnCancelarContrato.setEnabled(false);
 		btnCancelarContrato.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(contratoSeleccionado != null) {
-					int opcion = JOptionPane.showConfirmDialog(null, 
+				if (contratoSeleccionado != null) {
+					int opcion = JOptionPane.showConfirmDialog(null,
 							"¿Desea desactivar el contrato?", "Confirmar", JOptionPane.YES_NO_OPTION);
-					
+
 					if (opcion == JOptionPane.YES_OPTION) {
-						// 1. Cambiamos el estado lógico
 						contratoSeleccionado.setActivo(false);
-						
-						// 2. RE-CONTAMOS para que el cliente pierda ese contrato activo en su contador
 						EmpresaAltice.getInstance().refrescarConteosContratos();
-						
-						// 3. Guardamos los archivos
+
 						EmpresaAltice empresa = EmpresaAltice.getInstance();
-						empresa.GuardarDatos(empresa.getMisClientes(), empresa.getMisEmpleados(), 
-							empresa.getMisPlanes(), empresa.getMisServicios(), empresa.getMisUsuarios(), 
-							empresa.getMisContratos(), empresa.getPagos());
-						
-						// 4. ¡CRÍTICO! Volver a cargar la tabla para que el botón se apague y el texto cambie
-						loadContratos(); 
+						empresa.GuardarDatos(empresa.getMisClientes(), empresa.getMisEmpleados(),
+								empresa.getMisPlanes(), empresa.getMisServicios(), empresa.getMisUsuarios(),
+								empresa.getMisContratos(), empresa.getPagos());
+
+						loadContratos();
 						btnCancelarContrato.setEnabled(false);
-						btnVerServiciosPlan.setEnabled(false); // Apagamos por seguridad
+						btnVerServiciosPlan.setEnabled(false);
 						contratoSeleccionado = null;
-						
+
 						JOptionPane.showMessageDialog(null, "Contrato desactivado correctamente.");
 					}
 				}
 			}
 		});
 		
-		// LÓGICA DE DISTRIBUCIÓN DE BOTONES (MODO DUAL)
-		if (modoSeleccion == true) {
+		 btnReactivarContrato = new JButton("Reactivar Contrato");
+	        btnReactivarContrato.setEnabled(false);
+	        btnReactivarContrato.addActionListener(new ActionListener() {
+	            public void actionPerformed(ActionEvent e) {
+	                if (contratoSeleccionado != null) {
+	                    int option = JOptionPane.showConfirmDialog(null,
+	                            "¿Desea reactivar el contrato " + contratoSeleccionado.getIdContrato() +
+	                            " del cliente " + contratoSeleccionado.getCliente().getNombre() + "?",
+	                            "Confirmación", JOptionPane.YES_NO_OPTION);
+
+	                    if (option == JOptionPane.YES_OPTION) {
+	                        contratoSeleccionado.getCliente().solicitarReactivarContratoById(contratoSeleccionado.getIdContrato());
+	                        
+	                        EmpresaAltice empresa = EmpresaAltice.getInstance();
+	                        empresa.GuardarDatos(empresa.getMisClientes(), empresa.getMisEmpleados(),
+	                                empresa.getMisPlanes(), empresa.getMisServicios(), empresa.getMisUsuarios(),
+	                                empresa.getMisContratos(), empresa.getPagos());
+	                        
+	                        loadContratos();
+	                        btnCancelarContrato.setEnabled(false);
+	                        btnReactivarContrato.setEnabled(false);
+	                        btnVerServiciosPlan.setEnabled(false);
+	                        contratoSeleccionado = null;
+	                        
+	                        JOptionPane.showMessageDialog(null, "Contrato reactivado con éxito", "Información", JOptionPane.INFORMATION_MESSAGE);
+	                    }
+	                }
+	            }
+	        });
+	        buttonPane.add(btnReactivarContrato);
+
+		if (modoSeleccion) {
 			buttonPane.add(btnSeleccionar);
 			btnCancelarContrato.setVisible(false);
-			btnVerServiciosPlan.setVisible(false); // Si es selector, escondemos las funciones de admin
+			btnReactivarContrato.setVisible(false);
+			btnVerServiciosPlan.setVisible(false);
 		} else {
-			buttonPane.add(btnVerServiciosPlan); // Lo mostramos antes de desactivar
+			buttonPane.add(btnVerServiciosPlan);
 			buttonPane.add(btnCancelarContrato);
+			 buttonPane.add(btnReactivarContrato);
 			btnSeleccionar.setVisible(false);
 		}
 
@@ -207,23 +264,48 @@ public class ListarContratosGeneral extends JDialog {
 		});
 		buttonPane.add(btnCerrar);
 
+		loadClientes();
 		loadContratos();
+	}
+
+	private void aplicarFiltros() {
+		String textoBusqueda = txtBuscar.getText().trim();
+		String clienteSeleccionado = (String) cbxClientes.getSelectedItem();
+		boolean hayTexto = textoBusqueda.length() > 0;
+		boolean hayCliente = clienteSeleccionado != null && !clienteSeleccionado.equals("Todos");
+
+		if (!hayTexto && !hayCliente) {
+			sorter.setRowFilter(null);
+		} else if (hayTexto && !hayCliente) {
+			sorter.setRowFilter(RowFilter.regexFilter("(?i)" + textoBusqueda));
+		} else if (!hayTexto && hayCliente) {
+			sorter.setRowFilter(RowFilter.regexFilter("(?i)" + clienteSeleccionado, 1)); // columna 1 = Nombre Cliente
+		} else {
+			sorter.setRowFilter(RowFilter.andFilter(Arrays.asList(
+				RowFilter.regexFilter("(?i)" + textoBusqueda),
+				RowFilter.regexFilter("(?i)" + clienteSeleccionado, 1)
+			)));
+		}
+	}
+
+	private void loadClientes() {
+		DefaultComboBoxModel<String> cbxModel = new DefaultComboBoxModel<>();
+		cbxModel.addElement("Todos");
+		for (Cliente c : EmpresaAltice.getInstance().getMisClientes()) {
+			cbxModel.addElement(c.getNombre());
+		}
+		cbxClientes.setModel(cbxModel);
 	}
 
 	private void loadContratos() {
 		model.setRowCount(0);
 		for (Contrato c : EmpresaAltice.getInstance().getMisContratos()) {
-			String estado = "";
-			if (c.isActivo() == true) {
-				estado = "Activo";
-			} else {
-				estado = "Inactivo";
-			}
-			
+			String estado = c.isActivo() ? "Activo" : "Inactivo";
+
 			float porcentajeDecimal = c.getPorcentajeComisionAplicado() / 100.0f;
 			float costoComision = c.getPrecioMensualAcordado() * porcentajeDecimal;
 			float totalMensual = c.getPrecioMensualAcordado() + costoComision;
-			
+
 			Object[] row = new Object[6];
 			row[0] = c.getCliente().getCodigoCliente();
 			row[1] = c.getCliente().getNombre();
@@ -231,11 +313,10 @@ public class ListarContratosGeneral extends JDialog {
 			row[3] = estado;
 			row[4] = c.getEmpConsiguioContrato().getNombre();
 			row[5] = "$ " + totalMensual;
-			
 			model.addRow(row);
 		}
 	}
-	
+
 	public Contrato getContratoSeleccionado() {
 		return contratoSeleccionado;
 	}

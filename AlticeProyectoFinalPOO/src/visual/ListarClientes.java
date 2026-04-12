@@ -27,34 +27,24 @@ import logico.Cliente;
 import logico.EmpresaAltice;
 
 public class ListarClientes extends JDialog {
-	
-	/*
+
 	private final JPanel contentPanel = new JPanel();
 	private JTable table;
 	private DefaultTableModel model;
 	private JTextField txtBuscar;
 	private TableRowSorter<DefaultTableModel> sorter;
-	
+	private JButton btnActualizar;
 	private JButton btnEliminar;
-	private JButton btnCrearContrato;
-	private JButton btnVerContratos;
-	private JButton btnSeleccionar; // NUEVO BOTÓN
-	
 	private Cliente selected = null;
+	private boolean modoSeleccion;
 
-	public static void main(String[] args) {
-		try {
-			ListarClientes dialog = new ListarClientes(false); // Falso para pruebas normales
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			dialog.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	public ListarClientes() {
+		this(false);
 	}
 
-	// NUEVO: Agregamos el boolean modoSeleccion
 	public ListarClientes(boolean modoSeleccion) {
-		setTitle("Listado de Clientes");
+		this.modoSeleccion = modoSeleccion;
+		setTitle(modoSeleccion ? "Seleccionar Cliente" : "Listado de Clientes");
 		setResizable(false);
 		setBounds(100, 100, 800, 500);
 		setLocationRelativeTo(null);
@@ -82,34 +72,28 @@ public class ListarClientes extends JDialog {
 
 		table = new JTable();
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		
+
 		table.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				int indexVisual = table.getSelectedRow();
-				if(indexVisual != -1) {
-					
+				if (indexVisual != -1) {
 					int indexReal = table.convertRowIndexToModel(indexVisual);
 					String idCliente = (String) model.getValueAt(indexReal, 0);
-					
 					selected = EmpresaAltice.getInstance().buscarClienteById(idCliente);
-					
-					// Encendemos los botones
-					btnEliminar.setEnabled(true);
-					btnCrearContrato.setEnabled(true);
-					btnSeleccionar.setEnabled(true); // Encendemos el botón de seleccionar
-					
-					if(selected.getCantContratosActivos() > 0) {
-						btnVerContratos.setVisible(true);
+
+					if (modoSeleccion) {
+						btnActualizar.setEnabled(true);
 					} else {
-						btnVerContratos.setVisible(false);
+						btnActualizar.setEnabled(true);
+						btnEliminar.setEnabled(true);
 					}
 				}
 			}
 		});
 
 		model = new DefaultTableModel();
-		String[] headers = {"ID", "Código", "Nombre", "Email", "Deuda", "Contratos activos"};
+		String[] headers = {"ID", "Código", "Nombre", "Email", "Deuda"};
 		model.setColumnIdentifiers(headers);
 		table.setModel(model);
 		scrollPane.setViewportView(table);
@@ -132,135 +116,102 @@ public class ListarClientes extends JDialog {
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
-		
-		// --- CONFIGURACIÓN DE BOTONES ---
-		
-		btnSeleccionar = new JButton("Seleccionar");
-		btnSeleccionar.setEnabled(false);
-		btnSeleccionar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				dispose(); // Solo cierra la ventana, guardando el "selected"
-			}
-		});
-		
-		btnEliminar = new JButton("Eliminar");
-		btnEliminar.setEnabled(false);
-		btnEliminar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if(selected != null) {
-					int option = JOptionPane.showConfirmDialog(null, 
-							"¿Desea realmente eliminar al cliente: " + selected.getNombre() + "?", 
-							"Confirmación",
-							JOptionPane.WARNING_MESSAGE);
-					
-					if(option == JOptionPane.YES_OPTION) {
-						boolean eliminado = EmpresaAltice.getInstance().eliminarCliente(selected);
-						
-						if(eliminado == true) {
-							JOptionPane.showMessageDialog(null, "El cliente ha sido eliminado con éxito", "Información", JOptionPane.INFORMATION_MESSAGE);
-						} else {
-							JOptionPane.showMessageDialog(null, "El cliente no puede ser eliminado ya que tiene contratos activos", "Información", JOptionPane.INFORMATION_MESSAGE);
+
+		if (modoSeleccion) {
+			btnActualizar = new JButton("Seleccionar");
+			btnActualizar.setEnabled(false);
+			btnActualizar.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					if (selected != null) {
+						int confirm = JOptionPane.showConfirmDialog(null,
+								"¿Está seguro que desea seleccionar al cliente: " + selected.getNombre() + "?",
+								"Confirmación", JOptionPane.YES_NO_OPTION);
+						if (confirm == JOptionPane.YES_OPTION) {
+							dispose();
 						}
-						
-						EmpresaAltice empresa = EmpresaAltice.getInstance();
-						empresa.GuardarDatos(empresa.getMisClientes(), 
-								empresa.getMisEmpleados(), 
-								empresa.getMisPlanes(), 
-								empresa.getMisServicios(), 
-								empresa.getMisUsuarios(), 
-								empresa.getMisContratos(), 
-								empresa.getPagos());
-						empresa.actualizarContadores();
-						
+					}
+				}
+			});
+			buttonPane.add(btnActualizar);
+
+		} else {
+			btnActualizar = new JButton("Actualizar");
+			btnActualizar.setEnabled(false);
+			btnActualizar.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					if (selected != null) {
+						RegistrarCliente regCli = new RegistrarCliente(selected);
+						regCli.setModal(true);
+						regCli.setVisible(true);
 						loadClientes();
+						btnActualizar.setEnabled(false);
 						btnEliminar.setEnabled(false);
-						btnCrearContrato.setEnabled(false);
-						btnSeleccionar.setEnabled(false);
-						btnVerContratos.setVisible(false);
 						selected = null;
 					}
 				}
-			}
-		});
-		
-		btnCrearContrato = new JButton("Crear Contrato");
-		btnCrearContrato.setEnabled(false);
-		btnCrearContrato.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				
-				logico.Empleado empleadoFalso = new logico.Empleado(null, "Admin", 1000, 10, 0, 0, "Administrativo");
-				
-				RegistrarContrato regisCto = new RegistrarContrato(selected, empleadoFalso);
-				regisCto.setModal(true);
-				regisCto.setVisible(true); 
-				
-				// --- NUEVO: Refrescar los conteos lógicos globales primero ---
-				EmpresaAltice.getInstance().refrescarConteosContratos();
-				
-				// --- Luego recargar la tabla visual ---
-				loadClientes();
-				
-				btnEliminar.setEnabled(false);
-				btnCrearContrato.setEnabled(false);
-				btnVerContratos.setVisible(false);
-				selected = null;
-			}
-		});
-		
-		btnVerContratos = new JButton("Ver Contratos");
-		btnVerContratos.setVisible(false);
-		btnVerContratos.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				ListarContratosXCliente listarCtosClientes = new ListarContratosXCliente(selected);
-				listarCtosClientes.setModal(true);
-				listarCtosClientes.setVisible(true);
-			}
-		});
-		
-		// --- LÓGICA MODO DUAL ---
-		if (modoSeleccion == true) {
-			// Si solo lo abrimos para buscar a un cliente, escondemos todo lo demás
-			buttonPane.add(btnSeleccionar);
-			btnVerContratos.setVisible(false);
-			btnCrearContrato.setVisible(false);
-			btnEliminar.setVisible(false);
-		} else {
-			// Modo normal (Menú -> Clientes -> Listar)
-			buttonPane.add(btnVerContratos);
-			buttonPane.add(btnCrearContrato);
+			});
+			buttonPane.add(btnActualizar);
+
+			btnEliminar = new JButton("Eliminar");
+			btnEliminar.setEnabled(false);
+			btnEliminar.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					if (selected != null) {
+						int option = JOptionPane.showConfirmDialog(null,
+								"¿Desea realmente eliminar al cliente: " + selected.getNombre() + "?",
+								"Confirmación", JOptionPane.WARNING_MESSAGE);
+						if (option == JOptionPane.YES_OPTION) {
+							boolean eliminado = EmpresaAltice.getInstance().eliminarCliente(selected);
+							if (eliminado) {
+								JOptionPane.showMessageDialog(null, "El cliente ha sido eliminado con éxito", "Información", JOptionPane.INFORMATION_MESSAGE);
+							} else {
+								JOptionPane.showMessageDialog(null, "El cliente no puede ser eliminado ya que tiene contratos activos", "Información", JOptionPane.INFORMATION_MESSAGE);
+							}
+							EmpresaAltice empresa = EmpresaAltice.getInstance();
+							empresa.GuardarDatos(empresa.getMisClientes(),
+									empresa.getMisEmpleados(),
+									empresa.getMisPlanes(),
+									empresa.getMisServicios(),
+									empresa.getMisUsuarios(),
+									empresa.getMisContratos(),
+									empresa.getPagos());
+							loadClientes();
+							btnEliminar.setEnabled(false);
+							btnActualizar.setEnabled(false);
+							selected = null;
+						}
+					}
+				}
+			});
 			buttonPane.add(btnEliminar);
-			btnSeleccionar.setVisible(false); // Ocultamos seleccionar
 		}
 
-		JButton btnCancelar = new JButton("Cerrar");
-		btnCancelar.addActionListener(new ActionListener() {
+		JButton btnCerrar = new JButton("Cerrar");
+		btnCerrar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				selected = null; // Limpiamos la selección si el usuario cancela
+				selected = null;
 				dispose();
 			}
 		});
-		buttonPane.add(btnCancelar);
+		buttonPane.add(btnCerrar);
 
 		loadClientes();
+	}
+
+	public Cliente getClienteSeleccionado() {
+		return selected;
 	}
 
 	private void loadClientes() {
 		model.setRowCount(0);
 		for (Cliente c : EmpresaAltice.getInstance().getMisClientes()) {
-			Object[] row = new Object[6];
+			Object[] row = new Object[5];
 			row[0] = c.getIdPersona();
 			row[1] = c.getCodigoCliente();
 			row[2] = c.getNombre();
 			row[3] = c.getEmail();
 			row[4] = c.getDeuda();
-			row[5] = c.getCantContratosActivos();
 			model.addRow(row);
 		}
 	}
-	
-	// Getter para que Principal reciba al cliente
-	public Cliente getClienteSeleccionado() {
-		return selected;
-	}
-	*/
 }

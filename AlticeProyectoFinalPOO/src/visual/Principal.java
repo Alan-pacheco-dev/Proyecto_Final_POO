@@ -131,17 +131,17 @@ public class Principal extends JFrame {
 		JMenuItem menuItemListarClientes = new JMenuItem("Listar");
 		menuItemListarClientes.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//ListarClientes listCli = new ListarClientes();
-				//listCli.setModal(true);
-				//listCli.setVisible(true);
+				ListarClientes listCli = new ListarClientes();
+				listCli.setModal(true);
+				listCli.setVisible(true);
 			}
 		});
 		mnNewMenu.add(menuItemListarClientes);
 		mntmNewMenuItem.addActionListener(new ActionListener() {
 			 public void actionPerformed(ActionEvent e) {
-		            //RegistrarCliente regisCli = new RegistrarCliente(null);
-		            //regisCli.setModal(true);
-		            //regisCli.setVisible(true);
+		            RegistrarCliente regisCli = new RegistrarCliente(null);
+		            regisCli.setModal(true);
+		            regisCli.setVisible(true);
 			 }
 		});
 		
@@ -151,21 +151,9 @@ public class Principal extends JFrame {
 		JMenuItem menuItem_6 = new JMenuItem("Registrar");
 		menuItem_6.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// 1. OBLIGATORIO: Debe ser TRUE para que funcione como selector
-				//ListarClientes selectorCliente = new ListarClientes();
-				//selectorCliente.setModal(true);
-				//selectorCliente.setVisible(true);
-				
-				// 2. Capturamos la selección
-				//Cliente clienteElegido = selectorCliente.getClienteSeleccionado();
-				
-				// 3. Procedemos al registro
-				//if (clienteElegido != null) {
-					//Empleado empleadoLogueado = new Empleado(null, "Admin Prueba", "00000000000", 1000f, 10f, 0f, 0f, "Administrativo");
-					//RegistrarContrato regisCto = new RegistrarContrato(clienteElegido, empleadoLogueado);
-					//regisCto.setModal(true);
-					//regisCto.setVisible(true);
-				//} 
+				RegistrarContrato regisCon = new RegistrarContrato(null, null);
+				regisCon.setModal(true);
+				regisCon.setVisible(true);
 			}
 		});
 		mnContratos.add(menuItem_6);
@@ -176,7 +164,6 @@ public class Principal extends JFrame {
 				ListarContratosGeneral listarCtos = new ListarContratosGeneral(false);
 				listarCtos.setModal(true);
 				listarCtos.setVisible(true);
-				//Este listarContratos debe permitir filtro según el cliente y si está activo el contrato o no
 			}
 		});
 		mnContratos.add(menuItem_7);
@@ -241,6 +228,13 @@ public class Principal extends JFrame {
 		
 		JMenuItem menuItem_5 = new JMenuItem("Listar");
 		menuPagos.add(menuItem_5);
+		menuItem_5.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ListarPagos listPag= new ListarPagos();
+				listPag.setModal(true);
+				listPag.setVisible(true);
+			}
+		});
 		
 		JMenu menuReportes = new JMenu("Reportes");
 		menuBar.add(menuReportes);
