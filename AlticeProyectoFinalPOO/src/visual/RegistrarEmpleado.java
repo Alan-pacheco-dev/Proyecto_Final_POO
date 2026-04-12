@@ -1,7 +1,6 @@
 package visual;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,199 +8,262 @@ import java.time.LocalDate;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
-import javax.swing.border.TitledBorder;
-
-import logico.Empleado;
-import logico.EmpresaAltice;
-
-import javax.swing.border.LineBorder;
-import java.awt.Color;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
+import logico.Empleado;
+import logico.EmpresaAltice;
+
 public class RegistrarEmpleado extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
-	private Dimension dim;
-	private JTextField txtIdEmpleado;
-	private JTextField txtCodigoEmpleado;
-	private JTextField txtNombreEmpleado;
-	private JSpinner spnSalarioEmpleado;
-	private JSpinner spnPorcentajeComisionEmp;
-	private JComboBox<String> cbxRolEmpleado;
+	private JTextField txtId;
+	private JTextField txtCodigo;
+	private JTextField txtNombre;
+	private JTextField txtCedula;
+	private JSpinner spnSalario;
+	private JSpinner spnComisiones;
+	private JComboBox<String> cbxRol;
+	
+	private Empleado miEmpleado = null;
 
-	/**
-	 * Create the dialog.
-	 */
-	public RegistrarEmpleado() {
-		super();
-		setTitle("Registrar Empleado");
-		setBounds(100, 100, 450, 300);
-		dim = getToolkit().getScreenSize();
-		setSize(553, 493);
+	public static void main(String[] args) {
+		try {
+			// Se envía null para probar el modo Registro
+			RegistrarEmpleado dialog = new RegistrarEmpleado(null);
+			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+			dialog.setVisible(true);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	// Constructor que recibe un Empleado (null = Registrar, Objeto = Actualizar)
+	public RegistrarEmpleado(Empleado empleado) {
+		
+		this.miEmpleado = empleado;
+		setResizable(false);
+		
+		// Lógica IF tradicional para el título
+		if(miEmpleado == null) {
+			setTitle("Registrar Nuevo Empleado");
+		} else {
+			setTitle("Actualizar Datos del Empleado");
+		}
+		
+		setBounds(100, 100, 500, 405);
 		setLocationRelativeTo(null);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(new BorderLayout(0, 0));
 		
-		// Configuración de los Spinners para evitar números negativos desde la interfaz
-		spnSalarioEmpleado = new JSpinner(new SpinnerNumberModel(0.0, 0.0, null, 1000.0));
-		spnPorcentajeComisionEmp = new JSpinner(new SpinnerNumberModel(0.0, 0.0, 100.0, 1.0));
-		
-		cbxRolEmpleado = new JComboBox<String>();
-		
 		{
 			JPanel panel = new JPanel();
 			panel.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 			contentPanel.add(panel, BorderLayout.CENTER);
 			panel.setLayout(null);
+
+			// --- ID ---
+			JLabel lblId = new JLabel("ID Persona:");
+			lblId.setBounds(20, 20, 174, 14);
+			panel.add(lblId);
+
+			txtId = new JTextField();
+			txtId.setEditable(false);
+			txtId.setText("E - " + EmpresaAltice.getInstance().idEmpleados);
+			txtId.setBounds(20, 40, 200, 20);
+			panel.add(txtId);
+			txtId.setColumns(10);
 			
-			JLabel lblIDEmpleado = new JLabel("ID del Empleado");
-			lblIDEmpleado.setBounds(20, 37, 117, 34);
-			panel.add(lblIDEmpleado);
-			
-			txtIdEmpleado = new JTextField();
-			txtIdEmpleado.setEditable(false);
-			txtIdEmpleado.setText("E - " + EmpresaAltice.getInstance().idEmpleados);
-			txtIdEmpleado.setBounds(20, 82, 185, 20);
-			panel.add(txtIdEmpleado);
-			txtIdEmpleado.setColumns(10);
-			
-			JLabel label = new JLabel("Código del empleado");
-			label.setBounds(288, 37, 222, 34);
-			panel.add(label);
-			
-			txtCodigoEmpleado = new JTextField();
-			txtCodigoEmpleado.setEditable(false);
-			txtCodigoEmpleado.setColumns(10);
+			// --- CÓDIGO EMPLEADO ---
+			JLabel lblCodigo = new JLabel("Código Empleado:");
+			lblCodigo.setBounds(240, 20, 200, 14);
+			panel.add(lblCodigo);
+
 			String anioActual = String.valueOf(LocalDate.now().getYear());
-			txtCodigoEmpleado.setText("EMP-" + anioActual + "-" + EmpresaAltice.getInstance().idEmpleados);
-			txtCodigoEmpleado.setBounds(288, 82, 185, 20);
-			panel.add(txtCodigoEmpleado);
+			txtCodigo = new JTextField();
+			txtCodigo.setEditable(false);
+			txtCodigo.setText("EMP-" + anioActual + "-" + EmpresaAltice.getInstance().idEmpleados);
+			txtCodigo.setBounds(240, 40, 200, 20);
+			panel.add(txtCodigo);
+
+			// --- NOMBRE ---
+			JLabel lblNombre = new JLabel("Nombre y Apellidos:");
+			lblNombre.setBounds(20, 80, 222, 14);
+			panel.add(lblNombre);
+
+			txtNombre = new JTextField();
+			txtNombre.setBounds(20, 100, 420, 20);
+			panel.add(txtNombre);
+			txtNombre.setColumns(10);
 			
-			JLabel lblNombreDelEmpleado = new JLabel("Nombre del Empleado");
-			lblNombreDelEmpleado.setBounds(20, 129, 148, 34);
-			panel.add(lblNombreDelEmpleado);
+			// --- CÉDULA ---
+			JLabel lblCedula = new JLabel("Cédula:");
+			lblCedula.setBounds(20, 140, 150, 14);
+			panel.add(lblCedula);
+
+			txtCedula = new JTextField();
+			txtCedula.setBounds(20, 160, 420, 20);
+			panel.add(txtCedula);
+			txtCedula.setColumns(10);
+
+			// --- ROL ---
+			JLabel lblRol = new JLabel("Rol del Empleado:");
+			lblRol.setBounds(20, 200, 150, 14);
+			panel.add(lblRol);
+
+			cbxRol = new JComboBox<String>();
+			cbxRol.setModel(new DefaultComboBoxModel<String>(new String[] {"Seleccione...", "Administrativo", "Vendedor"}));
+			cbxRol.setBounds(20, 220, 420, 20);
+			panel.add(cbxRol);
+
+			// --- SALARIO ---
+			JLabel lblSalario = new JLabel("Salario Base ($):");
+			lblSalario.setBounds(20, 260, 150, 14);
+			panel.add(lblSalario);
+
+			// Configurado para manejar decimales
+			spnSalario = new JSpinner();
+			spnSalario.setModel(new SpinnerNumberModel(0.0f, 0.0f, 1000000.0f, 500.0f));
+			spnSalario.setBounds(20, 280, 200, 20);
+			panel.add(spnSalario);
 			
-			txtNombreEmpleado = new JTextField();
-			txtNombreEmpleado.setColumns(10);
-			txtNombreEmpleado.setBounds(20, 174, 453, 20);
-			panel.add(txtNombreEmpleado);
-			
-			JLabel lblVentas = new JLabel("Salario");
-			lblVentas.setBounds(20, 292, 117, 34);
-			panel.add(lblVentas);
-			
-			JLabel lblComision = new JLabel("Porcentaje de comisión por venta");
-			lblComision.setBounds(288, 292, 222, 34);
-			panel.add(lblComision);
-			
-			JLabel lblRolDelEmpleado = new JLabel("Rol del empleado");
-			lblRolDelEmpleado.setBounds(20, 216, 148, 34);
-			panel.add(lblRolDelEmpleado);
-			
-			cbxRolEmpleado.setModel(new DefaultComboBoxModel<String>(new String[] {"Administrativo", "Comercial", "Vendedor"}));
-			cbxRolEmpleado.setBounds(20, 261, 200, 20);
-			panel.add(cbxRolEmpleado);
-			
-			spnSalarioEmpleado.setBounds(20, 337, 185, 20);
-			panel.add(spnSalarioEmpleado);
-			
-			spnPorcentajeComisionEmp.setBounds(288, 337, 185, 20);
-			panel.add(spnPorcentajeComisionEmp);
+			// --- COMISIONES ---
+			JLabel lblComisiones = new JLabel("Comisión (%):");
+			lblComisiones.setBounds(240, 260, 141, 14);
+			panel.add(lblComisiones);
+
+			// Configurado para manejar porcentajes (0 a 100)
+			spnComisiones = new JSpinner();
+			spnComisiones.setModel(new SpinnerNumberModel(0.0f, 0.0f, 100.0f, 1.0f));
+			spnComisiones.setBounds(240, 280, 200, 20);
+			panel.add(spnComisiones);
 		}
+		
 		{
 			JPanel buttonPane = new JPanel();
-			buttonPane.setBorder(new LineBorder(new Color(0, 0, 0)));
+			buttonPane.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
-				JButton btnRegistrar = new JButton("Registrar");
-				btnRegistrar.setActionCommand("OK");
-				btnRegistrar.addActionListener(new ActionListener() {
-					
+				JButton btnAccion = new JButton("Registrar");
+				
+				// Lógica IF tradicional para el texto del botón
+				if(miEmpleado != null) {
+					btnAccion.setText("Actualizar");
+				}
+				
+				btnAccion.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						
-						// 1. Extraemos los valores de la interfaz
-						String nombre = txtNombreEmpleado.getText().trim();
-						float salario = ((Number) spnSalarioEmpleado.getValue()).floatValue();
-						float comision = ((Number) spnPorcentajeComisionEmp.getValue()).floatValue();
+						// 1. Validaciones básicas
+						String nombre = txtNombre.getText().trim();
+						String cedula = txtCedula.getText().trim();
+						String rol = cbxRol.getSelectedItem().toString();
 						
-						// 2. Validación de nombre vacío
-						if (nombre.isEmpty()) {
-							JOptionPane.showMessageDialog(null, "El nombre del empleado no puede estar vacío.", "Error de validación", JOptionPane.WARNING_MESSAGE);
+						if(nombre.isEmpty() || cedula.isEmpty() || rol.equals("Seleccione...")) {
+							JOptionPane.showMessageDialog(null, "Por favor complete todos los campos y seleccione un rol.", "Campos vacíos", JOptionPane.WARNING_MESSAGE);
 							return;
 						}
 						
-						// 3. Validación de rol seleccionado
-						if (cbxRolEmpleado.getSelectedItem() == null) {
-							JOptionPane.showMessageDialog(null, "Debe seleccionar un rol para el empleado.", "Error de validación", JOptionPane.WARNING_MESSAGE);
-							return;
-						}
-						String rol = cbxRolEmpleado.getSelectedItem().toString();
-						
-						// 4. Validación de Salario mayor a 0
-						if (salario <= 0) {
-							JOptionPane.showMessageDialog(null, "El salario del empleado debe ser mayor a 0.", "Error de validación", JOptionPane.WARNING_MESSAGE);
+						if(!cedula.matches("[0-9]+") || cedula.length() != 11) {
+							JOptionPane.showMessageDialog(null, "La cédula debe contener exactamente 11 números, sin guiones.", "Cédula Inválida", JOptionPane.WARNING_MESSAGE);
 							return;
 						}
 						
-						// 5. Validación de Comisión (0 a 100%)
-						if (comision < 0 || comision > 100) {
-							JOptionPane.showMessageDialog(null, "El porcentaje de comisión debe estar entre 0 y 100.", "Error de validación", JOptionPane.WARNING_MESSAGE);
-							return;
-						}
+						// Capturamos los valores numéricos
+						float salario = ((Double) spnSalario.getValue()).floatValue();
+						float comisiones = ((Double) spnComisiones.getValue()).floatValue();
 						
-						// Si todo es correcto, guardamos el empleado
 						EmpresaAltice empresa = EmpresaAltice.getInstance();
-						Empleado emp = new Empleado(null, nombre, salario, comision, 0, 0, rol);
+
+						// --- MODO REGISTRO ---
+						if(miEmpleado == null) {
+							
+							// El constructor genera automáticamente el ID y el Código interno
+							Empleado nuevoEmpleado = new Empleado(null, nombre, cedula, salario, comisiones, 0f, 0f, rol);
+							
+							empresa.getMisEmpleados().add(nuevoEmpleado);
+							JOptionPane.showMessageDialog(null, "Empleado registrado con éxito", "Información", JOptionPane.INFORMATION_MESSAGE);
+							clean(); // Limpiamos para permitir otro registro
+						} 
+						// --- MODO ACTUALIZACIÓN ---
+						else {
+							miEmpleado.setNombre(nombre);
+							miEmpleado.setCedula(cedula);
+							miEmpleado.setRolEmpleado(rol);
+							miEmpleado.setSalario(salario);
+							miEmpleado.setComisiones(comisiones);
+							
+							JOptionPane.showMessageDialog(null, "Empleado actualizado con éxito", "Información", JOptionPane.INFORMATION_MESSAGE);
+							dispose(); // Si estamos actualizando, cerramos la ventana al terminar
+						}
 						
-						empresa.getMisEmpleados().add(emp);
-						
+						// En ambos casos, guardamos los datos inmediatamente
 						empresa.GuardarDatos(
-							empresa.getMisClientes(), empresa.getMisEmpleados(),
-							empresa.getMisPlanes(), empresa.getMisServicios(),
-							empresa.getMisUsuarios(), empresa.getMisContratos(),
-							empresa.getPagos()
+								empresa.getMisClientes(), 
+								empresa.getMisEmpleados(), 
+								empresa.getMisPlanes(), 
+								empresa.getMisServicios(), 
+								empresa.getMisUsuarios(), 
+								empresa.getMisContratos(), 
+								empresa.getPagos()
 						);
-						
-						JOptionPane.showMessageDialog(null, "¡Empleado registrado con éxito!", "Información", JOptionPane.INFORMATION_MESSAGE);
-						clean();
 					}
 				});
-				buttonPane.add(btnRegistrar);
-				getRootPane().setDefaultButton(btnRegistrar);
+				btnAccion.setActionCommand("OK");
+				buttonPane.add(btnAccion);
+				getRootPane().setDefaultButton(btnAccion);
 			}
 			{
 				JButton btnCancelar = new JButton("Cancelar");
-				btnCancelar.setActionCommand("Cancel");
 				btnCancelar.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						dispose();
 					}
 				});
+				btnCancelar.setActionCommand("Cancel");
 				buttonPane.add(btnCancelar);
 			}
 		}
-	}
-	
-	private void clean() {
-		txtIdEmpleado.setText("E - " + EmpresaAltice.getInstance().idEmpleados);
-		String anioActual = String.valueOf(LocalDate.now().getYear());
-		txtCodigoEmpleado.setText("EMP-" + anioActual + "-" + EmpresaAltice.getInstance().idEmpleados);
 		
-		txtNombreEmpleado.setText("");
-		spnSalarioEmpleado.setValue(0.0);
-		spnPorcentajeComisionEmp.setValue(0.0); // Faltaba limpiar la comisión
-		cbxRolEmpleado.setSelectedIndex(0);
+		// Llenamos los datos al arrancar si es modo actualización
+		loadEmpleado();
+	}
+
+	// Método para llenar la ventana con los datos del empleado a modificar
+	private void loadEmpleado() {
+		if(miEmpleado != null) {
+			txtId.setText(miEmpleado.getIdPersona());
+			txtCodigo.setText(miEmpleado.getCodigoEmpleado());
+			txtNombre.setText(miEmpleado.getNombre());
+			txtCedula.setText(miEmpleado.getCedula());
+			cbxRol.setSelectedItem(miEmpleado.getRolEmpleado());
+			spnSalario.setValue((double) miEmpleado.getSalario());
+			spnComisiones.setValue((double) miEmpleado.getComisiones());
+		}
+	}
+
+	// Método para resetear la ventana en modo registro
+	private void clean() {
+		txtNombre.setText("");
+		txtCedula.setText("");
+		cbxRol.setSelectedIndex(0);
+		spnSalario.setValue(0.0d);
+		spnComisiones.setValue(0.0d);
+		
+		// Actualizamos los visualizadores de ID para el próximo registro
+		txtId.setText("E - " + EmpresaAltice.getInstance().idEmpleados);
+		String anioActual = String.valueOf(LocalDate.now().getYear());
+		txtCodigo.setText("EMP-" + anioActual + "-" + EmpresaAltice.getInstance().idEmpleados);
 	}
 }

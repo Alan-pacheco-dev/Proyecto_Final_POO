@@ -36,6 +36,7 @@ public class ListarEmpleados extends JDialog {
 	
 	private JButton btnEliminar;
 	private JButton btnSeleccionar; // Nuevo botón para el modo dual
+	private JButton btnActualizar; // Nuevo botón para el modo dual
 	
 	private Empleado selected = null;
 
@@ -104,6 +105,7 @@ public class ListarEmpleados extends JDialog {
 					if(selected != null) {
 						btnEliminar.setEnabled(true);
 						btnSeleccionar.setEnabled(true);
+						btnActualizar.setEnabled(true);
 					}
 				}
 			}
@@ -170,9 +172,31 @@ public class ListarEmpleados extends JDialog {
 						
 						loadEmpleados();
 						btnEliminar.setEnabled(false);
+						btnActualizar.setEnabled(false);
 						btnSeleccionar.setEnabled(false);
 						selected = null;
 					}
+				}
+			}
+		});
+		
+		btnActualizar = new JButton("Actualizar");
+		btnActualizar.setEnabled(false);
+		btnActualizar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				if (selected != null) {
+					
+					RegistrarEmpleado actualizarEmp = new RegistrarEmpleado(selected);
+					actualizarEmp.setModal(true);
+					actualizarEmp.setVisible(true);
+					
+					loadEmpleados();
+					btnActualizar.setEnabled(false);
+					btnEliminar.setEnabled(false);
+					btnSeleccionar.setEnabled(false);
+					
+					selected = null;
 				}
 			}
 		});
@@ -181,8 +205,10 @@ public class ListarEmpleados extends JDialog {
 		if (modoSeleccion == true) {
 			buttonPane.add(btnSeleccionar);
 			btnEliminar.setVisible(false);
+			btnActualizar.setVisible(false);
 		} else {
 			buttonPane.add(btnEliminar);
+			buttonPane.add(btnActualizar);
 			btnSeleccionar.setVisible(false);
 		}
 

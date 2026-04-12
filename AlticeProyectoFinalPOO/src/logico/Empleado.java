@@ -11,6 +11,7 @@ public class Empleado extends Persona implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 	private String codigoEmpleado;
+	private String cedula;
 	private float salario;
 	private float comisiones;
 	private float montoVentas;
@@ -18,7 +19,7 @@ public class Empleado extends Persona implements Serializable{
 	private String rolEmpleado;
 	private Usuario miUsuario;
 	
-	public Empleado(String id, String nombre, float salario, float comisiones, float cantidadVentas, float montoVentas, String rolEmpleado) {
+	public Empleado(String id, String nombre, String cedula, float salario, float comisiones, float cantidadVentas, float montoVentas, String rolEmpleado) {
 		super(id, nombre);
 		
 		String anioActual = String.valueOf(LocalDate.now().getYear());
@@ -28,6 +29,7 @@ public class Empleado extends Persona implements Serializable{
 		this.setIdPersona("E - " + EmpresaAltice.getInstance().idEmpleados++);
 		this.salario = salario;
 		this.comisiones = comisiones;
+		this.cedula = cedula;
 		this.montoVentas = montoVentas;
 		this.cantidadVentas = cantidadVentas;
 		this.miUsuario = null;
@@ -88,6 +90,14 @@ public class Empleado extends Persona implements Serializable{
 
 	public void setCantidadVentas(float cantidadVentas) {
 		this.cantidadVentas = cantidadVentas;
+	}
+
+	public String getCedula() {
+		return cedula;
+	}
+
+	public void setCedula(String cedula) {
+		this.cedula = cedula;
 	}
 	
 	
