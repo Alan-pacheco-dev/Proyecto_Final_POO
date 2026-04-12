@@ -33,8 +33,11 @@ public class ListarClientes extends JDialog {
 	private DefaultTableModel model;
 	private JTextField txtBuscar;
 	private TableRowSorter<DefaultTableModel> sorter;
+	
 	private JButton btnActualizar;
 	private JButton btnEliminar;
+	private JButton btnVerContratos; // NUEVO BOTÓN
+	
 	private Cliente selected = null;
 	private boolean modoSeleccion;
 
@@ -44,7 +47,13 @@ public class ListarClientes extends JDialog {
 
 	public ListarClientes(boolean modoSeleccion) {
 		this.modoSeleccion = modoSeleccion;
-		setTitle(modoSeleccion ? "Seleccionar Cliente" : "Listado de Clientes");
+		
+		if (modoSeleccion) {
+			setTitle("Seleccionar Cliente");
+		} else {
+			setTitle("Listado de Clientes");
+		}
+		
 		setResizable(false);
 		setBounds(100, 100, 800, 500);
 		setLocationRelativeTo(null);
@@ -87,13 +96,20 @@ public class ListarClientes extends JDialog {
 					} else {
 						btnActualizar.setEnabled(true);
 						btnEliminar.setEnabled(true);
+						
+						// ENCENDEMOS EL BOTÓN SOLO SI TIENE CONTRATOS
+						if (selected.getCantContratosActivos() > 0) {
+							btnVerContratos.setEnabled(true);
+						} else {
+							btnVerContratos.setEnabled(false);
+						}
 					}
 				}
 			}
 		});
 
 		model = new DefaultTableModel();
-		String[] headers = {"ID", "Código", "Nombre", "Email", "Deuda"};
+		String[] headers = {"ID", "Código", "Nombre", "Email", "Contratos Activos", "Deuda"};
 		model.setColumnIdentifiers(headers);
 		table.setModel(model);
 		scrollPane.setViewportView(table);
@@ -135,6 +151,21 @@ public class ListarClientes extends JDialog {
 			buttonPane.add(btnActualizar);
 
 		} else {
+			
+			// --- NUEVO BOTÓN: VER CONTRATOS ---
+			btnVerContratos = new JButton("Ver Contratos");
+			btnVerContratos.setEnabled(false);
+			btnVerContratos.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					if (selected != null) {
+						// Llamamos a la clase que creaste, pasándole el cliente
+						ListarContratosXCliente visorHistorial = new ListarContratosXCliente(selected);
+						visorHistorial.setVisible(true);
+					}
+				}
+			});
+			buttonPane.add(btnVerContratos);
+			
 			btnActualizar = new JButton("Actualizar");
 			btnActualizar.setEnabled(false);
 			btnActualizar.addActionListener(new ActionListener() {
@@ -143,9 +174,12 @@ public class ListarClientes extends JDialog {
 						RegistrarCliente regCli = new RegistrarCliente(selected);
 						regCli.setModal(true);
 						regCli.setVisible(true);
+						
 						loadClientes();
+						
 						btnActualizar.setEnabled(false);
 						btnEliminar.setEnabled(false);
+						btnVerContratos.setEnabled(false); // Apagamos por seguridad
 						selected = null;
 					}
 				}
@@ -178,6 +212,7 @@ public class ListarClientes extends JDialog {
 							loadClientes();
 							btnEliminar.setEnabled(false);
 							btnActualizar.setEnabled(false);
+							btnVerContratos.setEnabled(false); // Apagamos por seguridad
 							selected = null;
 						}
 					}
@@ -205,12 +240,13 @@ public class ListarClientes extends JDialog {
 	private void loadClientes() {
 		model.setRowCount(0);
 		for (Cliente c : EmpresaAltice.getInstance().getMisClientes()) {
-			Object[] row = new Object[5];
+			Object[] row = new Object[6];
 			row[0] = c.getIdPersona();
 			row[1] = c.getCodigoCliente();
 			row[2] = c.getNombre();
 			row[3] = c.getEmail();
-			row[4] = c.getDeuda();
+			row[4] = c.getCantContratosActivos();
+			row[5] = c.getDeuda();
 			model.addRow(row);
 		}
 	}

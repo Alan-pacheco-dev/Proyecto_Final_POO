@@ -184,7 +184,7 @@ public class RegistrarContrato extends JDialog {
 					}
 				}
 			});
-			btnEscogerPlan.setBounds(20, 546, 150, 23);
+			btnEscogerPlan.setBounds(147, 539, 141, 23);
 			panel.add(btnEscogerPlan);
 			
 			JButton btnVerServiciosPlan = new JButton("Ver los servicios del plan");
@@ -198,7 +198,7 @@ public class RegistrarContrato extends JDialog {
 					}
 				}
 			});
-			btnVerServiciosPlan.setBounds(185, 546, 207, 23);
+			btnVerServiciosPlan.setBounds(303, 539, 207, 23);
 			panel.add(btnVerServiciosPlan);
 			
 			// --- ASIGNACIÓN DEL EMPLEADO / COMISIÓN ---
@@ -238,6 +238,17 @@ public class RegistrarContrato extends JDialog {
 			});
 			btnEscogerEmpleado.setBounds(20, 666, 222, 23);
 			panel.add(btnEscogerEmpleado);
+			
+			JButton btnCrearPlan = new JButton("Crear Plan");
+			btnCrearPlan.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					RegistrarPlan regisPlan = new RegistrarPlan();
+					regisPlan.setModal(true);
+					regisPlan.setVisible(true);
+				}
+			});
+			btnCrearPlan.setBounds(18, 539, 119, 23);
+			panel.add(btnCrearPlan);
 			
 			// Lógica de seguridad para Roles
 			if (empleadoLogueado != null) {
@@ -310,6 +321,7 @@ public class RegistrarContrato extends JDialog {
 						// Actualizamos los contadores del cliente
 						clienteActual.setCantContratosActivos(clienteActual.getCantContratosActivos() + 1);
 						clienteActual.getMisContratos().add(cto);
+						clienteActual.setDeuda(cto.getPrecioMensualAcordado());
 						
 						// Sumamos las ventas al empleado
 						empleadoComision.setCantidadVentas(empleadoComision.getCantidadVentas() + 1);
