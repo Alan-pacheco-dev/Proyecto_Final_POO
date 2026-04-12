@@ -157,45 +157,27 @@ public class PagosPorContrato extends JDialog {
 				btnRegistrar.addActionListener(new ActionListener() {
 				    public void actionPerformed(ActionEvent e) {
 				        if (miPago == null) return;
-
+				        
 				        float montoPagado = ((Number) spnMontoAPagar.getValue()).floatValue();
-
+				        
 				        if (montoPagado <= 0) {
 				            JOptionPane.showMessageDialog(null, "El monto a pagar debe ser mayor a 0",
 				                "Error", JOptionPane.ERROR_MESSAGE);
 				            return;
 				        }
-
-				        EmpresaAltice empresa = EmpresaAltice.getInstance();
-
-				        // Registrar lo que se pagó en este pago, sin modificar totalPorPagar
+				        
+				        if (montoPagado < miPago.getTotalPorPagar()) {
+				            JOptionPane.showMessageDialog(null, 
+				                "El monto ingresado es insuficiente. El total a pagar es: $ " + miPago.getTotalPorPagar(),
+				                "Error", JOptionPane.ERROR_MESSAGE);
+				            return;
+				        }
+				        
 				        miPago.setPagoDelCliente(montoPagado);
 				        miPago.setFechaPagoDelCliente(LocalDate.now());
-				        miPago.setPagadoTotal(true); // este pago queda cerrado como evidencia
-
-				        float restante = miPago.getTotalPorPagar() - montoPagado;
-
-				        if (restante > 0) {
-				            // Crear nuevo pago pendiente con el restante
-				        	Pagos pagoRestante = new Pagos(
-				        		    miPago.getContrato(),
-				        		    miPago.getFechaInicioPago(),       
-				        		    miPago.getFechaVencimientoPago(),  
-				        		    null,
-				        		    0,
-				        		    0,
-				        		    restante
-				        	);
-				            pagoRestante.setPagadoTotal(false);
-				            empresa.getPagos().add(pagoRestante);
-
-				            JOptionPane.showMessageDialog(null,
-				                "Pago parcial registrado. Queda pendiente: $ " + restante,
-				                "Información", JOptionPane.INFORMATION_MESSAGE);
-				        } else {
-				            JOptionPane.showMessageDialog(null, "Pago completado con éxito",
-				                "Información", JOptionPane.INFORMATION_MESSAGE);
-				        }
+				        miPago.setPagadoTotal(true);
+				        
+				        EmpresaAltice empresa = EmpresaAltice.getInstance();
 				        empresa.actualizarDeudaClientes();
 				        empresa.GuardarDatos(
 				            empresa.getMisClientes(), empresa.getMisEmpleados(),
@@ -203,7 +185,9 @@ public class PagosPorContrato extends JDialog {
 				            empresa.getMisUsuarios(), empresa.getMisContratos(),
 				            empresa.getPagos()
 				        );
-
+				        
+				        JOptionPane.showMessageDialog(null, "Pago completado con éxito",
+				            "Información", JOptionPane.INFORMATION_MESSAGE);
 				        dispose();
 				    }
 				});

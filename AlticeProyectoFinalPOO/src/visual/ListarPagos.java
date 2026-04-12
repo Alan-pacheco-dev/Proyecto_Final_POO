@@ -26,7 +26,8 @@ import logico.Cliente;
 import logico.EmpresaAltice;
 import logico.Pagos;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ListarPagos extends JDialog {
 
@@ -35,22 +36,23 @@ public class ListarPagos extends JDialog {
     private DefaultTableModel model;
     private JTextField txtBuscar;
     private JComboBox<String> cbxClientes;
+    private JComboBox<String> cbxEstado;
     private TableRowSorter<DefaultTableModel> sorter;
 
     public static void main(String[] args) {
-		try {
-			ListarPagos dialog = new ListarPagos();
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			dialog.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-    
+        try {
+            ListarPagos dialog = new ListarPagos();
+            dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+            dialog.setVisible(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public ListarPagos() {
         setTitle("Listado de Pagos");
         setResizable(false);
-        setBounds(100, 100, 850, 500);
+        setBounds(100, 100, 950, 500);
         setLocationRelativeTo(null);
         getContentPane().setLayout(new BorderLayout());
         contentPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -74,6 +76,15 @@ public class ListarPagos extends JDialog {
         cbxClientes = new JComboBox<>();
         cbxClientes.setPrototypeDisplayValue("Seleccionar cliente      ");
         panelFiltros.add(cbxClientes);
+
+        JLabel lblEstado = new JLabel("Estado: ");
+        panelFiltros.add(lblEstado);
+
+        cbxEstado = new JComboBox<>();
+        cbxEstado.addItem("Todos");
+        cbxEstado.addItem("Pagados");
+        cbxEstado.addItem("Pendientes");
+        panelFiltros.add(cbxEstado);
 
         JButton btnLimpiar = new JButton("Limpiar filtros");
         panelFiltros.add(btnLimpiar);
@@ -102,7 +113,6 @@ public class ListarPagos extends JDialog {
         sorter = new TableRowSorter<>(model);
         table.setRowSorter(sorter);
 
-        // Filtro por texto en tiempo real
         txtBuscar.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
@@ -110,18 +120,24 @@ public class ListarPagos extends JDialog {
             }
         });
 
-        // Filtro por cliente al seleccionar del desplegable
         cbxClientes.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 aplicarFiltros();
             }
         });
 
-        // Limpiar filtros
+        cbxEstado.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                aplicarFiltros();
+            }
+        });
+
         btnLimpiar.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 txtBuscar.setText("");
                 cbxClientes.setSelectedIndex(0);
+                cbxEstado.setSelectedIndex(0);
+                loadPagos("Todos");
                 sorter.setRowFilter(null);
             }
         });
@@ -140,26 +156,34 @@ public class ListarPagos extends JDialog {
         buttonPane.add(btnCerrar);
 
         loadClientes();
-        loadPagos();
+        loadPagos("Todos");
     }
 
     private void aplicarFiltros() {
         String textoBusqueda = txtBuscar.getText().trim();
         String clienteSeleccionado = (String) cbxClientes.getSelectedItem();
+        String estadoSeleccionado = (String) cbxEstado.getSelectedItem();
+
         boolean hayTexto = textoBusqueda.length() > 0;
         boolean hayCliente = clienteSeleccionado != null && !clienteSeleccionado.equals("Todos");
 
-        if (!hayTexto && !hayCliente) {
+        loadPagos(estadoSeleccionado);
+
+        List<RowFilter<Object, Object>> filtros = new ArrayList<>();
+
+        if (hayTexto) {
+            filtros.add(RowFilter.regexFilter("(?i)" + textoBusqueda));
+        }
+        if (hayCliente) {
+            filtros.add(RowFilter.regexFilter("(?i)" + clienteSeleccionado, 1));
+        }
+
+        if (filtros.isEmpty()) {
             sorter.setRowFilter(null);
-        } else if (hayTexto && !hayCliente) {
-            sorter.setRowFilter(RowFilter.regexFilter("(?i)" + textoBusqueda));
-        } else if (!hayTexto && hayCliente) {
-            sorter.setRowFilter(RowFilter.regexFilter("(?i)" + clienteSeleccionado, 1)); // columna 1 = Cliente
+        } else if (filtros.size() == 1) {
+            sorter.setRowFilter(filtros.get(0));
         } else {
-            sorter.setRowFilter(RowFilter.andFilter(Arrays.asList(
-                RowFilter.regexFilter("(?i)" + textoBusqueda),
-                RowFilter.regexFilter("(?i)" + clienteSeleccionado, 1)
-            )));
+            sorter.setRowFilter(RowFilter.andFilter(filtros));
         }
     }
 
@@ -172,9 +196,12 @@ public class ListarPagos extends JDialog {
         cbxClientes.setModel(cbxModel);
     }
 
-    private void loadPagos() {
+    private void loadPagos(String filtroEstado) {
         model.setRowCount(0);
         for (Pagos p : EmpresaAltice.getInstance().getPagos()) {
+            if (filtroEstado.equals("Pagados") && !p.isPagadoTotal()) continue;
+            if (filtroEstado.equals("Pendientes") && p.isPagadoTotal()) continue;
+
             Object[] row = new Object[9];
             row[0] = p.getIdPago();
             row[1] = p.getContrato().getCliente().getNombre();

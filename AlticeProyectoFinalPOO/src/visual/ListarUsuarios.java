@@ -167,10 +167,10 @@ public class ListarUsuarios extends JDialog {
             public void actionPerformed(ActionEvent e) {
                 if (selected != null) {
                     
-                    // if (selected.getRolEmpleado().equalsIgnoreCase("Administrativo")) {
-                    //     JOptionPane.showMessageDialog(null, "No se puede eliminar el usuario Administrativo", "Error", JOptionPane.ERROR_MESSAGE);
-                    //     return;
-                    // }
+                    if (selected.getRolEmpleado().equalsIgnoreCase("Administrativo")) {
+                         JOptionPane.showMessageDialog(null, "No se puede eliminar el usuario Administrativo", "Error", JOptionPane.ERROR_MESSAGE);
+                         return;
+                     }
 
                     int option = JOptionPane.showConfirmDialog(null,
                             "¿Desea realmente eliminar al usuario: " + selected.getNombreUsuario() + "?",

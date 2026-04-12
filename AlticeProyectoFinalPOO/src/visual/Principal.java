@@ -64,6 +64,13 @@ public class Principal extends JFrame {
 		login.setModal(true);
 		login.setVisible(true);
 		 */
+		int pagosGenerados = empresa.generarPagosMensuales();
+		if (pagosGenerados > 0) {
+		    JOptionPane.showMessageDialog(null,
+		        "Se generaron " + pagosGenerados + " nuevos pagos mensuales pendientes",
+		        "Información", JOptionPane.INFORMATION_MESSAGE);
+		}
+		
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1071, 711);

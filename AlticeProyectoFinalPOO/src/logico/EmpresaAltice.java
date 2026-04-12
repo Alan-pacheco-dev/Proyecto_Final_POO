@@ -206,23 +206,26 @@ public class EmpresaAltice implements Serializable{
 
 	}
 	
-	public void generarPagosMensuales() {
+	public int generarPagosMensuales() {
+	    int generados = 0;
 	    LocalDate hoy = LocalDate.now();
-	    
+
 	    for (Contrato c : misContratos) {
 	        if (!c.isActivo()) continue;
-	        
+
 	        Pagos ultimoPago = null;
 	        for (Pagos p : pagosClientes) {
 	            if (p.getContrato().getIdContrato().equals(c.getIdContrato())) {
-	                if (ultimoPago == null || p.getFechaVencimientoPago().isAfter(ultimoPago.getFechaVencimientoPago())) {
+	                if (ultimoPago == null || p.getFechaVencimientoPago()
+	                        .isAfter(ultimoPago.getFechaVencimientoPago())) {
 	                    ultimoPago = p;
 	                }
 	            }
 	        }
+
 	        LocalDate fechaInicioPago;
 	        LocalDate fechaVencimiento;
-	        
+
 	        if (ultimoPago == null) {
 	            fechaInicioPago = c.getFechaInicioContrato();
 	            fechaVencimiento = fechaInicioPago.plusMonths(1);
@@ -233,22 +236,27 @@ public class EmpresaAltice implements Serializable{
 	            fechaInicioPago = ultimoPago.getFechaVencimientoPago();
 	            fechaVencimiento = fechaInicioPago.plusMonths(1);
 	        }
-	        
+
 	        Pagos nuevoPago = new Pagos(
 	            c,
 	            fechaInicioPago,
 	            fechaVencimiento,
-	            null, 
+	            null,
 	            0,
-	            0,    
+	            0,
 	            c.getPrecioMensualAcordado()
 	        );
 	        pagosClientes.add(nuevoPago);
+	        generados++;
 	    }
-	    
-	    actualizarDeudaClientes();
-	    GuardarDatos(misClientes, misEmpleados, misPlanes, misServicios, 
-	                 misUsuarios, misContratos, pagosClientes);
+
+	    if (generados > 0) {
+	        actualizarDeudaClientes();
+	        GuardarDatos(misClientes, misEmpleados, misPlanes, misServicios,
+	                     misUsuarios, misContratos, pagosClientes);
+	    }
+
+	    return generados;
 	}
 	
 	public void actualizarDeudaClientes() {
