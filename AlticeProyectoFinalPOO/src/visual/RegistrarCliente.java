@@ -21,7 +21,8 @@ import logico.EmpresaAltice;
 import javax.swing.JRadioButton;
 
 public class RegistrarCliente extends JDialog {
-
+	
+	/*
 	private final JPanel contentPanel = new JPanel();
 	private JTextField txtID;
 	private JTextField txtCodigoCliente;
@@ -282,4 +283,5 @@ public class RegistrarCliente extends JDialog {
 		txtEmailCliente.setText("");
 		txtCedulaRNC.setText("");
 	}
+	*/
 }

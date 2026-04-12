@@ -27,7 +27,8 @@ import logico.Cliente;
 import logico.EmpresaAltice;
 
 public class ListarClientes extends JDialog {
-
+	
+	/*
 	private final JPanel contentPanel = new JPanel();
 	private JTable table;
 	private DefaultTableModel model;
@@ -261,4 +262,5 @@ public class ListarClientes extends JDialog {
 	public Cliente getClienteSeleccionado() {
 		return selected;
 	}
+	*/
 }
