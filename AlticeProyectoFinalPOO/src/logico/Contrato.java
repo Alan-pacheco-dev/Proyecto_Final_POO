@@ -93,12 +93,7 @@ public class Contrato implements Serializable {
 	}
 	
 	public float calcularComisionEmpleado() {
-		float totalCalculadoComision = 0;
-			
-		totalCalculadoComision = precioMensualAcordado * porcentajeComisionAplicado;
-		
-		return totalCalculadoComision;
-		
+		return precioMensualAcordado * (porcentajeComisionAplicado / 100);
 	}
 	
 }

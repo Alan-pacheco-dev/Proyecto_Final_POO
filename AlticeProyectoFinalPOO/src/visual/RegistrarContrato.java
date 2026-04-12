@@ -321,7 +321,7 @@ public class RegistrarContrato extends JDialog {
 						// Actualizamos los contadores del cliente
 						clienteActual.setCantContratosActivos(clienteActual.getCantContratosActivos() + 1);
 						clienteActual.getMisContratos().add(cto);
-						clienteActual.setDeuda(cto.getPrecioMensualAcordado());
+						clienteActual.setDeuda(clienteActual.getDeuda() + cto.getPrecioMensualAcordado());
 						
 						// Sumamos las ventas al empleado
 						empleadoComision.setCantidadVentas(empleadoComision.getCantidadVentas() + 1);

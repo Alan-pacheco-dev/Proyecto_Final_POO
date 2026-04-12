@@ -16,7 +16,7 @@ public class Plan implements Serializable {
 	
 	public Plan(String nombrePlan, String tiempoCuota, float precioTotal) {
 		super();
-		this.idPlan = "P - " + EmpresaAltice.getInstance().idPlanes++;
+		this.idPlan = "PAG - " + EmpresaAltice.getInstance().idPlanes++;
 		this.nombrePlan = nombrePlan;
 		this.serviciosPlan = new ArrayList<Servicio>();
 		this.precioMensual = calcularPrecioTotal();
@@ -54,7 +54,8 @@ public class Plan implements Serializable {
 				precioTotal += servis.getPrecioServicio();
 			}
 		}
-		return precioTotal;
+		//Calculado con el ITBIS
+		return precioTotal * 1.18f;
 	}
 	
 	public void actualizarPrecioPlan(float nuevoPrecio) {

@@ -74,11 +74,11 @@ public class Principal extends JFrame {
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
 		
-		JMenu mnNewMenu_2 = new JMenu("Usuarios");
-		menuBar.add(mnNewMenu_2);
+		JMenu menuUsuarios = new JMenu("Usuarios");
+		menuBar.add(menuUsuarios);
 		
 		JMenuItem mntmNewMenuItem_2 = new JMenuItem("Registrar");
-		mnNewMenu_2.add(mntmNewMenuItem_2);
+		menuUsuarios.add(mntmNewMenuItem_2);
 		
 		JMenuItem menuItemListarUsuarios = new JMenuItem("Listar");
 		menuItemListarUsuarios.addActionListener(new ActionListener() {
@@ -88,7 +88,7 @@ public class Principal extends JFrame {
 				listarUsers.setVisible(true);
 			}
 		});
-		mnNewMenu_2.add(menuItemListarUsuarios);
+		menuUsuarios.add(menuItemListarUsuarios);
 		mntmNewMenuItem_2.addActionListener(new ActionListener() {
 			 public void actionPerformed(ActionEvent e) {
 		
@@ -99,11 +99,11 @@ public class Principal extends JFrame {
 			 }
 		});
 		
-		JMenu mnNewMenu_1 = new JMenu("Empleados");
-		menuBar.add(mnNewMenu_1);
+		JMenu menuEmpleados = new JMenu("Empleados");
+		menuBar.add(menuEmpleados);
 		
 		JMenuItem mntmNewMenuItem_1 = new JMenuItem("Registrar");
-		mnNewMenu_1.add(mntmNewMenuItem_1);
+		menuEmpleados.add(mntmNewMenuItem_1);
 		
 		JMenuItem menuItemListarEmpleados = new JMenuItem("Listar");
 		menuItemListarEmpleados.addActionListener(new ActionListener() {
@@ -114,7 +114,7 @@ public class Principal extends JFrame {
 				listarEmps.setVisible(true);
 			}
 		});
-		mnNewMenu_1.add(menuItemListarEmpleados);
+		menuEmpleados.add(menuItemListarEmpleados);
 		mntmNewMenuItem_1.addActionListener(new ActionListener() {
 			 public void actionPerformed(ActionEvent e) {
 		            RegistrarEmpleado regisEmp = new RegistrarEmpleado(null);
@@ -123,11 +123,11 @@ public class Principal extends JFrame {
 			 }
 		});
 		
-		JMenu mnNewMenu = new JMenu("Clientes");
-		menuBar.add(mnNewMenu);
+		JMenu menuClientes = new JMenu("Clientes");
+		menuBar.add(menuClientes);
 		
 		JMenuItem mntmNewMenuItem = new JMenuItem("Registrar");
-		mnNewMenu.add(mntmNewMenuItem);
+		menuClientes.add(mntmNewMenuItem);
 		
 		JMenuItem menuItemListarClientes = new JMenuItem("Listar");
 		menuItemListarClientes.addActionListener(new ActionListener() {
@@ -137,7 +137,7 @@ public class Principal extends JFrame {
 				listCli.setVisible(true);
 			}
 		});
-		mnNewMenu.add(menuItemListarClientes);
+		menuClientes.add(menuItemListarClientes);
 		mntmNewMenuItem.addActionListener(new ActionListener() {
 			 public void actionPerformed(ActionEvent e) {
 		            RegistrarCliente regisCli = new RegistrarCliente(null);
@@ -146,8 +146,8 @@ public class Principal extends JFrame {
 			 }
 		});
 		
-		JMenu mnContratos = new JMenu("Contratos");
-		menuBar.add(mnContratos);
+		JMenu menuContratos = new JMenu("Contratos");
+		menuBar.add(menuContratos);
 		
 		JMenuItem menuItem_6 = new JMenuItem("Registrar");
 		menuItem_6.addActionListener(new ActionListener() {
@@ -157,7 +157,7 @@ public class Principal extends JFrame {
 				regisCon.setVisible(true);
 			}
 		});
-		mnContratos.add(menuItem_6);
+		menuContratos.add(menuItem_6);
 		
 		JMenuItem menuItem_7 = new JMenuItem("Listar");
 		menuItem_7.addActionListener(new ActionListener() {
@@ -167,7 +167,7 @@ public class Principal extends JFrame {
 				listarCtos.setVisible(true);
 			}
 		});
-		mnContratos.add(menuItem_7);
+		menuContratos.add(menuItem_7);
 		
 		JMenu menuPlanes = new JMenu("Planes");
 		menuBar.add(menuPlanes);
@@ -256,13 +256,13 @@ public class Principal extends JFrame {
 		JMenu menuReportes = new JMenu("Reportes");
 		menuBar.add(menuReportes);
 		
-		JMenuItem mntmReporteGeneral = new JMenuItem("Reporte general");
+		JMenuItem mntmReporteGeneral = new JMenuItem("Reporte General");
 		menuReportes.add(mntmReporteGeneral);
 		
-		JMenuItem mntmReporteDeClientes = new JMenuItem("Reporte de clientes");
-		menuReportes.add(mntmReporteDeClientes);
+		JMenuItem mntmReporteDeRendimiento = new JMenuItem("Reporte de Rendimiento");
+		menuReportes.add(mntmReporteDeRendimiento);
 		
-		JMenuItem mntmReporteDeEmpleados = new JMenuItem("Reporte de empleados");
+		JMenuItem mntmReporteDeEmpleados = new JMenuItem("Reporte de Mercado");
 		menuReportes.add(mntmReporteDeEmpleados);
 		
 		//Comentado para acceder directamente a la pantalla principal sin el login

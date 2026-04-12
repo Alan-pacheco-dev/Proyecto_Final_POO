@@ -25,6 +25,7 @@ import javax.swing.table.TableRowSorter;
 
 import logico.EmpresaAltice;
 import logico.Plan;
+import logico.Servicio;
 
 public class ListarPlanes extends JDialog {
 
@@ -174,6 +175,12 @@ public class ListarPlanes extends JDialog {
 					
 					if (confirmacion == JOptionPane.YES_OPTION) {
 						EmpresaAltice empresa = EmpresaAltice.getInstance();
+						
+						if (planSeleccionado.getServiciosPlan() != null) {
+							for (Servicio s : planSeleccionado.getServiciosPlan()) {
+								s.setEstaEnUso(false);
+							}
+						}
 						
 						empresa.getMisPlanes().remove(planSeleccionado);
 						

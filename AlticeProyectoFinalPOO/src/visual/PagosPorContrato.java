@@ -29,14 +29,14 @@ public class PagosPorContrato extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
 	private Dimension dim;
-	private JTextField txtIdContratoAPagar;
-	private JTextField txtCodigoEmpleado;
-	private JTextField txtNombreEmpleado;
-	private JTextField txtSalarioEmpleado;
-	private JTextField textField_4;
-	private JTextField txtNombreDeUsuarioEmp;
-	private JTextField txtContraseniaUsuarioEmp;
-	private JTextField textField;
+	private JTextField txtIdDelClienteContrato;
+	private JTextField txtIdContrato;
+	private JTextField txtNombreCliente;
+	private JTextField txtFechaInicioPago;
+	private JTextField txtFechaVencimientoPago;
+	private JTextField txtTotalPorPagar;
+	private JTextField txtIdPlan;
+	private JTextField txtIdcliente;
 	private Pagos miPago = null;
 
 	public PagosPorContrato(Pagos pago) {
@@ -50,7 +50,7 @@ public class PagosPorContrato extends JDialog {
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(new BorderLayout(0, 0));
 
-		final JSpinner spinner;
+		final JSpinner spnMontoAPagar;
 
 		{
 			JPanel panel = new JPanel();
@@ -62,63 +62,63 @@ public class PagosPorContrato extends JDialog {
 			lblNewLabel.setBounds(20, 37, 185, 34);
 			panel.add(lblNewLabel);
 
-			txtIdContratoAPagar = new JTextField();
-			txtIdContratoAPagar.setEditable(false);
-			txtIdContratoAPagar.setBounds(20, 82, 185, 20);
-			panel.add(txtIdContratoAPagar);
-			txtIdContratoAPagar.setColumns(10);
+			txtIdDelClienteContrato = new JTextField();
+			txtIdDelClienteContrato.setEditable(false);
+			txtIdDelClienteContrato.setBounds(20, 82, 185, 20);
+			panel.add(txtIdDelClienteContrato);
+			txtIdDelClienteContrato.setColumns(10);
 
 			JLabel lblIdDelContrato = new JLabel("ID del contrato");
 			lblIdDelContrato.setBounds(288, 37, 185, 34);
 			panel.add(lblIdDelContrato);
 
-			txtCodigoEmpleado = new JTextField();
-			txtCodigoEmpleado.setEditable(false);
-			txtCodigoEmpleado.setColumns(10);
-			txtCodigoEmpleado.setBounds(288, 82, 185, 20);
-			panel.add(txtCodigoEmpleado);
+			txtIdContrato = new JTextField();
+			txtIdContrato.setEditable(false);
+			txtIdContrato.setColumns(10);
+			txtIdContrato.setBounds(288, 82, 185, 20);
+			panel.add(txtIdContrato);
 
 			JLabel lblNombreDelClienteDelContrato = new JLabel("Nombre del Cliente con el contrato");
 			lblNombreDelClienteDelContrato.setBounds(20, 220, 245, 34);
 			panel.add(lblNombreDelClienteDelContrato);
 
-			txtNombreEmpleado = new JTextField();
-			txtNombreEmpleado.setEditable(false);
-			txtNombreEmpleado.setColumns(10);
-			txtNombreEmpleado.setBounds(20, 265, 453, 20);
-			panel.add(txtNombreEmpleado);
+			txtNombreCliente = new JTextField();
+			txtNombreCliente.setEditable(false);
+			txtNombreCliente.setColumns(10);
+			txtNombreCliente.setBounds(20, 265, 453, 20);
+			panel.add(txtNombreCliente);
 
 			JLabel lblSalario = new JLabel("Fecha de inicio del pago");
 			lblSalario.setBounds(20, 308, 147, 34);
 			panel.add(lblSalario);
 
-			txtSalarioEmpleado = new JTextField();
-			txtSalarioEmpleado.setEditable(false);
-			txtSalarioEmpleado.setColumns(10);
-			txtSalarioEmpleado.setBounds(20, 353, 185, 20);
-			panel.add(txtSalarioEmpleado);
+			txtFechaInicioPago = new JTextField();
+			txtFechaInicioPago.setEditable(false);
+			txtFechaInicioPago.setColumns(10);
+			txtFechaInicioPago.setBounds(20, 353, 185, 20);
+			panel.add(txtFechaInicioPago);
 
-			textField_4 = new JTextField();
-			textField_4.setEditable(false);
-			textField_4.setColumns(10);
-			textField_4.setBounds(288, 353, 185, 20);
-			panel.add(textField_4);
+			txtFechaVencimientoPago = new JTextField();
+			txtFechaVencimientoPago.setEditable(false);
+			txtFechaVencimientoPago.setColumns(10);
+			txtFechaVencimientoPago.setBounds(288, 353, 185, 20);
+			panel.add(txtFechaVencimientoPago);
 
-			txtNombreDeUsuarioEmp = new JTextField();
-			txtNombreDeUsuarioEmp.setEditable(false);
-			txtNombreDeUsuarioEmp.setColumns(10);
-			txtNombreDeUsuarioEmp.setBounds(20, 446, 185, 20);
-			panel.add(txtNombreDeUsuarioEmp);
+			txtTotalPorPagar = new JTextField();
+			txtTotalPorPagar.setEditable(false);
+			txtTotalPorPagar.setColumns(10);
+			txtTotalPorPagar.setBounds(20, 446, 185, 20);
+			panel.add(txtTotalPorPagar);
 
 			JLabel lblTotalPorPagar = new JLabel("Total por pagar");
 			lblTotalPorPagar.setBounds(20, 401, 117, 34);
 			panel.add(lblTotalPorPagar);
 
-			txtContraseniaUsuarioEmp = new JTextField();
-			txtContraseniaUsuarioEmp.setEditable(false);
-			txtContraseniaUsuarioEmp.setColumns(10);
-			txtContraseniaUsuarioEmp.setBounds(20, 175, 185, 20);
-			panel.add(txtContraseniaUsuarioEmp);
+			txtIdPlan = new JTextField();
+			txtIdPlan.setEditable(false);
+			txtIdPlan.setColumns(10);
+			txtIdPlan.setBounds(20, 175, 185, 20);
+			panel.add(txtIdPlan);
 
 			JLabel lblIdPlanPorPagar = new JLabel("ID del plan por pagar");
 			lblIdPlanPorPagar.setBounds(20, 130, 117, 34);
@@ -128,11 +128,11 @@ public class PagosPorContrato extends JDialog {
 			lblFechaDeVencimiento.setBounds(287, 308, 186, 34);
 			panel.add(lblFechaDeVencimiento);
 
-			textField = new JTextField();
-			textField.setEditable(false);
-			textField.setColumns(10);
-			textField.setBounds(288, 175, 185, 20);
-			panel.add(textField);
+			txtIdcliente = new JTextField();
+			txtIdcliente.setEditable(false);
+			txtIdcliente.setColumns(10);
+			txtIdcliente.setBounds(288, 175, 185, 20);
+			panel.add(txtIdcliente);
 
 			JLabel lblIdDelClientepor = new JLabel("ID del cliente");
 			lblIdDelClientepor.setBounds(288, 130, 117, 34);
@@ -142,10 +142,10 @@ public class PagosPorContrato extends JDialog {
 			lblPago.setBounds(288, 401, 117, 34);
 			panel.add(lblPago);
 
-			spinner = new JSpinner();
-			spinner.setModel(new SpinnerNumberModel(new Float(0), new Float(0), null, new Float(1)));
-			spinner.setBounds(288, 446, 185, 20);
-			panel.add(spinner);
+			spnMontoAPagar = new JSpinner();
+			spnMontoAPagar.setModel(new SpinnerNumberModel(new Float(0), new Float(0), null, new Float(1)));
+			spnMontoAPagar.setBounds(288, 446, 185, 20);
+			panel.add(spnMontoAPagar);
 		}
 		{
 			JPanel buttonPane = new JPanel();
@@ -158,7 +158,7 @@ public class PagosPorContrato extends JDialog {
 				    public void actionPerformed(ActionEvent e) {
 				        if (miPago == null) return;
 
-				        float montoPagado = ((Number) spinner.getValue()).floatValue();
+				        float montoPagado = ((Number) spnMontoAPagar.getValue()).floatValue();
 
 				        if (montoPagado <= 0) {
 				            JOptionPane.showMessageDialog(null, "El monto a pagar debe ser mayor a 0",
@@ -229,14 +229,14 @@ public class PagosPorContrato extends JDialog {
 
 	private void loadContrato() {
 	    if (miPago != null) {
-	        txtIdContratoAPagar.setText(miPago.getContrato().getCliente().getIdPersona());
-	        txtCodigoEmpleado.setText(miPago.getContrato().getIdContrato());
-	        txtContraseniaUsuarioEmp.setText(miPago.getContrato().getPlanContrato().getIdPlan());
-	        textField.setText(miPago.getContrato().getCliente().getIdPersona());
-	        txtNombreEmpleado.setText(miPago.getContrato().getCliente().getNombre());
-	        txtSalarioEmpleado.setText(miPago.getFechaInicioPago().toString());
-	        textField_4.setText(miPago.getFechaVencimientoPago().toString());
-	        txtNombreDeUsuarioEmp.setText("$ " + miPago.getTotalPorPagar());
+	        txtIdDelClienteContrato.setText(miPago.getContrato().getCliente().getIdPersona());
+	        txtIdContrato.setText(miPago.getContrato().getIdContrato());
+	        txtIdPlan.setText(miPago.getContrato().getPlanContrato().getIdPlan());
+	        txtIdcliente.setText(miPago.getContrato().getCliente().getIdPersona());
+	        txtNombreCliente.setText(miPago.getContrato().getCliente().getNombre());
+	        txtFechaInicioPago.setText(miPago.getFechaInicioPago().toString());
+	        txtFechaVencimientoPago.setText(miPago.getFechaVencimientoPago().toString());
+	        txtTotalPorPagar.setText("$ " + miPago.getTotalPorPagar());
 	    }
 	}
 }

@@ -413,7 +413,7 @@ public class EmpresaAltice implements Serializable{
 			}
 		}
 		idEmpleados = maxIdEmpleado + 1;
-		if(misServicios.size() == 0) {
+		if(misEmpleados.size() == 0) {
 			idEmpleados = 1;
 		}
 
