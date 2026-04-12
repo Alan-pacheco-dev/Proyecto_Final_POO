@@ -33,18 +33,21 @@ public class ListarUsuarios extends JDialog {
     private DefaultTableModel model;
     private JTextField txtBuscar;
     private TableRowSorter<DefaultTableModel> sorter;
+    
     private JButton btnEliminar;
+    private JButton btnActualizar; // NUEVO BOTÓN
+    
     private Usuario selected = null;
     
     public static void main(String[] args) {
-		try {
-			ListarUsuarios dialog = new ListarUsuarios();
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			dialog.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+        try {
+            ListarUsuarios dialog = new ListarUsuarios();
+            dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+            dialog.setVisible(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public ListarUsuarios() {
         setTitle("Listado de Usuarios");
@@ -56,7 +59,7 @@ public class ListarUsuarios extends JDialog {
         getContentPane().add(contentPanel, BorderLayout.CENTER);
         contentPanel.setLayout(new BorderLayout(0, 10));
 
-        // Panel de búsqueda
+        // --- PANEL DE BÚSQUEDA ---
         JPanel panelBusqueda = new JPanel();
         panelBusqueda.setLayout(new BorderLayout(10, 0));
         contentPanel.add(panelBusqueda, BorderLayout.NORTH);
@@ -67,7 +70,7 @@ public class ListarUsuarios extends JDialog {
         txtBuscar = new JTextField();
         panelBusqueda.add(txtBuscar, BorderLayout.CENTER);
 
-        // Panel de la tabla
+        // --- PANEL DE LA TABLA ---
         JPanel panelTabla = new JPanel();
         panelTabla.setLayout(new BorderLayout(0, 0));
         contentPanel.add(panelTabla, BorderLayout.CENTER);
@@ -84,15 +87,22 @@ public class ListarUsuarios extends JDialog {
                 int indexVisual = table.getSelectedRow();
                 if (indexVisual != -1) {
                     int indexReal = table.convertRowIndexToModel(indexVisual);
-                    String nombreUsuario = (String) model.getValueAt(indexReal, 0);
+                    
+                    // CORRECCIÓN: La columna 0 es el ID, así que lo guardamos como ID
+                    String idUsuario = (String) model.getValueAt(indexReal, 0);
 
+                    // Buscamos iterando de forma tradicional
                     for (Usuario u : EmpresaAltice.getInstance().getMisUsuarios()) {
-                        if (u.getNombreUsuario().equals(nombreUsuario)) {
+                        if (u.getIdUsuario().equals(idUsuario)) { // Buscamos por el ID extraído
                             selected = u;
                             break;
                         }
                     }
-                    btnEliminar.setEnabled(true);
+                    
+                    if (selected != null) {
+                        btnEliminar.setEnabled(true);
+                        btnActualizar.setEnabled(true); // Encendemos el botón de actualizar
+                    }
                 }
             }
         });
@@ -102,7 +112,8 @@ public class ListarUsuarios extends JDialog {
                 return false;
             }
         };
-        String[] headers = {"Nombre de Usuario", "Rol"};
+        
+        String[] headers = {"ID User", "Nombre de Usuario", "Rol"};
         model.setColumnIdentifiers(headers);
         table.setModel(model);
         scrollPane.setViewportView(table);
@@ -122,20 +133,44 @@ public class ListarUsuarios extends JDialog {
             }
         });
 
-        // Panel de botones
+        // --- PANEL DE BOTONES ---
         JPanel buttonPane = new JPanel();
         buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
         getContentPane().add(buttonPane, BorderLayout.SOUTH);
 
+        // 1. Botón Actualizar
+        btnActualizar = new JButton("Actualizar");
+        btnActualizar.setEnabled(false);
+        btnActualizar.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (selected != null) {
+                    
+                    // Abrimos la ventana pasándole el usuario a actualizar
+                    RegistrarUsuario ventanaUpdate = new RegistrarUsuario(selected);
+                    ventanaUpdate.setModal(true);
+                    ventanaUpdate.setVisible(true);
+                    
+                    // Sincronización visual al terminar
+                    loadUsuarios();
+                    btnActualizar.setEnabled(false);
+                    btnEliminar.setEnabled(false);
+                    selected = null;
+                }
+            }
+        });
+        buttonPane.add(btnActualizar);
+
+        // 2. Botón Eliminar
         btnEliminar = new JButton("Eliminar");
         btnEliminar.setEnabled(false);
         btnEliminar.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (selected != null) {
-                    //if (selected.getRolEmpleado().equalsIgnoreCase("Administrativo")) {
-                        //JOptionPane.showMessageDialog(null, "No se puede eliminar el usuario Administrativo", "Error", JOptionPane.ERROR_MESSAGE);
-                        //return;
-                    //}
+                    
+                    // if (selected.getRolEmpleado().equalsIgnoreCase("Administrativo")) {
+                    //     JOptionPane.showMessageDialog(null, "No se puede eliminar el usuario Administrativo", "Error", JOptionPane.ERROR_MESSAGE);
+                    //     return;
+                    // }
 
                     int option = JOptionPane.showConfirmDialog(null,
                             "¿Desea realmente eliminar al usuario: " + selected.getNombreUsuario() + "?",
@@ -144,7 +179,9 @@ public class ListarUsuarios extends JDialog {
 
                     if (option == JOptionPane.YES_OPTION) {
                         EmpresaAltice empresa = EmpresaAltice.getInstance();
-                        empresa.getMisUsuarios().remove(selected);
+                        
+                        boolean eliminado = empresa.eliminarUsuarioEmpleadoByID(selected.getIdUsuario());
+                        
                         empresa.GuardarDatos(
                                 empresa.getMisClientes(),
                                 empresa.getMisEmpleados(),
@@ -153,9 +190,15 @@ public class ListarUsuarios extends JDialog {
                                 empresa.getMisUsuarios(),
                                 empresa.getMisContratos(),
                                 empresa.getPagos());
-                        JOptionPane.showMessageDialog(null, "Usuario eliminado con éxito", "Información", JOptionPane.INFORMATION_MESSAGE);
+                        if(eliminado == true) {	
+                        	JOptionPane.showMessageDialog(null, "Usuario eliminado con éxito", "Información", JOptionPane.INFORMATION_MESSAGE);
+                        }else {
+                        	JOptionPane.showMessageDialog(null, "El Usuario no ha podido ser eliminado con éxito", "Información", JOptionPane.INFORMATION_MESSAGE);
+                        }
+                        
                         loadUsuarios();
                         btnEliminar.setEnabled(false);
+                        btnActualizar.setEnabled(false); // Se apagan ambos botones
                         selected = null;
                     }
                 }
@@ -163,6 +206,7 @@ public class ListarUsuarios extends JDialog {
         });
         buttonPane.add(btnEliminar);
 
+        // 3. Botón Cerrar
         JButton btnCerrar = new JButton("Cerrar");
         btnCerrar.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -177,9 +221,10 @@ public class ListarUsuarios extends JDialog {
     private void loadUsuarios() {
         model.setRowCount(0);
         for (Usuario u : EmpresaAltice.getInstance().getMisUsuarios()) {
-            Object[] row = new Object[2];
-            row[0] = u.getNombreUsuario();
-            row[1] = u.getRolEmpleado();
+            Object[] row = new Object[3];
+            row[0] = u.getIdUsuario();
+            row[1] = u.getNombreUsuario();
+            row[2] = u.getRolEmpleado();
             model.addRow(row);
         }
     }

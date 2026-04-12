@@ -292,6 +292,22 @@ public class EmpresaAltice implements Serializable{
 		}
 		return eliminado;
 	}
+	
+	public boolean eliminarUsuarioEmpleadoByID(String idUsuario) {
+		boolean eliminado = false;
+		for (Empleado emp : misEmpleados) {
+			if (emp.getMiUsuario() != null) {
+				if (emp.getMiUsuario().getIdUsuario().equalsIgnoreCase(idUsuario)) {
+					Usuario usuarioAEliminar = emp.getMiUsuario();
+					emp.setMiUsuario(null);
+					misUsuarios.remove(usuarioAEliminar);
+					eliminado = true;
+					break; 
+				}
+			}
+		}
+		return eliminado;
+	}
 
 	public boolean eliminarEmpleado(Empleado selected) {
 		boolean eliminado = false;
@@ -387,7 +403,7 @@ public class EmpresaAltice implements Serializable{
 			}
 		}
 		idPlanes= maxIdPlanes + 1;
-		if(misServicios.size() == 0) {
+		if(misPlanes.size() == 0) {
 			idPlanes = 1;
 		}
 
@@ -406,6 +422,24 @@ public class EmpresaAltice implements Serializable{
 		if(pagosClientes.size() == 0) {
 			idPagos = 1;
 		}
+		
+		/*
+		int maxIdUsuarios= 0;
+		for (Usuario u : misUsuarios) {
+			String numeroLimpio = u.getIdUsuario().replaceAll("[^0-9]", "");
+
+			if (numeroLimpio.isEmpty() == false) {
+				int numero = Integer.parseInt(numeroLimpio);
+				if (numero > maxIdUsuarios) {
+					maxIdUsuarios = numero;
+				}
+			}
+		}
+		idUsuarios = maxIdUsuarios + 1;
+		if(misUsuarios.size() == 0) {
+			idUsuarios = 1;
+		}
+		*/
 	}
 
 	public void refrescarConteosContratos() {

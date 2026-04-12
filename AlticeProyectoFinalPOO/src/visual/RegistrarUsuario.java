@@ -27,16 +27,27 @@ public class RegistrarUsuario extends JDialog {
 	private final JPanel contentPanel = new JPanel();
 	private Dimension dim;
 	
-	// Se dejan solo aquí de forma global
 	private JTextField txtNombreDeUsuarioEmp;
 	private JTextField txtContraseniaUsuarioEmp;
 	private JTextField txtDatosEmpleado;
 	
 	private Empleado empSeleccionado = null;
+	private Usuario miUsuario = null; // Variable para saber si actualizamos o registramos
+	
+	private JButton btnSeleccionarEmpleado;
 
-	public RegistrarUsuario() {
+	public RegistrarUsuario(Usuario user) {
 		super();
-		setTitle("Registrar Usuario del Sistema");
+		
+		this.miUsuario = user;
+		
+		// Lógica IF tradicional para el título
+		if (miUsuario != null) {
+			setTitle("Actualizar Usuario del Sistema");
+		} else {
+			setTitle("Registrar Usuario del Sistema");
+		}
+		
 		setBounds(100, 100, 450, 300);
 		dim = getToolkit().getScreenSize();
 		setSize(553, 326);
@@ -46,7 +57,6 @@ public class RegistrarUsuario extends JDialog {
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(new BorderLayout(0, 0));
 		
-		// Inicializamos las variables globales correctamente
 		txtNombreDeUsuarioEmp = new JTextField();
 		txtContraseniaUsuarioEmp = new JTextField();
 		
@@ -62,7 +72,7 @@ public class RegistrarUsuario extends JDialog {
 			
 			txtDatosEmpleado = new JTextField();
 			txtDatosEmpleado.setEditable(false);
-			txtDatosEmpleado.setText("Ningún empleado seleccionado..."); // Corrección del error de sintaxis
+			txtDatosEmpleado.setText("Ningún empleado seleccionado..."); 
 			txtDatosEmpleado.setBounds(20, 68, 457, 20);
 			panel.add(txtDatosEmpleado);
 			txtDatosEmpleado.setColumns(10);
@@ -83,20 +93,16 @@ public class RegistrarUsuario extends JDialog {
 			lblContrasea.setBounds(288, 143, 117, 34);
 			panel.add(lblContrasea);
 			
-			JButton btnSeleccionarEmpleado = new JButton("Seleccionar empleado");
+			btnSeleccionarEmpleado = new JButton("Seleccionar empleado");
 			btnSeleccionarEmpleado.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					// 1. Abrimos el modo selector
 					ListarEmpleados listaEmps = new ListarEmpleados(true);
 					listaEmps.setModal(true);
 					listaEmps.setVisible(true);
 					
-					// 2. Capturamos el empleado
 					Empleado capturado = listaEmps.getEmpleadoSeleccionado();
 					
-					// 3. Validamos
 					if (capturado != null) {
-						// Evitar que le creen dos usuarios al mismo empleado
 						if (capturado.getMiUsuario() != null) {
 							JOptionPane.showMessageDialog(null, "Este empleado ya tiene un usuario asignado en el sistema.", "Aviso", JOptionPane.WARNING_MESSAGE);
 						} else {
@@ -115,16 +121,17 @@ public class RegistrarUsuario extends JDialog {
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
-				JButton btnRegistrar = new JButton("Registrar");
-				btnRegistrar.setActionCommand("OK");
+				JButton btnRegistrar = new JButton();
+				
+				// Lógica IF tradicional para el nombre del botón
+				if (miUsuario != null) {
+					btnRegistrar.setText("Actualizar");
+				} else {
+					btnRegistrar.setText("Registrar");
+				}
+				
 				btnRegistrar.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						
-						// --- VALIDACIONES ---
-						if (empSeleccionado == null) {
-							JOptionPane.showMessageDialog(null, "Debe seleccionar un empleado para asignarle el usuario.", "Faltan datos", JOptionPane.WARNING_MESSAGE);
-							return;
-						}
 						
 						String nombreUsuario = txtNombreDeUsuarioEmp.getText().trim();
 						String contrasenia = txtContraseniaUsuarioEmp.getText().trim();
@@ -136,17 +143,27 @@ public class RegistrarUsuario extends JDialog {
 						
 						EmpresaAltice empresa = EmpresaAltice.getInstance();
 						
-						// En lugar de forzar "Comercial", podemos usar el rol real que tiene el empleado (Administrativo o Vendedor)
-						String rol = empSeleccionado.getRolEmpleado(); 
-						
-						// --- CREACIÓN Y VINCULACIÓN ---
-						Usuario usr = new Usuario(rol, nombreUsuario, contrasenia);
-						
-						// ¡MUY IMPORTANTE! Le asignamos este nuevo usuario al empleado para que queden vinculados
-						empSeleccionado.setMiUsuario(usr);
-						
-						// Guardamos el usuario en la lista general de la empresa
-						empresa.getMisUsuarios().add(usr);
+						// --- MODO REGISTRO ---
+						if (miUsuario == null) {
+							if (empSeleccionado == null) {
+								JOptionPane.showMessageDialog(null, "Debe seleccionar un empleado para asignarle el usuario.", "Faltan datos", JOptionPane.WARNING_MESSAGE);
+								return;
+							}
+							
+							String rol = empSeleccionado.getRolEmpleado(); 
+							Usuario usr = new Usuario(rol, nombreUsuario, contrasenia);
+							empSeleccionado.setMiUsuario(usr);
+							empresa.getMisUsuarios().add(usr);
+							
+							JOptionPane.showMessageDialog(null, "Usuario registrado y vinculado al empleado con éxito.", "Información", JOptionPane.INFORMATION_MESSAGE);
+						} 
+						// --- MODO ACTUALIZACIÓN ---
+						else {
+							miUsuario.setNombreUsuario(nombreUsuario);
+							miUsuario.setContrasenia(contrasenia);
+							
+							JOptionPane.showMessageDialog(null, "Usuario actualizado con éxito.", "Información", JOptionPane.INFORMATION_MESSAGE);
+						}
 						
 						empresa.GuardarDatos(
 							empresa.getMisClientes(), empresa.getMisEmpleados(),
@@ -155,7 +172,6 @@ public class RegistrarUsuario extends JDialog {
 							empresa.getPagos()
 						);
 						
-						JOptionPane.showMessageDialog(null, "Usuario registrado y vinculado al empleado con éxito.", "Información", JOptionPane.INFORMATION_MESSAGE);
 						dispose();
 					}
 				});
@@ -164,13 +180,36 @@ public class RegistrarUsuario extends JDialog {
 			}
 			{
 				JButton btnCancelar = new JButton("Cancelar");
-				btnCancelar.setActionCommand("Cancel");
 				btnCancelar.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						dispose();
 					}
 				});
 				buttonPane.add(btnCancelar);
+			}
+		}
+		
+		loadUsuario();
+	}
+
+	// Método para llenar los campos si estamos actualizando
+	private void loadUsuario() {
+		if (miUsuario != null) {
+			txtNombreDeUsuarioEmp.setText(miUsuario.getNombreUsuario());
+			txtContraseniaUsuarioEmp.setText(miUsuario.getContrasenia());
+			
+			// Si estamos actualizando, apagamos el botón de seleccionar empleado por seguridad
+			btnSeleccionarEmpleado.setEnabled(false);
+			
+			// Buscamos a qué empleado pertenece este usuario usando un for tradicional
+			for (Empleado emp : EmpresaAltice.getInstance().getMisEmpleados()) {
+				if (emp.getMiUsuario() != null) {
+					if (emp.getMiUsuario().getIdUsuario().equals(miUsuario.getIdUsuario())) {
+						empSeleccionado = emp;
+						txtDatosEmpleado.setText(empSeleccionado.getCodigoEmpleado() + " - " + empSeleccionado.getNombre() + " - " + empSeleccionado.getRolEmpleado());
+						break;
+					}
+				}
 			}
 		}
 	}

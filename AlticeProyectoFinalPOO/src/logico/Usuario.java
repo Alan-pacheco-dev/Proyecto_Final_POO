@@ -8,6 +8,7 @@ public class Usuario implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	private String idUsuario;
 	private String rolEmpleado; //El rol solo le pertenece al empleado porque no se crearán usuarios del cliente
 	//Más adelante si se quiere podemos crearle Usuario
 	private String nombreUsuario;
@@ -15,6 +16,7 @@ public class Usuario implements Serializable{
 	
 	public Usuario(String rolEmpleado, String nombreUsuario, String contrasenia) {
 		super();
+		this.setIdUsuario("U - " + EmpresaAltice.getInstance().idUsuarios++);
 		this.rolEmpleado = rolEmpleado;
 		this.nombreUsuario = nombreUsuario;
 		this.contrasenia = contrasenia;
@@ -42,6 +44,14 @@ public class Usuario implements Serializable{
 
 	public void setContrasenia(String contrasenia) {
 		this.contrasenia = contrasenia;
+	}
+
+	public String getIdUsuario() {
+		return idUsuario;
+	}
+
+	public void setIdUsuario(String idUsuario) {
+		this.idUsuario = idUsuario;
 	}
 	
 	
