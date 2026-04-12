@@ -10,6 +10,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import logico.Cliente;
+import logico.Empleado;
 import logico.EmpresaAltice;
 import logico.Usuario;
 
@@ -51,6 +53,9 @@ public class Principal extends JFrame {
 				empresa.getMisUsuarios(), 
 				empresa.getMisContratos(), 
 				empresa.getPagos());
+		
+		empresa.actualizarContadores();
+		empresa.refrescarConteosContratos();
 		
 		//Comentado para acceder directamente a la pantalla principal sin el login
 		/*
@@ -100,7 +105,8 @@ public class Principal extends JFrame {
 		JMenuItem menuItemListarEmpleados = new JMenuItem("Listar");
 		menuItemListarEmpleados.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ListarEmpleados listarEmps = new ListarEmpleados();
+				//Se manda false solo para que muestre y se pueda eliminar, no seleccionar
+				ListarEmpleados listarEmps = new ListarEmpleados(false);
 				listarEmps.setModal(true);
 				listarEmps.setVisible(true);
 			}
@@ -123,7 +129,7 @@ public class Principal extends JFrame {
 		JMenuItem menuItemListarClientes = new JMenuItem("Listar");
 		menuItemListarClientes.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ListarClientes listCli = new ListarClientes();
+				ListarClientes listCli = new ListarClientes(false);
 				listCli.setModal(true);
 				listCli.setVisible(true);
 			}
@@ -143,9 +149,21 @@ public class Principal extends JFrame {
 		JMenuItem menuItem_6 = new JMenuItem("Registrar");
 		menuItem_6.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				RegistrarContrato regisCto = new RegistrarContrato();
-				regisCto.setModal(true);
-				regisCto.setVisible(true);
+				// 1. OBLIGATORIO: Debe ser TRUE para que funcione como selector
+				ListarClientes selectorCliente = new ListarClientes(true);
+				selectorCliente.setModal(true);
+				selectorCliente.setVisible(true);
+				
+				// 2. Capturamos la selección
+				Cliente clienteElegido = selectorCliente.getClienteSeleccionado();
+				
+				// 3. Procedemos al registro
+				if (clienteElegido != null) {
+					Empleado empleadoLogueado = new Empleado(null, "Admin Prueba", 10000f, 10f, 0f, 0f, "Administrativo");
+					RegistrarContrato regisCto = new RegistrarContrato(clienteElegido, empleadoLogueado);
+					regisCto.setModal(true);
+					regisCto.setVisible(true);
+				} 
 			}
 		});
 		mnContratos.add(menuItem_6);
@@ -153,7 +171,9 @@ public class Principal extends JFrame {
 		JMenuItem menuItem_7 = new JMenuItem("Listar");
 		menuItem_7.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//ListarContratos
+				ListarContratosGeneral listarCtos = new ListarContratosGeneral(false);
+				listarCtos.setModal(true);
+				listarCtos.setVisible(true);
 				//Este listarContratos debe permitir filtro según el cliente y si está activo el contrato o no
 			}
 		});
@@ -173,6 +193,12 @@ public class Principal extends JFrame {
 		menuPlanes.add(menuItem);
 		
 		JMenuItem menuItem_1 = new JMenuItem("Listar");
+		menuItem_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ListarPlanes ventanaPlanes = new ListarPlanes(false); // false = Encender botón Eliminar
+				ventanaPlanes.setVisible(true);
+			}
+		});
 		menuPlanes.add(menuItem_1);
 		
 		JMenu menuServicios = new JMenu("Servicios");
@@ -189,6 +215,13 @@ public class Principal extends JFrame {
 		menuServicios.add(menuItem_2);
 		
 		JMenuItem menuItem_3 = new JMenuItem("Listar");
+		menuItem_3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ListarServicios listarServis = new ListarServicios("Todos", false);
+				listarServis.setModal(true);
+				listarServis.setVisible(true);
+			}
+		});
 		menuServicios.add(menuItem_3);
 		
 		JMenu menuPagos = new JMenu("Pagos");
@@ -206,6 +239,18 @@ public class Principal extends JFrame {
 		
 		JMenuItem menuItem_5 = new JMenuItem("Listar");
 		menuPagos.add(menuItem_5);
+		
+		JMenu menuReportes = new JMenu("Reportes");
+		menuBar.add(menuReportes);
+		
+		JMenuItem mntmReporteGeneral = new JMenuItem("Reporte general");
+		menuReportes.add(mntmReporteGeneral);
+		
+		JMenuItem mntmReporteDeClientes = new JMenuItem("Reporte de clientes");
+		menuReportes.add(mntmReporteDeClientes);
+		
+		JMenuItem mntmReporteDeEmpleados = new JMenuItem("Reporte de empleados");
+		menuReportes.add(mntmReporteDeEmpleados);
 		
 		//Comentado para acceder directamente a la pantalla principal sin el login
 		/*

@@ -1,14 +1,12 @@
 package logico;
 
-//ESTA AUN NO SE IMPLEMENTA
-
-public class ServicioInternet {
+public class ServicioInternet extends Servicio{
 
 	private int velocidadMbps;
 	private boolean tieneRouter;
 	
-	public ServicioInternet(int velocidadMbps, boolean tieneRouter) {
-		super();
+	public ServicioInternet(String tipoServicio, float precioServicio, int velocidadMbps, boolean tieneRouter) {
+		super(tipoServicio, precioServicio);
 		this.velocidadMbps = velocidadMbps;
 		this.tieneRouter = tieneRouter;
 	}

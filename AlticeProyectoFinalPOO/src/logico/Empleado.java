@@ -13,11 +13,12 @@ public class Empleado extends Persona implements Serializable{
 	private String codigoEmpleado;
 	private float salario;
 	private float comisiones;
-	private float ventas;
+	private float montoVentas;
+	private float cantidadVentas;
 	private String rolEmpleado;
 	private Usuario miUsuario;
 	
-	public Empleado(String id, String nombre, float salario, float comisiones, float ventas, String rolEmpleado) {
+	public Empleado(String id, String nombre, float salario, float comisiones, float cantidadVentas, float montoVentas, String rolEmpleado) {
 		super(id, nombre);
 		
 		String anioActual = String.valueOf(LocalDate.now().getYear());
@@ -27,7 +28,8 @@ public class Empleado extends Persona implements Serializable{
 		this.setIdPersona("E - " + EmpresaAltice.getInstance().idEmpleados++);
 		this.salario = salario;
 		this.comisiones = comisiones;
-		this.ventas = ventas;
+		this.montoVentas = montoVentas;
+		this.cantidadVentas = cantidadVentas;
 		this.miUsuario = null;
 		this.rolEmpleado = rolEmpleado;
 	}
@@ -56,12 +58,12 @@ public class Empleado extends Persona implements Serializable{
 		this.comisiones = comisiones;
 	}
 
-	public float getVentas() {
-		return ventas;
+	public float getMontoVentas() {
+		return montoVentas;
 	}
 
-	public void setVentas(float ventas) {
-		this.ventas = ventas;
+	public void setMontoVentas(float montoVentas) {
+		this.montoVentas = montoVentas;
 	}
 	
 	public Usuario getMiUsuario() {
@@ -78,6 +80,14 @@ public class Empleado extends Persona implements Serializable{
 
 	public void setRolEmpleado(String rolEmpleado) {
 		this.rolEmpleado = rolEmpleado;
+	}
+
+	public float getCantidadVentas() {
+		return cantidadVentas;
+	}
+
+	public void setCantidadVentas(float cantidadVentas) {
+		this.cantidadVentas = cantidadVentas;
 	}
 	
 	

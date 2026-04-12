@@ -1,15 +1,13 @@
 package logico;
 
-//ESTA AUN NO SE IMPLEMENTA
-
-public class ServicioMovil {
+public class ServicioMovil extends Servicio{
 	
 	private int datosGb;
 	private int minutos;
 	private int sms;
 	
-	public ServicioMovil(int datosGb, int minutos, int sms) {
-		super();
+	public ServicioMovil(String tipoServicio, float precioServicio, int datosGb, int minutos, int sms) {
+		super(tipoServicio, precioServicio);
 		this.datosGb = datosGb;
 		this.minutos = minutos;
 		this.sms = sms;

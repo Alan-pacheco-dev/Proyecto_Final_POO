@@ -23,7 +23,7 @@ public class EmpresaAltice implements Serializable{
 	public static int idClientes = 1;
 	public static int idServicios = 1;
 	public static int idUsuarios = 1;
-	
+
 	private static EmpresaAltice empresaAltice = null;
 	private ArrayList<Cliente>misClientes;
 	private ArrayList<Empleado>misEmpleados;
@@ -125,20 +125,20 @@ public class EmpresaAltice implements Serializable{
 			ArrayList<Plan> planes, ArrayList<Servicio> servicios, ArrayList<Usuario> usuarios, ArrayList<Contrato> contratos, 
 			ArrayList<Pagos> pagos) 
 	{
-		
-		boolean tieneAdministrativo = false;
-	    for (Usuario u : usuarios) {
-	        if (u.getRolEmpleado().equalsIgnoreCase("Administrativo")) {
-	            tieneAdministrativo = true;
-	            break;
-	        }
-	    }
 
-	    
-	    if (!tieneAdministrativo) {
-	        Usuario admin = new Usuario("Administrativo", "Admin", "1234");
-	        usuarios.add(admin);
-	    }
+		boolean tieneAdministrativo = false;
+		for (Usuario u : usuarios) {
+			if (u.getRolEmpleado().equalsIgnoreCase("Administrativo")) {
+				tieneAdministrativo = true;
+				break;
+			}
+		}
+
+
+		if (!tieneAdministrativo) {
+			Usuario admin = new Usuario("Administrativo", "Admin", "1234");
+			usuarios.add(admin);
+		}
 
 		//ObjectOutputStream file variable para controlar donde se va a escribir
 		//new ObjectOutputStream() serializa los objetos y permite escribirlos en un fichero
@@ -175,16 +175,16 @@ public class EmpresaAltice implements Serializable{
 		//new ObjectInputStream        ||                 ||
 		//new FileInputStream          ||                 ||
 		try(ObjectInputStream file= new ObjectInputStream(new FileInputStream(archivo))){
-			
+
 			//Limpiar para que no hayan duplicados con addAll
 			clientes.clear();
-            empleados.clear();
-            planes.clear();
-            servicios.clear();
-            usuarios.clear();
-            contratos.clear();
-            pagos.clear();
-			
+			empleados.clear();
+			planes.clear();
+			servicios.clear();
+			usuarios.clear();
+			contratos.clear();
+			pagos.clear();
+
 			//Los warnings son por que java automaticamente va a volver los objetos que lee al tipo que tiene ArrayList de forma automatica
 			//Se tiene que leer en el mismo orden con el cual se escribio
 			//abierto a cambios aqui
@@ -218,17 +218,17 @@ public class EmpresaAltice implements Serializable{
 		registrado = true;
 		return registrado;
 	}
-	
+
 	public boolean crearUsuario(Empleado emp) {
 		boolean usuarioCreado = false;
-		
+
 		if(emp != null) {
 			//La contrasenia debe ser pedida en la parte visual al igual que el nombre de usuario
 			Usuario nuevoUsuario = new Usuario(emp.getRolEmpleado(), "username", "*********");
 			misUsuarios.add(nuevoUsuario);
 			usuarioCreado = true;
 		}
-		
+
 		return usuarioCreado;
 	}
 
@@ -260,14 +260,7 @@ public class EmpresaAltice implements Serializable{
 		return encontrado;
 	}
 
-	public boolean eliminarCliente(Cliente selected) {
-		boolean eliminado = false;
-		if(selected.getCantContratosActivos() == 0) {
-			misClientes.remove(selected);
-			eliminado = true;
-		}
-		return eliminado;
-	}
+
 
 	public Empleado buscarEmpleadoById(String idEmpleado) {
 		Empleado encontrado = null;
@@ -279,5 +272,155 @@ public class EmpresaAltice implements Serializable{
 		return encontrado;
 	}
 
+	public Servicio buscarServicioById(String idServicio) {
+		Servicio encontrado = null;
+		for(Servicio servi: misServicios) {
+			if(servi.getIdServicio().equalsIgnoreCase(idServicio)) {
+				encontrado =  servi;
+			}
+		}
+		return encontrado;
+	}
+
+	//Funciones de eliminación
+
+	public boolean eliminarCliente(Cliente selected) {
+		boolean eliminado = false;
+		if(selected.getCantContratosActivos() == 0) {
+			misClientes.remove(selected);
+			eliminado = true;
+		}
+		return eliminado;
+	}
+
+	public boolean eliminarEmpleado(Empleado selected) {
+		boolean eliminado = false;
+		//if(selected == 0) {
+		misEmpleados.remove(selected);
+		eliminado = true;
+		//}
+		return eliminado;
+	}
+
+
+
+	public void actualizarContadores() {
+
+		// 1. Actualizar el contador de CLIENTES
+		int maxIdCliente = 0;
+		for (Cliente c : misClientes) {
+			// El truco de magia: replaceAll("[^0-9]", "") borra todas las letras y símbolos (como "C - ") 
+			// y nos deja solo el número limpio para poder convertirlo a entero.
+			String numeroLimpio = c.getIdPersona().replaceAll("[^0-9]", "");
+
+			if (numeroLimpio.isEmpty() == false) {
+				int numero = Integer.parseInt(numeroLimpio);
+				if (numero > maxIdCliente) {
+					maxIdCliente = numero;
+				}
+			}
+		}
+		idClientes = maxIdCliente + 1;
+		if(misClientes.size() == 0) {
+			idClientes = 1;
+		}
+
+		// 2. Actualizar el contador de EMPLEADOS
+		int maxIdEmpleado = 0;
+		for (Empleado emp : misEmpleados) {
+			String numeroLimpio = emp.getIdPersona().replaceAll("[^0-9]", "");
+
+			if (numeroLimpio.isEmpty() == false) {
+				int numero = Integer.parseInt(numeroLimpio);
+				if (numero > maxIdEmpleado) {
+					maxIdEmpleado = numero;
+				}
+			}
+		}
+		idEmpleados = maxIdEmpleado + 1;
+		if(misServicios.size() == 0) {
+			idEmpleados = 1;
+		}
+
+		// 3. Actualizar el contador de SERVICIOS
+		int maxIdServicio = 0;
+		for (Servicio s : misServicios) {
+			String numeroLimpio = s.getIdServicio().replaceAll("[^0-9]", "");
+
+			if (numeroLimpio.isEmpty() == false) {
+				int numero = Integer.parseInt(numeroLimpio);
+				if (numero > maxIdServicio) {
+					maxIdServicio = numero;
+				}
+			}
+		}
+		idServicios = maxIdServicio + 1;
+		if(misServicios.size() == 0) {
+			idServicios = 1;
+		}
+
+		int maxIdContrato = 0;
+		for (Contrato c : misContratos) {
+			String numeroLimpio = c.getIdContrato().replaceAll("[^0-9]", "");
+
+			if (numeroLimpio.isEmpty() == false) {
+				int numero = Integer.parseInt(numeroLimpio);
+				if (numero > maxIdContrato) {
+					maxIdContrato = numero;
+				}
+			}
+		}
+		idContratos = maxIdContrato + 1;
+		if(misContratos.size() == 0) {
+			idContratos = 1;
+		}
+
+		int maxIdPlanes = 0;
+		for (Plan p : misPlanes) {
+			String numeroLimpio = p.getIdPlan().replaceAll("[^0-9]", "");
+
+			if (numeroLimpio.isEmpty() == false) {
+				int numero = Integer.parseInt(numeroLimpio);
+				if (numero > maxIdPlanes) {
+					maxIdPlanes = numero;
+				}
+			}
+		}
+		idPlanes= maxIdPlanes + 1;
+		if(misServicios.size() == 0) {
+			idPlanes = 1;
+		}
+
+		int maxIdPagos = 0;
+		for (Pagos p : pagosClientes) {
+			String numeroLimpio = p.getIdPago().replaceAll("[^0-9]", "");
+
+			if (numeroLimpio.isEmpty() == false) {
+				int numero = Integer.parseInt(numeroLimpio);
+				if (numero > maxIdPagos) {
+					maxIdPagos = numero;
+				}
+			}
+		}
+		idPagos = maxIdPagos + 1;
+		if(pagosClientes.size() == 0) {
+			idPagos = 1;
+		}
+	}
+
+	public void refrescarConteosContratos() {
+		// Ponemos todos los contadores de los clientes en 0 primero
+		for (Cliente cli : misClientes) {
+			cli.setCantContratosActivos(0);
+		}
+
+		// Recorremos la lista maestra de contratos y sumamos solo los activos
+		for (Contrato cto : misContratos) {
+			if (cto.isActivo() == true) {
+				Cliente dueño = cto.getCliente();
+				dueño.setCantContratosActivos(dueño.getCantContratosActivos() + 1);
+			}
+		}
+	}
 
 }

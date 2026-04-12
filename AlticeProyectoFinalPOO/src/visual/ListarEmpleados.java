@@ -33,12 +33,16 @@ public class ListarEmpleados extends JDialog {
 	private DefaultTableModel model;
 	private JTextField txtBuscar;
 	private TableRowSorter<DefaultTableModel> sorter;
+	
 	private JButton btnEliminar;
+	private JButton btnSeleccionar; // Nuevo botón para el modo dual
+	
 	private Empleado selected = null;
 
 	public static void main(String[] args) {
 		try {
-			ListarEmpleados dialog = new ListarEmpleados();
+			// Lo probamos en modo administrador (false)
+			ListarEmpleados dialog = new ListarEmpleados(false);
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
 		} catch (Exception e) {
@@ -46,8 +50,9 @@ public class ListarEmpleados extends JDialog {
 		}
 	}
 
-	public ListarEmpleados() {
+	public ListarEmpleados(boolean modoSeleccion) {
 		setTitle("Listado de Empleados");
+		setModal(modoSeleccion); // Bloquea si es selector
 		setResizable(false);
 		setBounds(100, 100, 850, 500);
 		setLocationRelativeTo(null);
@@ -83,31 +88,33 @@ public class ListarEmpleados extends JDialog {
 			public void mouseClicked(MouseEvent e) {
 				int indexVisual = table.getSelectedRow();
 				if(indexVisual != -1) {
-					// 1. Convertir índice visual al real por el filtro
 					int indexReal = table.convertRowIndexToModel(indexVisual);
 					
-					// 2. Extraer el ID de la primera columna
 					String idEmpleado = (String) model.getValueAt(indexReal, 0);
 					
-					// 3. Buscar al empleado en la lógica
-					// Asumo que tienes un método buscarEmpleadoById, si no, lo puedes crear igual que el de clientes
-					selected = EmpresaAltice.getInstance().buscarEmpleadoById(idEmpleado);
+					// Búsqueda manual clásica (sin lambdas)
+					selected = null;
+					for (Empleado emp : EmpresaAltice.getInstance().getMisEmpleados()) {
+						if (emp.getIdPersona().equalsIgnoreCase(idEmpleado)) {
+							selected = emp;
+							break;
+						}
+					}
 					
 					if(selected != null) {
 						btnEliminar.setEnabled(true);
+						btnSeleccionar.setEnabled(true);
 					}
 				}
 			}
 		});
 
 		model = new DefaultTableModel();
-		// Configuración de las columnas basadas en tu clase Empleado
-		String[] headers = {"ID", "Código", "Nombre", "Rol", "Salario", "Ventas"};
+		String[] headers = {"ID", "Código", "Nombre", "Rol", "Salario", "Cantidad Ventas", "Monto Ventas"};
 		model.setColumnIdentifiers(headers);
 		table.setModel(model);
 		scrollPane.setViewportView(table);
 
-		// --- CONFIGURACIÓN DEL SORTER ---
 		sorter = new TableRowSorter<>(model);
 		table.setRowSorter(sorter);
 
@@ -115,7 +122,7 @@ public class ListarEmpleados extends JDialog {
 			@Override
 			public void keyReleased(KeyEvent e) {
 				String textoBusqueda = txtBuscar.getText();
-				if (textoBusqueda.trim().length() == 0) {
+				if (textoBusqueda.trim().isEmpty()) {
 					sorter.setRowFilter(null);
 				} else {
 					sorter.setRowFilter(RowFilter.regexFilter("(?i)" + textoBusqueda));
@@ -127,6 +134,14 @@ public class ListarEmpleados extends JDialog {
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
+		
+		btnSeleccionar = new JButton("Seleccionar");
+		btnSeleccionar.setEnabled(false);
+		btnSeleccionar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dispose(); // Cierra y guarda el selected
+			}
+		});
 		
 		btnEliminar = new JButton("Eliminar");
 		btnEliminar.setEnabled(false);
@@ -140,65 +155,67 @@ public class ListarEmpleados extends JDialog {
 					
 					if(option == JOptionPane.YES_OPTION) {
 						EmpresaAltice empresa = EmpresaAltice.getInstance();
-						
-						// Si tienes un método empresa.eliminarEmpleado(selected) que valide cosas, úsalo aquí.
-						// De lo contrario, lo removemos directo de la lista:
-						boolean eliminado = empresa.getMisEmpleados().remove(selected);
+						boolean eliminado = empresa.eliminarEmpleado(selected);
 						
 						if(eliminado) {
 							JOptionPane.showMessageDialog(null, "El empleado ha sido eliminado con éxito.", "Información", JOptionPane.INFORMATION_MESSAGE);
-							
-							// ¡AQUÍ ESTÁ LA MAGIA! Guardamos los datos para sobreescribir el archivo viejo.
-							// NUNCA usamos CargarDatos() aquí.
 							empresa.GuardarDatos(
-									empresa.getMisClientes(), 
-									empresa.getMisEmpleados(), 
-									empresa.getMisPlanes(), 
-									empresa.getMisServicios(), 
-									empresa.getMisUsuarios(), 
-									empresa.getMisContratos(), 
-									empresa.getPagos() // Asegúrate que así se llame el getter de tus pagos
+									empresa.getMisClientes(), empresa.getMisEmpleados(), empresa.getMisPlanes(), 
+									empresa.getMisServicios(), empresa.getMisUsuarios(), empresa.getMisContratos(), 
+									empresa.getPagos()
 							);
-							
 						} else {
 							JOptionPane.showMessageDialog(null, "No se pudo eliminar el empleado.", "Error", JOptionPane.ERROR_MESSAGE);
 						}
 						
-						// Refrescamos la tabla y bloqueamos el botón
 						loadEmpleados();
 						btnEliminar.setEnabled(false);
+						btnSeleccionar.setEnabled(false);
 						selected = null;
 					}
 				}
 			}
 		});
-		buttonPane.add(btnEliminar);
+		
+		// Lógica IF tradicional para mostrar botones según el modo
+		if (modoSeleccion == true) {
+			buttonPane.add(btnSeleccionar);
+			btnEliminar.setVisible(false);
+		} else {
+			buttonPane.add(btnEliminar);
+			btnSeleccionar.setVisible(false);
+		}
 
 		JButton btnCancelar = new JButton("Cerrar");
 		btnCancelar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				selected = null; // Limpiamos si el usuario cancela
 				dispose();
 			}
 		});
 		buttonPane.add(btnCancelar);
 
-		// Cargar datos al iniciar
 		loadEmpleados();
 	}
 
 	private void loadEmpleados() {
-		// Importante: Limpiamos la tabla para que no se dupliquen los registros
 		model.setRowCount(0);
 		
 		for (Empleado emp : EmpresaAltice.getInstance().getMisEmpleados()) {
-			Object[] row = new Object[6];
-			row[0] = emp.getIdPersona(); // Viene heredado de la clase Persona
+			Object[] row = new Object[7];
+			row[0] = emp.getIdPersona(); 
 			row[1] = emp.getCodigoEmpleado();
-			row[2] = emp.getNombre();    // Viene heredado de la clase Persona
+			row[2] = emp.getNombre();    
 			row[3] = emp.getRolEmpleado();
 			row[4] = emp.getSalario();
-			row[5] = emp.getVentas();
+			row[5] = emp.getCantidadVentas();
+			row[6] = emp.getMontoVentas(); 
 			model.addRow(row);
 		}
+	}
+	
+	// Método para devolver el empleado elegido
+	public Empleado getEmpleadoSeleccionado() {
+		return selected;
 	}
 }

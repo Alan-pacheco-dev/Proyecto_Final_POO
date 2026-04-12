@@ -36,15 +36,14 @@ public class RegistrarEmpleado extends JDialog {
 	private JTextField txtNombreEmpleado;
 	private JSpinner spnSalarioEmpleado;
 	private JSpinner spnPorcentajeComisionEmp;
-	private JComboBox cbxRolEmpleado;
-
-	
+	private JComboBox<String> cbxRolEmpleado;
 
 	/**
 	 * Create the dialog.
 	 */
 	public RegistrarEmpleado() {
 		super();
+		setTitle("Registrar Empleado");
 		setBounds(100, 100, 450, 300);
 		dim = getToolkit().getScreenSize();
 		setSize(553, 493);
@@ -53,10 +52,13 @@ public class RegistrarEmpleado extends JDialog {
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(new BorderLayout(0, 0));
-		spnSalarioEmpleado = new JSpinner();
-		spnPorcentajeComisionEmp = new JSpinner();
-		spnPorcentajeComisionEmp.setModel(new SpinnerNumberModel(0, null, 100, 1));
-		cbxRolEmpleado = new JComboBox();
+		
+		// Configuración de los Spinners para evitar números negativos desde la interfaz
+		spnSalarioEmpleado = new JSpinner(new SpinnerNumberModel(0.0, 0.0, null, 1000.0));
+		spnPorcentajeComisionEmp = new JSpinner(new SpinnerNumberModel(0.0, 0.0, 100.0, 1.0));
+		
+		cbxRolEmpleado = new JComboBox<String>();
+		
 		{
 			JPanel panel = new JPanel();
 			panel.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
@@ -74,7 +76,7 @@ public class RegistrarEmpleado extends JDialog {
 			panel.add(txtIdEmpleado);
 			txtIdEmpleado.setColumns(10);
 			
-			JLabel label = new JLabel("C\u00F3digo del empleado");
+			JLabel label = new JLabel("Código del empleado");
 			label.setBounds(288, 37, 222, 34);
 			panel.add(label);
 			
@@ -99,7 +101,7 @@ public class RegistrarEmpleado extends JDialog {
 			lblVentas.setBounds(20, 292, 117, 34);
 			panel.add(lblVentas);
 			
-			JLabel lblComision = new JLabel("Porcentaje de comisi\u00F3n por venta");
+			JLabel lblComision = new JLabel("Porcentaje de comisión por venta");
 			lblComision.setBounds(288, 292, 222, 34);
 			panel.add(lblComision);
 			
@@ -107,15 +109,13 @@ public class RegistrarEmpleado extends JDialog {
 			lblRolDelEmpleado.setBounds(20, 216, 148, 34);
 			panel.add(lblRolDelEmpleado);
 			
-			cbxRolEmpleado.setModel(new DefaultComboBoxModel(new String[] {"Administrativo", "Comercial", "Vendedor"}));
+			cbxRolEmpleado.setModel(new DefaultComboBoxModel<String>(new String[] {"Administrativo", "Comercial", "Vendedor"}));
 			cbxRolEmpleado.setBounds(20, 261, 200, 20);
 			panel.add(cbxRolEmpleado);
-			
 			
 			spnSalarioEmpleado.setBounds(20, 337, 185, 20);
 			panel.add(spnSalarioEmpleado);
 			
-	
 			spnPorcentajeComisionEmp.setBounds(288, 337, 185, 20);
 			panel.add(spnPorcentajeComisionEmp);
 		}
@@ -130,22 +130,51 @@ public class RegistrarEmpleado extends JDialog {
 				btnRegistrar.addActionListener(new ActionListener() {
 					
 					public void actionPerformed(ActionEvent e) {
+						
+						// 1. Extraemos los valores de la interfaz
+						String nombre = txtNombreEmpleado.getText().trim();
+						float salario = ((Number) spnSalarioEmpleado.getValue()).floatValue();
+						float comision = ((Number) spnPorcentajeComisionEmp.getValue()).floatValue();
+						
+						// 2. Validación de nombre vacío
+						if (nombre.isEmpty()) {
+							JOptionPane.showMessageDialog(null, "El nombre del empleado no puede estar vacío.", "Error de validación", JOptionPane.WARNING_MESSAGE);
+							return;
+						}
+						
+						// 3. Validación de rol seleccionado
+						if (cbxRolEmpleado.getSelectedItem() == null) {
+							JOptionPane.showMessageDialog(null, "Debe seleccionar un rol para el empleado.", "Error de validación", JOptionPane.WARNING_MESSAGE);
+							return;
+						}
+						String rol = cbxRolEmpleado.getSelectedItem().toString();
+						
+						// 4. Validación de Salario mayor a 0
+						if (salario <= 0) {
+							JOptionPane.showMessageDialog(null, "El salario del empleado debe ser mayor a 0.", "Error de validación", JOptionPane.WARNING_MESSAGE);
+							return;
+						}
+						
+						// 5. Validación de Comisión (0 a 100%)
+						if (comision < 0 || comision > 100) {
+							JOptionPane.showMessageDialog(null, "El porcentaje de comisión debe estar entre 0 y 100.", "Error de validación", JOptionPane.WARNING_MESSAGE);
+							return;
+						}
+						
+						// Si todo es correcto, guardamos el empleado
 						EmpresaAltice empresa = EmpresaAltice.getInstance();
+						Empleado emp = new Empleado(null, nombre, salario, comision, 0, 0, rol);
 						
-						String nombre= txtNombreEmpleado.getText().trim();
-						float salario= ((Number)spnSalarioEmpleado.getValue()).floatValue();
-						float comision=((Number)spnPorcentajeComisionEmp.getValue()).floatValue();
-						String rol =cbxRolEmpleado.getSelectedItem().toString();
-						
-						Empleado emp = new Empleado(null, nombre, salario, comision, 0, rol);
 						empresa.getMisEmpleados().add(emp);
+						
 						empresa.GuardarDatos(
 							empresa.getMisClientes(), empresa.getMisEmpleados(),
 							empresa.getMisPlanes(), empresa.getMisServicios(),
 							empresa.getMisUsuarios(), empresa.getMisContratos(),
 							empresa.getPagos()
 						);
-						JOptionPane.showMessageDialog(null, "Empleado registrado con �xito");
+						
+						JOptionPane.showMessageDialog(null, "¡Empleado registrado con éxito!", "Información", JOptionPane.INFORMATION_MESSAGE);
 						clean();
 					}
 				});
@@ -164,12 +193,15 @@ public class RegistrarEmpleado extends JDialog {
 			}
 		}
 	}
+	
 	private void clean() {
 		txtIdEmpleado.setText("E - " + EmpresaAltice.getInstance().idEmpleados);
 		String anioActual = String.valueOf(LocalDate.now().getYear());
 		txtCodigoEmpleado.setText("EMP-" + anioActual + "-" + EmpresaAltice.getInstance().idEmpleados);
+		
 		txtNombreEmpleado.setText("");
-		spnSalarioEmpleado.setValue(new Float(0));
+		spnSalarioEmpleado.setValue(0.0);
+		spnPorcentajeComisionEmp.setValue(0.0); // Faltaba limpiar la comisión
 		cbxRolEmpleado.setSelectedIndex(0);
 	}
 }

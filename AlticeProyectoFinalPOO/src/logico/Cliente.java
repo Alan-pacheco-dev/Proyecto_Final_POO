@@ -14,6 +14,7 @@ public class Cliente extends Persona{
 	private String direccion;
 	private String email;
 	private ArrayList<Contrato> misContratos;
+	private int cantContratosActivos;
 	private float deuda;
 	private boolean esEmpresa;
 	private String rnc;
@@ -24,7 +25,11 @@ public class Cliente extends Persona{
 		
 		String anioActual = String.valueOf(LocalDate.now().getYear());
 		
-		this.codigoCliente = "CLTE-" + anioActual + "-" +  EmpresaAltice.getInstance().idClientes;
+		if(esEmpresa == true) {
+			this.codigoCliente = "CLTE-EMPR" + anioActual + "-" +  EmpresaAltice.getInstance().idClientes;
+		}else {
+			this.codigoCliente = "CLTE-FIS" + anioActual + "-" +  EmpresaAltice.getInstance().idClientes;
+		}
 		this.setIdPersona("C - " + EmpresaAltice.getInstance().idClientes++);
 		this.direccion = direccion;
 		this.email = email;
@@ -33,6 +38,7 @@ public class Cliente extends Persona{
 		this.setRnc(rnc);
 		this.misPagos = new ArrayList<Pagos>();
 		this.misContratos = new ArrayList<Contrato>();
+		this.cantContratosActivos = 0;
 	}
 
 	public String getCodigoCliente() {
@@ -183,7 +189,19 @@ public class Cliente extends Persona{
 		}
 	}
 	
+	public float calcularDeuda() {
+		float deuda = 0;
+		for(Contrato c: misContratos) {
+			deuda += c.getPrecioMensualAcordado();
+		}
+		setDeuda(deuda);
+		
+		return deuda;
+	}
 
+	public void setCantContratosActivos(int cantContratosActivos) {
+		this.cantContratosActivos = cantContratosActivos;
+	}
 	
 	
 	
