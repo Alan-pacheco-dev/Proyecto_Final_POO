@@ -1,16 +1,16 @@
 package visual;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -18,98 +18,161 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.RowFilter;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
-import logico.EmpresaAltice;
 import logico.Contrato;
+import logico.EmpresaAltice;
+import logico.Pagos;
+
+import java.awt.FlowLayout;
 
 public class RegistrarPago extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
 	private JTextField txtBuscar;
-	private JTable table;
-	private DefaultTableModel model;
-	private JButton btnProcesarPago;
-	
-	// El componente estrella para la búsqueda en tiempo real
-	private TableRowSorter<DefaultTableModel> sorter;
 
-	public static void main(String[] args) {
-		try {
-			RegistrarPago dialog = new RegistrarPago();
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			dialog.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+	// Tabla de contratos
+	private JTable tableContratos;
+	private DefaultTableModel modelContratos;
+	private TableRowSorter<DefaultTableModel> sorterContratos;
+
+	// Tabla de pagos pendientes
+	private JTable tablePagos;
+	private DefaultTableModel modelPagos;
+
+	private JButton btnProcesarPago;
+	private Contrato contratoSeleccionado = null;
+	private Pagos pagoSeleccionado = null;
 
 	public RegistrarPago() {
-		setTitle("Buscador de Cuentas por Cobrar");
+		setTitle("Registrar Pago");
 		setResizable(false);
-		setBounds(100, 100, 950, 600);
+		setBounds(100, 100, 950, 650);
 		setLocationRelativeTo(null);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
-		contentPanel.setLayout(new BorderLayout(0, 15)); // Espaciado vertical entre paneles
+		contentPanel.setLayout(new BorderLayout(0, 10));
 
-		// --- PANEL SUPERIOR: BARRA DE BÚSQUEDA ---
+		// --- PANEL SUPERIOR: BUSCADOR ---
 		JPanel panelBusqueda = new JPanel();
 		panelBusqueda.setLayout(null);
-		// Le damos un tamaño fijo de altura al panel superior
-		panelBusqueda.setPreferredSize(new java.awt.Dimension(950, 70));
+		panelBusqueda.setPreferredSize(new java.awt.Dimension(950, 50));
 		contentPanel.add(panelBusqueda, BorderLayout.NORTH);
 
-		JLabel lblBuscar = new JLabel("Buscar Contrato (Nombre, Cédula o ID):");
-		lblBuscar.setBounds(20, 23, 280, 25);
+		JLabel lblBuscar = new JLabel("Buscar Contrato (Cliente, Plan, ID):");
+		lblBuscar.setBounds(20, 15, 250, 25);
 		panelBusqueda.add(lblBuscar);
 
 		txtBuscar = new JTextField();
-		txtBuscar.setBounds(300, 20, 580, 30);
+		txtBuscar.setBounds(270, 12, 580, 30);
 		panelBusqueda.add(txtBuscar);
 
-		// --- PANEL CENTRAL: TABLA DE CONTRATOS ---
-		JPanel panelTabla = new JPanel();
-		panelTabla.setLayout(new BorderLayout(0, 0));
-		contentPanel.add(panelTabla, BorderLayout.CENTER);
+		// --- PANEL CENTRAL: DOS TABLAS ---
+		JPanel panelCentral = new JPanel();
+		panelCentral.setLayout(new BorderLayout(0, 10));
+		contentPanel.add(panelCentral, BorderLayout.CENTER);
 
-		JScrollPane scrollPane = new JScrollPane();
-		panelTabla.add(scrollPane, BorderLayout.CENTER);
+		// Tabla de contratos
+		JPanel panelContratos = new JPanel();
+		panelContratos.setLayout(new BorderLayout());
+		panelContratos.setBorder(new TitledBorder("Contratos Activos"));
+		panelCentral.add(panelContratos, BorderLayout.CENTER);
 
-		table = new JTable();
-		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		JScrollPane scrollContratos = new JScrollPane();
+		panelContratos.add(scrollContratos, BorderLayout.CENTER);
 
-		model = new DefaultTableModel();
-		String[] headers = {"ID Contrato", "Cédula", "Cliente", "Plan", "Precio Acordado"};
-		model.setColumnIdentifiers(headers);
-		table.setModel(model);
-		scrollPane.setViewportView(table);
+		tableContratos = new JTable();
+		tableContratos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		modelContratos = new DefaultTableModel() {
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
+		String[] headersContratos = {"ID Contrato", "Cliente", "Plan", "Precio Mensual", "Fecha Inicio"};
+		modelContratos.setColumnIdentifiers(headersContratos);
+		tableContratos.setModel(modelContratos);
+		scrollContratos.setViewportView(tableContratos);
 
-		// --- MAGIA DEL BUSCADOR: Conectar el Sorter ---
-		sorter = new TableRowSorter<>(model);
-		table.setRowSorter(sorter);
+		sorterContratos = new TableRowSorter<>(modelContratos);
+		tableContratos.setRowSorter(sorterContratos);
 
-		txtBuscar.addKeyListener(new KeyAdapter() {
+		// Al seleccionar un contrato cargar sus pagos pendientes
+		tableContratos.addMouseListener(new MouseAdapter() {
 			@Override
-			public void keyReleased(KeyEvent e) {
-				String textoBusqueda = txtBuscar.getText();
-				if (textoBusqueda.trim().length() == 0) {
-					sorter.setRowFilter(null); // Si está vacío, muestra todo
-				} else {
-					// El "(?i)" ignora mayúsculas y minúsculas
-					sorter.setRowFilter(RowFilter.regexFilter("(?i)" + textoBusqueda));
+			public void mouseClicked(MouseEvent e) {
+				int indexVisual = tableContratos.getSelectedRow();
+				if (indexVisual != -1) {
+					int indexReal = tableContratos.convertRowIndexToModel(indexVisual);
+					String idContrato = (String) modelContratos.getValueAt(indexReal, 0);
+
+					for (Contrato c : EmpresaAltice.getInstance().getMisContratos()) {
+						if (c.getIdContrato().equals(idContrato)) {
+							contratoSeleccionado = c;
+							break;
+						}
+					}
+
+					pagoSeleccionado = null;
+					btnProcesarPago.setEnabled(false);
+					loadPagosPendientes();
 				}
 			}
 		});
 
-		// Habilitar el botón solo si hay una fila seleccionada
-		table.getSelectionModel().addListSelectionListener(e -> {
-			if (!e.getValueIsAdjusting() && table.getSelectedRow() != -1) {
-				btnProcesarPago.setEnabled(true);
-			} else {
-				btnProcesarPago.setEnabled(false);
+		// Tabla de pagos pendientes
+		JPanel panelPagos = new JPanel();
+		panelPagos.setLayout(new BorderLayout());
+		panelPagos.setBorder(new TitledBorder("Pagos Pendientes del Contrato Seleccionado"));
+		panelPagos.setPreferredSize(new java.awt.Dimension(950, 200));
+		panelCentral.add(panelPagos, BorderLayout.SOUTH);
+
+		JScrollPane scrollPagos = new JScrollPane();
+		panelPagos.add(scrollPagos, BorderLayout.CENTER);
+
+		tablePagos = new JTable();
+		tablePagos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		modelPagos = new DefaultTableModel() {
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
+		String[] headersPagos = {"ID Pago", "Fecha Inicio", "Fecha Vencimiento", "Total por Pagar"};
+		modelPagos.setColumnIdentifiers(headersPagos);
+		tablePagos.setModel(modelPagos);
+		scrollPagos.setViewportView(tablePagos);
+
+		// Al seleccionar un pago habilitar el botón
+		tablePagos.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int indexVisual = tablePagos.getSelectedRow();
+				if (indexVisual != -1) {
+					String idPago = (String) modelPagos.getValueAt(indexVisual, 0);
+
+					for (Pagos p : EmpresaAltice.getInstance().getPagos()) {
+						if (p.getIdPago().equals(idPago)) {
+							pagoSeleccionado = p;
+							break;
+						}
+					}
+					btnProcesarPago.setEnabled(pagoSeleccionado != null);
+				}
+			}
+		});
+
+		// Buscador en tiempo real sobre contratos
+		txtBuscar.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				String texto = txtBuscar.getText();
+				if (texto.trim().isEmpty()) {
+					sorterContratos.setRowFilter(null);
+				} else {
+					sorterContratos.setRowFilter(RowFilter.regexFilter("(?i)" + texto));
+				}
 			}
 		});
 
@@ -119,72 +182,61 @@ public class RegistrarPago extends JDialog {
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
 
 		btnProcesarPago = new JButton("Procesar Pago");
-		btnProcesarPago.setEnabled(false); // Deshabilitado por defecto
+		btnProcesarPago.setEnabled(false);
 		btnProcesarPago.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
-				int indexVisual = table.getSelectedRow();
-				if (indexVisual != -1) {
-					// 1. Convertimos el índice visual al real por si la tabla está filtrada
-					int indexReal = table.convertRowIndexToModel(indexVisual);
-					
-					// 2. Extraemos el ID del contrato de la primera columna (columna 0)
-					String idContrato = (String) model.getValueAt(indexReal, 0);
-					
-					// 3. Buscamos el contrato en la lógica de negocio
-					Contrato seleccionado = EmpresaAltice.getInstance().buscarContratoById(idContrato);
-					
-					if (seleccionado != null) {
-					//  4. Abrimos la ventana que me enviaste por imagen, pasándole el contrato
-					    PagosPorContrato ventanaPago = new PagosPorContrato(seleccionado);
-					    ventanaPago.setModal(true);
-					    ventanaPago.setVisible(true);
-					    
-					//  5. Al cerrar la ventana de pago, actualizamos la tabla por si acaso
-					    loadContratos(); 
-					}
-					
-					// *MOCKUP TEMPORAL PARA QUE VEAS QUE FUNCIONA*
-					JOptionPane.showMessageDialog(null, "Abriendo ventana de pago para el contrato: " + idContrato);
+				if (pagoSeleccionado != null) {
+					PagosPorContrato ventanaPago = new PagosPorContrato(pagoSeleccionado);
+					ventanaPago.setModal(true);
+					ventanaPago.setVisible(true);
+					loadPagosPendientes();
+					btnProcesarPago.setEnabled(false);
+					pagoSeleccionado = null;
 				}
 			}
 		});
 		buttonPane.add(btnProcesarPago);
-		getRootPane().setDefaultButton(btnProcesarPago);
 
-		JButton btnCancelar = new JButton("Cerrar");
-		btnCancelar.addActionListener(new ActionListener() {
+		JButton btnCerrar = new JButton("Cerrar");
+		btnCerrar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				dispose();
 			}
 		});
-		buttonPane.add(btnCancelar);
+		buttonPane.add(btnCerrar);
 
-		// Cargamos los datos en la tabla
 		loadContratos();
 	}
 
-	// Método para llenar la tabla
 	private void loadContratos() {
-		model.setRowCount(0);
-		
-		// AQUÍ VA TU LÓGICA REAL:
+		modelContratos.setRowCount(0);
 		for (Contrato c : EmpresaAltice.getInstance().getMisContratos()) {
-		     if (c.isActivo()) {
-		         Object[] row = new Object[5];
-		         row[0] = c.getIdContrato();
-		         row[1] = c.getCliente().getRnc();
-		         row[2] = c.getCliente().getNombre();
-		         row[3] = c.getPlanContrato().getNombrePlan();
-		         row[4] = "$" + c.getPrecioMensualAcordado();
-		         model.addRow(row);
-		     }
-		 }
-		
-		// DATOS DE PRUEBA 
-		model.addRow(new Object[]{"CON-001", "402-1234567-8", "Juan Pérez", "Plan Básico", "$100.0"});
-		model.addRow(new Object[]{"CON-002", "031-9876543-2", "María Gómez", "Plan Premium", "$250.0"});
-		model.addRow(new Object[]{"CON-003", "402-1112223-3", "Carlos López", "Plan Básico", "$100.0"});
-		model.addRow(new Object[]{"CON-004", "031-4445556-6", "Ana Martínez", "Plan Corporativo", "$500.0"});
+			if (c.isActivo()) {
+				Object[] row = new Object[5];
+				row[0] = c.getIdContrato();
+				row[1] = c.getCliente().getNombre();
+				row[2] = c.getPlanContrato().getNombrePlan();
+				row[3] = "$ " + c.getPrecioMensualAcordado();
+				row[4] = c.getFechaInicioContrato();
+				modelContratos.addRow(row);
+			}
+		}
+	}
+
+	private void loadPagosPendientes() {
+		modelPagos.setRowCount(0);
+		if (contratoSeleccionado == null) return;
+
+		for (Pagos p : EmpresaAltice.getInstance().getPagos()) {
+			if (p.getContrato().getIdContrato().equals(contratoSeleccionado.getIdContrato())
+					&& !p.isPagadoTotal()) {
+				Object[] row = new Object[4];
+				row[0] = p.getIdPago();
+				row[1] = p.getFechaInicioPago();
+				row[2] = p.getFechaVencimientoPago();
+				row[3] = "$ " + p.getTotalPorPagar();
+				modelPagos.addRow(row);
+			}
+		}
 	}
 }

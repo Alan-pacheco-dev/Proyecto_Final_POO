@@ -36,7 +36,8 @@ public class ListarClientes extends JDialog {
 	
 	private JButton btnActualizar;
 	private JButton btnEliminar;
-	private JButton btnVerContratos; // NUEVO BOTÓN
+	private JButton btnVerContratos;
+	private JButton btnAgregarContrato;
 	
 	private Cliente selected = null;
 	private boolean modoSeleccion;
@@ -100,8 +101,10 @@ public class ListarClientes extends JDialog {
 						// ENCENDEMOS EL BOTÓN SOLO SI TIENE CONTRATOS
 						if (selected.getCantContratosActivos() > 0) {
 							btnVerContratos.setEnabled(true);
+							btnAgregarContrato.setEnabled(true);
 						} else {
 							btnVerContratos.setEnabled(false);
+							btnAgregarContrato.setEnabled(false);
 						}
 					}
 				}
@@ -165,6 +168,25 @@ public class ListarClientes extends JDialog {
 				}
 			});
 			buttonPane.add(btnVerContratos);
+			
+			btnAgregarContrato = new JButton("Agregar Contrato");
+			btnAgregarContrato.setEnabled(false);
+			btnAgregarContrato.addActionListener(new ActionListener() {
+			    public void actionPerformed(ActionEvent e) {
+			        if (selected != null) {
+			            RegistrarContrato regisCto = new RegistrarContrato(selected, null);
+			            regisCto.setModal(true);
+			            regisCto.setVisible(true);
+			            loadClientes();
+			            btnAgregarContrato.setEnabled(false);
+			            btnActualizar.setEnabled(false);
+			            btnEliminar.setEnabled(false);
+			            btnVerContratos.setEnabled(false);
+			            selected = null;
+			        }
+			    }
+			});
+			buttonPane.add(btnAgregarContrato);
 			
 			btnActualizar = new JButton("Actualizar");
 			btnActualizar.setEnabled(false);

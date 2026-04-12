@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class EmpresaAltice implements Serializable{
@@ -200,6 +201,64 @@ public class EmpresaAltice implements Serializable{
 			System.out.println("no se pudo cargar los datos");
 		}
 
+	}
+	
+	public void generarPagosMensuales() {
+	    LocalDate hoy = LocalDate.now();
+	    
+	    for (Contrato c : misContratos) {
+	        if (!c.isActivo()) continue;
+	        
+	        Pagos ultimoPago = null;
+	        for (Pagos p : pagosClientes) {
+	            if (p.getContrato().getIdContrato().equals(c.getIdContrato())) {
+	                if (ultimoPago == null || p.getFechaVencimientoPago().isAfter(ultimoPago.getFechaVencimientoPago())) {
+	                    ultimoPago = p;
+	                }
+	            }
+	        }
+	        LocalDate fechaInicioPago;
+	        LocalDate fechaVencimiento;
+	        
+	        if (ultimoPago == null) {
+	            fechaInicioPago = c.getFechaInicioContrato();
+	            fechaVencimiento = fechaInicioPago.plusMonths(1);
+	        } else {
+	            if (hoy.isBefore(ultimoPago.getFechaVencimientoPago())) {
+	                continue;
+	            }
+	            fechaInicioPago = ultimoPago.getFechaVencimientoPago();
+	            fechaVencimiento = fechaInicioPago.plusMonths(1);
+	        }
+	        
+	        Pagos nuevoPago = new Pagos(
+	            c,
+	            fechaInicioPago,
+	            fechaVencimiento,
+	            null, 
+	            0,
+	            0,    
+	            c.getPrecioMensualAcordado()
+	        );
+	        pagosClientes.add(nuevoPago);
+	    }
+	    
+	    actualizarDeudaClientes();
+	    GuardarDatos(misClientes, misEmpleados, misPlanes, misServicios, 
+	                 misUsuarios, misContratos, pagosClientes);
+	}
+	
+	public void actualizarDeudaClientes() {
+	    for (Cliente c : misClientes) {
+	        c.setDeuda(0);
+	    }
+	    
+	    for (Pagos p : pagosClientes) {
+	        if (!p.isPagadoTotal()) {
+	            Cliente cliente = p.getContrato().getCliente();
+	            cliente.setDeuda(cliente.getDeuda() + p.getTotalPorPagar());
+	        }
+	    }
 	}
 
 

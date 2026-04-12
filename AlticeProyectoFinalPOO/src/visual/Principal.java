@@ -56,6 +56,7 @@ public class Principal extends JFrame {
 		
 		empresa.actualizarContadores();
 		empresa.refrescarConteosContratos();
+		empresa.actualizarDeudaClientes();
 		
 		//Comentado para acceder directamente a la pantalla principal sin el login
 		/*
@@ -224,6 +225,22 @@ public class Principal extends JFrame {
 				regisPago.setVisible(true);
 			}
 		});
+		
+		JMenuItem menuItemGenerarPagos = new JMenuItem("Generar");
+		menuItemGenerarPagos.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int confirm = JOptionPane.showConfirmDialog(null, "¿Desea generar los pagos mensuales pendientes?", "Confirmación", 
+						JOptionPane.YES_NO_OPTION);
+			        if (confirm == JOptionPane.YES_OPTION) {
+			            EmpresaAltice.getInstance().generarPagosMensuales();
+			            JOptionPane.showMessageDialog(null, "Pagos generados correctamente", "Información", JOptionPane.INFORMATION_MESSAGE);
+			        }
+				
+			}
+		});
+		menuPagos.add(menuItemGenerarPagos);
 		menuPagos.add(menuItem_4);
 		
 		JMenuItem menuItem_5 = new JMenuItem("Listar");

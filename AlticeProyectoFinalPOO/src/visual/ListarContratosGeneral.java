@@ -253,7 +253,7 @@ public class ListarContratosGeneral extends JDialog {
 			btnVerServiciosPlan.setVisible(false); 
 		} else {
 			buttonPane.add(btnVerServiciosPlan); 
-			buttonPane.add(btnReactivarContrato); // Agregado a la interfaz
+			buttonPane.add(btnReactivarContrato); 
 			buttonPane.add(btnCancelarContrato);
 			btnSeleccionar.setVisible(false);
 		}
