@@ -77,7 +77,9 @@ public class Principal extends JFrame {
 		JMenuItem menuItemListarUsuarios = new JMenuItem("Listar");
 		menuItemListarUsuarios.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//ListarUsuarios
+				ListarUsuarios listUsers = new ListarUsuarios();
+		        listUsers.setModal(true);
+		        listUsers.setVisible(true);
 			}
 		});
 		mnNewMenu_2.add(menuItemListarUsuarios);
@@ -173,6 +175,11 @@ public class Principal extends JFrame {
 		menuPlanes.add(menuItem);
 		
 		JMenuItem menuItem_1 = new JMenuItem("Listar");
+		menuItem_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//ListarPlanes	
+			}
+		});
 		menuPlanes.add(menuItem_1);
 		
 		JMenu menuServicios = new JMenu("Servicios");
@@ -181,14 +188,20 @@ public class Principal extends JFrame {
 		JMenuItem menuItem_2 = new JMenuItem("Registrar");
 		menuItem_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				RegistrarServicio regisServi = new RegistrarServicio();
-				regisServi.setModal(true);
-				regisServi.setVisible(true);
+				//ListarServicios
 			}
 		});
 		menuServicios.add(menuItem_2);
 		
 		JMenuItem menuItem_3 = new JMenuItem("Listar");
+		menuItem_3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ListarServicios listServ = new ListarServicios();
+				listServ.setModal(true);
+				listServ.setVisible(true);
+				
+			}
+		});
 		menuServicios.add(menuItem_3);
 		
 		JMenu menuPagos = new JMenu("Pagos");
@@ -205,6 +218,15 @@ public class Principal extends JFrame {
 		menuPagos.add(menuItem_4);
 		
 		JMenuItem menuItem_5 = new JMenuItem("Listar");
+		menuItem_5.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent e) {
+				ListarPagos listPago= new ListarPagos();
+				listPago.setModal(true);
+				listPago.setVisible(true);
+				
+			}
+		});
 		menuPagos.add(menuItem_5);
 		
 		//Comentado para acceder directamente a la pantalla principal sin el login
