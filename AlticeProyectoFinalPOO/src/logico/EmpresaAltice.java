@@ -127,20 +127,6 @@ public class EmpresaAltice implements Serializable{
 			ArrayList<Pagos> pagos) 
 	{
 
-		boolean tieneAdministrativo = false;
-		for (Usuario u : usuarios) {
-			if (u.getRolEmpleado().equalsIgnoreCase("Administrativo")) {
-				tieneAdministrativo = true;
-				break;
-			}
-		}
-
-
-		if (!tieneAdministrativo) {
-			Usuario admin = new Usuario("Administrativo", "Admin", "1234");
-			usuarios.add(admin);
-		}
-
 		//ObjectOutputStream file variable para controlar donde se va a escribir
 		//new ObjectOutputStream() serializa los objetos y permite escribirlos en un fichero
 		//new FileOutStream() abre/crea/sobrescribe el archivo
@@ -165,6 +151,23 @@ public class EmpresaAltice implements Serializable{
 			ArrayList<Plan> planes, ArrayList<Servicio> servicios, ArrayList<Usuario> usuarios, ArrayList<Contrato> contratos, 
 			ArrayList<Pagos> pagos) 
 	{
+		
+		boolean tieneAdministrativo = false;
+		for (Usuario u : usuarios) {
+			if (u.getRolEmpleado().equalsIgnoreCase("Administrativo")) {
+				tieneAdministrativo = true;
+				break;
+			}
+		}
+
+		if (!tieneAdministrativo) {
+			Usuario admin = new Usuario("Administrativo", "Admin", "Admin");
+			admin.setIdUsuario("U - 0");
+			
+			usuarios.add(admin);
+			idUsuarios--; 
+		}
+		
 		File archivo = new File("Datos.txt");
 
 		if(!archivo.exists()) {
