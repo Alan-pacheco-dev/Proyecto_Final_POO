@@ -268,13 +268,31 @@ public class Principal extends JFrame {
 		menuBar.add(menuReportes);
 		
 		JMenuItem mntmReporteGeneral = new JMenuItem("Reporte General");
+		mntmReporteGeneral.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ReporteGeneral dashboard = new ReporteGeneral();
+				dashboard.setVisible(true);
+			}
+		});
 		menuReportes.add(mntmReporteGeneral);
 		
 		JMenuItem mntmReporteDeRendimiento = new JMenuItem("Reporte de Rendimiento");
+		mntmReporteDeRendimiento.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ReporteRendimiento ventanaRendimiento = new ReporteRendimiento();
+				ventanaRendimiento.setVisible(true);
+			}
+		});
 		menuReportes.add(mntmReporteDeRendimiento);
 		
-		JMenuItem mntmReporteDeEmpleados = new JMenuItem("Reporte de Mercado");
-		menuReportes.add(mntmReporteDeEmpleados);
+		JMenuItem mntmReporteDeMercado = new JMenuItem("Reporte de Mercado");
+		mntmReporteDeMercado.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ReporteMercado ventanaMercado = new ReporteMercado();
+				ventanaMercado.setVisible(true);
+			}
+		});
+		menuReportes.add(mntmReporteDeMercado);
 		
 		// MENÚ RESPALDO
 		JMenu menuRespaldo = new JMenu("Respaldo");
