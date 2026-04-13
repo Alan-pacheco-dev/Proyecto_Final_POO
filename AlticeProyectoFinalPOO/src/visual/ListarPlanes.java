@@ -38,6 +38,7 @@ public class ListarPlanes extends JDialog {
 	private JButton btnSeleccionar;
 	private JButton btnEliminar;
 	private JButton btnVerServicios;
+	private JButton btnAgregarServicio;
 	
 	private Plan planSeleccionado = null;
 
@@ -102,6 +103,7 @@ public class ListarPlanes extends JDialog {
 						btnSeleccionar.setEnabled(true);
 						btnEliminar.setEnabled(true);
 						btnVerServicios.setEnabled(true); 
+						btnAgregarServicio.setEnabled(true);
 					}
 				}
 			}
@@ -155,6 +157,50 @@ public class ListarPlanes extends JDialog {
 			}
 		});
 		
+		btnAgregarServicio = new JButton("Agregar Servicio");
+		btnAgregarServicio.setEnabled(false);
+		btnAgregarServicio.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        if (planSeleccionado != null) {
+		            ListarServicios listarServis = new ListarServicios("Todos", true);
+		            listarServis.setVisible(true);
+
+		            Servicio s = listarServis.getServicioSeleccionado();
+		            if (s != null) {
+		                for (Servicio existing : planSeleccionado.getServiciosPlan()) {
+		                    if (existing.getTipoServicio().equalsIgnoreCase(s.getTipoServicio())) {
+		                        JOptionPane.showMessageDialog(null,
+		                            "Este plan ya tiene un servicio de tipo " + s.getTipoServicio() + ".",
+		                            "Tipo duplicado", JOptionPane.WARNING_MESSAGE);
+		                        return;
+		                    }
+		                }
+
+		                planSeleccionado.getServiciosPlan().add(s);
+		                s.setEstaEnUso(true);
+
+		                planSeleccionado.actualizarPrecioPlan(planSeleccionado.calcularPrecioTotal());
+
+		                EmpresaAltice empresa = EmpresaAltice.getInstance();
+		                empresa.GuardarDatos(
+		                    empresa.getMisClientes(),
+		                    empresa.getMisEmpleados(),
+		                    empresa.getMisPlanes(),
+		                    empresa.getMisServicios(),
+		                    empresa.getMisUsuarios(),
+		                    empresa.getMisContratos(),
+		                    empresa.getPagos()
+		                );
+
+		                JOptionPane.showMessageDialog(null,
+		                    "Servicio agregado correctamente al plan.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+
+		                loadPlanes();
+		            }
+		        }
+		    }
+		});
+		
 		btnEliminar = new JButton("Eliminar");
 		btnEliminar.setEnabled(false);
 		btnEliminar.addActionListener(new ActionListener() {
@@ -193,6 +239,7 @@ public class ListarPlanes extends JDialog {
 						loadPlanes(); 
 						btnEliminar.setEnabled(false);
 						btnVerServicios.setEnabled(false);
+						btnAgregarServicio.setEnabled(false);
 						planSeleccionado = null;
 					}
 				}
@@ -211,8 +258,10 @@ public class ListarPlanes extends JDialog {
 			buttonPane.add(btnSeleccionar);
 			btnEliminar.setVisible(false);
 			btnVerServicios.setVisible(false); 
+			btnAgregarServicio.setVisible(false);
 		} else {
 			buttonPane.add(btnVerServicios); 
+			buttonPane.add(btnAgregarServicio);
 			buttonPane.add(btnEliminar);
 			btnSeleccionar.setVisible(false);
 		}

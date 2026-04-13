@@ -66,7 +66,7 @@ public class ListarServicios extends JDialog {
 		setTitle("Catálogo de Servicios Disponibles");
 		setModal(modoSeleccion); 
 		setResizable(false);
-		setBounds(100, 100, 800, 500);
+		setBounds(100, 100, 1000, 500);
 		setLocationRelativeTo(null);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -242,7 +242,7 @@ public class ListarServicios extends JDialog {
 		} else if (tipoFiltro.equals("Televisión")) {
 			model.setColumnIdentifiers(new String[]{"ID Servicio", "Precio ($)", "Canales", "Cajitas", "HD", "En Uso"});
 		} else {
-			model.setColumnIdentifiers(new String[]{"ID Servicio", "Tipo", "Precio Mensual ($)", "En Uso"});
+			model.setColumnIdentifiers(new String[]{"ID Servicio", "Tipo", "Precio Mensual ($)", "Detalles","En Uso"});
 		}
 
 		for (Servicio s : EmpresaAltice.getInstance().getMisServicios()) {
@@ -260,13 +260,14 @@ public class ListarServicios extends JDialog {
 			}
 
 			if (tipoFiltro.equals("Todos")) {
-				Object[] row = new Object[4];
-				row[0] = s.getIdServicio(); 
-				row[1] = s.getTipoServicio(); 
-				row[2] = s.getPrecioServicio();
-				row[3] = textoEnUso;
-				model.addRow(row);
-			} 
+			    Object[] row = new Object[5];
+			    row[0] = s.getIdServicio();
+			    row[1] = s.getTipoServicio();
+			    row[2] = s.getPrecioServicio();
+			    row[3] = buildDetalles(s);
+			    row[4] = textoEnUso;
+			    model.addRow(row);
+			}
 			else if (tipoFiltro.equals("Internet") && s instanceof ServicioInternet) {
 				ServicioInternet net = (ServicioInternet) s;
 				
@@ -336,6 +337,34 @@ public class ListarServicios extends JDialog {
 				model.addRow(row);
 			}
 		}
+		if (tipoFiltro.equals("Todos")) {
+		       table.getColumnModel().getColumn(3).setPreferredWidth(300);
+		}
+	}
+	
+	private String buildDetalles(Servicio s) {
+	    if (s instanceof ServicioInternet) {
+	        ServicioInternet net = (ServicioInternet) s;
+	        String router = net.isTieneRouter() ? "Sí" : "No";
+	        return "Velocidad: " + net.getVelocidadMbps() + " Mbps | Router: " + router;
+
+	    } else if (s instanceof ServicioMovil) {
+	        ServicioMovil movil = (ServicioMovil) s;
+	        return "Datos: " + movil.getDatosGb() + " GB | Minutos: " + movil.getMinutos() + " | SMS: " + movil.getSms();
+
+	    } else if (s instanceof ServicioTelefonia) {
+	        ServicioTelefonia tel = (ServicioTelefonia) s;
+	        String ilimitado = tel.isLlamadasIlimitadas() ? "Sí" : "No";
+	        return "Min. incluidos: " + tel.getMinutosIncluidos() + " | Ilimitado: " + ilimitado + " | Costo/min extra: $" + tel.getCostoMinutoExtra();
+
+	    } else if (s instanceof ServicioTelevision) {
+	        ServicioTelevision tv = (ServicioTelevision) s;
+	        String hd = tv.isTieneHD() ? "Sí" : "No";
+	        return "Canales: " + tv.getCantidadCanales() + " | Cajitas: " + tv.getCajitasIncluidas() + " | HD: " + hd;
+
+	    } else {
+	        return "-";
+	    }
 	}
 	
 	public Servicio getServicioSeleccionado() {
