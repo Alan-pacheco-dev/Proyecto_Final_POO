@@ -10,10 +10,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import logico.Cliente;
-import logico.Empleado;
 import logico.EmpresaAltice;
-import logico.Usuario;
 
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
@@ -25,9 +22,6 @@ public class Principal extends JFrame {
 	private JPanel contentPane;
 	private Dimension dim;
 
-	/**
-	 * Launch the application.
-	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -41,11 +35,8 @@ public class Principal extends JFrame {
 		});
 	}
 
-	/**
-	 * Create the frame.
-	 */
 	public Principal() {
-		EmpresaAltice empresa= EmpresaAltice.getInstance();
+		EmpresaAltice empresa = EmpresaAltice.getInstance();
 		empresa.CargarDatos(empresa.getMisClientes(), 
 				empresa.getMisEmpleados(), 
 				empresa.getMisPlanes(), 
@@ -58,18 +49,20 @@ public class Principal extends JFrame {
 		empresa.refrescarConteosContratos();
 		empresa.actualizarDeudaClientes();
 		
+		// --- ALERTA DE PAGOS AL INICIO ---
+		int pagosGenerados = empresa.generarPagosMensuales();
+		if (pagosGenerados > 0) {
+			JOptionPane.showMessageDialog(null,
+				"Se generaron " + pagosGenerados + " nuevos pagos mensuales pendientes",
+				"Información", JOptionPane.INFORMATION_MESSAGE);
+		}
+		
 		//Comentado para acceder directamente a la pantalla principal sin el login
 		/*
 		Login login = new Login(this, empresa.getMisUsuarios());
 		login.setModal(true);
 		login.setVisible(true);
 		 */
-		int pagosGenerados = empresa.generarPagosMensuales();
-		if (pagosGenerados > 0) {
-		    JOptionPane.showMessageDialog(null,
-		        "Se generaron " + pagosGenerados + " nuevos pagos mensuales pendientes",
-		        "Información", JOptionPane.INFORMATION_MESSAGE);
-		}
 		
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -81,6 +74,7 @@ public class Principal extends JFrame {
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
 		
+		// --- MENÚ USUARIOS ---
 		JMenu menuUsuarios = new JMenu("Usuarios");
 		menuBar.add(menuUsuarios);
 		
@@ -98,14 +92,13 @@ public class Principal extends JFrame {
 		menuUsuarios.add(menuItemListarUsuarios);
 		mntmNewMenuItem_2.addActionListener(new ActionListener() {
 			 public void actionPerformed(ActionEvent e) {
-		
 				RegistrarUsuario regisUser = new RegistrarUsuario(null);
 				regisUser.setModal(true);
 				regisUser.setVisible(true);
-				
 			 }
 		});
 		
+		// --- MENÚ EMPLEADOS ---
 		JMenu menuEmpleados = new JMenu("Empleados");
 		menuBar.add(menuEmpleados);
 		
@@ -115,7 +108,6 @@ public class Principal extends JFrame {
 		JMenuItem menuItemListarEmpleados = new JMenuItem("Listar");
 		menuItemListarEmpleados.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//Se manda false solo para que muestre y se pueda eliminar, no seleccionar
 				ListarEmpleados listarEmps = new ListarEmpleados(false);
 				listarEmps.setModal(true);
 				listarEmps.setVisible(true);
@@ -124,12 +116,13 @@ public class Principal extends JFrame {
 		menuEmpleados.add(menuItemListarEmpleados);
 		mntmNewMenuItem_1.addActionListener(new ActionListener() {
 			 public void actionPerformed(ActionEvent e) {
-		            RegistrarEmpleado regisEmp = new RegistrarEmpleado(null);
-		            regisEmp.setModal(true);
-		            regisEmp.setVisible(true);
+				RegistrarEmpleado regisEmp = new RegistrarEmpleado(null);
+				regisEmp.setModal(true);
+				regisEmp.setVisible(true);
 			 }
 		});
 		
+		// --- MENÚ CLIENTES ---
 		JMenu menuClientes = new JMenu("Clientes");
 		menuBar.add(menuClientes);
 		
@@ -147,12 +140,13 @@ public class Principal extends JFrame {
 		menuClientes.add(menuItemListarClientes);
 		mntmNewMenuItem.addActionListener(new ActionListener() {
 			 public void actionPerformed(ActionEvent e) {
-		            RegistrarCliente regisCli = new RegistrarCliente(null);
-		            regisCli.setModal(true);
-		            regisCli.setVisible(true);
+				RegistrarCliente regisCli = new RegistrarCliente(null);
+				regisCli.setModal(true);
+				regisCli.setVisible(true);
 			 }
 		});
 		
+		// --- MENÚ CONTRATOS ---
 		JMenu menuContratos = new JMenu("Contratos");
 		menuBar.add(menuContratos);
 		
@@ -176,6 +170,7 @@ public class Principal extends JFrame {
 		});
 		menuContratos.add(menuItem_7);
 		
+		// --- MENÚ PLANES ---
 		JMenu menuPlanes = new JMenu("Planes");
 		menuBar.add(menuPlanes);
 		
@@ -192,12 +187,13 @@ public class Principal extends JFrame {
 		JMenuItem menuItem_1 = new JMenuItem("Listar");
 		menuItem_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ListarPlanes ventanaPlanes = new ListarPlanes(false); // false = Encender botón Eliminar
+				ListarPlanes ventanaPlanes = new ListarPlanes(false);
 				ventanaPlanes.setVisible(true);
 			}
 		});
 		menuPlanes.add(menuItem_1);
 		
+		// --- MENÚ SERVICIOS ---
 		JMenu menuServicios = new JMenu("Servicios");
 		menuBar.add(menuServicios);
 		
@@ -221,6 +217,7 @@ public class Principal extends JFrame {
 		});
 		menuServicios.add(menuItem_3);
 		
+		// --- MENÚ PAGOS ---
 		JMenu menuPagos = new JMenu("Pagos");
 		menuBar.add(menuPagos);
 		
@@ -235,16 +232,19 @@ public class Principal extends JFrame {
 		
 		JMenuItem menuItemGenerarPagos = new JMenuItem("Generar");
 		menuItemGenerarPagos.addActionListener(new ActionListener() {
-			
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int confirm = JOptionPane.showConfirmDialog(null, "¿Desea generar los pagos mensuales pendientes?", "Confirmación", 
 						JOptionPane.YES_NO_OPTION);
-			        if (confirm == JOptionPane.YES_OPTION) {
-			            EmpresaAltice.getInstance().generarPagosMensuales();
-			            JOptionPane.showMessageDialog(null, "Pagos generados correctamente", "Información", JOptionPane.INFORMATION_MESSAGE);
-			        }
-				
+				if (confirm == JOptionPane.YES_OPTION) {
+					// Guardamos el int que nos retorna y mostramos el resultado
+					int generadosManuales = EmpresaAltice.getInstance().generarPagosMensuales();
+					if (generadosManuales > 0) {
+						JOptionPane.showMessageDialog(null, "Se generaron " + generadosManuales + " pagos correctamente", "Información", JOptionPane.INFORMATION_MESSAGE);
+					} else {
+						JOptionPane.showMessageDialog(null, "El sistema está al día. No hay pagos nuevos por generar.", "Información", JOptionPane.INFORMATION_MESSAGE);
+					}
+				}
 			}
 		});
 		menuPagos.add(menuItemGenerarPagos);
@@ -260,6 +260,7 @@ public class Principal extends JFrame {
 			}
 		});
 		
+		// --- MENÚ REPORTES ---
 		JMenu menuReportes = new JMenu("Reportes");
 		menuBar.add(menuReportes);
 		
@@ -272,18 +273,71 @@ public class Principal extends JFrame {
 		JMenuItem mntmReporteDeEmpleados = new JMenuItem("Reporte de Mercado");
 		menuReportes.add(mntmReporteDeEmpleados);
 		
-		//Comentado para acceder directamente a la pantalla principal sin el login
-		/*
-		Usuario usuarioActual = EmpresaAltice.getLoginUser();
-	    if (!usuarioActual.getRolEmpleado().equalsIgnoreCase("Administrativo")) {
-	        mnNewMenu_1.setVisible(false);
-	        mnNewMenu_2.setVisible(false); 
-	    }
-		*/
+		// --- MENÚ RESPALDO ---
+		JMenu menuRespaldo = new JMenu("Respaldo");
+		menuBar.add(menuRespaldo);
+		
+		JMenuItem menuItemRespaldo = new JMenuItem("Generar Respaldo en Servidor");
+		menuItemRespaldo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int confirm = JOptionPane.showConfirmDialog(null, 
+						"¿Desea generar un respaldo de toda la base de datos en el servidor?", 
+						"Confirmación de Respaldo", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+				
+				if (confirm == JOptionPane.YES_OPTION) {
+					try {
+						java.net.Socket socket = new java.net.Socket("localhost", 7000);
+						java.io.ObjectOutputStream out = new java.io.ObjectOutputStream(new java.io.BufferedOutputStream(socket.getOutputStream()));
+						out.flush();
+						
+						EmpresaAltice empresaParaEnviar = EmpresaAltice.getInstance();
+						out.writeObject(empresaParaEnviar);
+						out.flush();
+						
+						JOptionPane.showMessageDialog(null, "El respaldo se ha enviado y guardado en el servidor exitosamente.", "Respaldo Completado", JOptionPane.INFORMATION_MESSAGE);
+						
+						out.close();
+						socket.close();
+					} catch (Exception ex) {
+						JOptionPane.showMessageDialog(null, "No se pudo conectar con el servidor. Verifique que esté encendido.", "Error de Conexión", JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			}
+		});
+		menuRespaldo.add(menuItemRespaldo);
+		
+		JMenuItem menuItemRestaurar = new JMenuItem("Restaurar desde archivo...");
+		menuItemRestaurar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				javax.swing.JFileChooser fileChooser = new javax.swing.JFileChooser();
+				fileChooser.setDialogTitle("Seleccione el archivo de respaldo (.txt)");
+				
+				int seleccion = fileChooser.showOpenDialog(null);
+				
+				if (seleccion == javax.swing.JFileChooser.APPROVE_OPTION) {
+					java.io.File archivoSeleccionado = fileChooser.getSelectedFile();
+					
+					int confirm = JOptionPane.showConfirmDialog(null, 
+							"ALERTA: ¿Está seguro de restaurar el sistema con este archivo?\nSe borrarán los datos actuales y se reemplazarán por los del respaldo.", 
+							"Confirmar Restauración", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+					
+					if (confirm == JOptionPane.YES_OPTION) {
+						boolean exito = EmpresaAltice.getInstance().CargarDatosDesdeRespaldo(archivoSeleccionado.getAbsolutePath());
+						
+						if (exito) {
+							JOptionPane.showMessageDialog(null, "Respaldo restaurado con éxito. El sistema ha vuelto al estado guardado.", "Restauración Exitosa", JOptionPane.INFORMATION_MESSAGE);
+						} else {
+							JOptionPane.showMessageDialog(null, "Error al leer el archivo. Puede que esté corrupto o no sea un respaldo válido.", "Error", JOptionPane.ERROR_MESSAGE);
+						}
+					}
+				}
+			}
+		});
+		menuRespaldo.add(menuItemRestaurar);
+		
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
 	}
-
 }
