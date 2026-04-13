@@ -321,6 +321,58 @@ public class RegistrarServicio extends JDialog {
 				}
 
 				EmpresaAltice empresa = EmpresaAltice.getInstance();
+				
+				String tipoSeleccionado = "";
+				if (rdbtnMovil.isSelected()) tipoSeleccionado = "Móvil";
+				else if (rdbtnInternet.isSelected()) tipoSeleccionado = "Internet";
+				else if (rdbtnTelefonia.isSelected()) tipoSeleccionado = "Telefonía";
+				else if (rdbtnTelevision.isSelected()) tipoSeleccionado = "Televisión";
+
+				if (tipoSeleccionado.isEmpty()) {
+				    JOptionPane.showMessageDialog(null, "Debe seleccionar un tipo de servicio.", "Error", JOptionPane.ERROR_MESSAGE);
+				    return;
+				}
+				
+				for (logico.Servicio s : empresa.getMisServicios()) {
+				    if (!s.getTipoServicio().equalsIgnoreCase(tipoSeleccionado)) continue;
+
+				    boolean esDuplicado = false;
+
+				    if (rdbtnMovil.isSelected() && s instanceof ServicioMovil) {
+				        ServicioMovil sm = (ServicioMovil) s;
+				        esDuplicado = sm.getDatosGb() == (Integer) spnDatos.getValue()
+				                   && sm.getMinutos() == (Integer) spnMinutos.getValue()
+				                   && sm.getSms() == (Integer) spnSms.getValue()
+				                   && sm.getPrecioServicio() == precio;
+
+				    } else if (rdbtnInternet.isSelected() && s instanceof ServicioInternet) {
+				        ServicioInternet si = (ServicioInternet) s;
+				        esDuplicado = si.getVelocidadMbps() == (Integer) spnVelocidad.getValue()
+				                   && si.isTieneRouter() == rbRouterSi.isSelected()
+				                   && si.getPrecioServicio() == precio;
+
+				    } else if (rdbtnTelefonia.isSelected() && s instanceof ServicioTelefonia) {
+				        ServicioTelefonia st = (ServicioTelefonia) s;
+				        esDuplicado = st.getMinutosIncluidos() == (Integer) spnMinutosIncluidos.getValue()
+				                   && st.isLlamadasIlimitadas() == rbIlimitadoSi.isSelected()
+				                   && st.getCostoMinutoExtra() == ((Double) spnCostoMinuto.getValue()).floatValue()
+				                   && st.getPrecioServicio() == precio;
+
+				    } else if (rdbtnTelevision.isSelected() && s instanceof ServicioTelevision) {
+				        ServicioTelevision stv = (ServicioTelevision) s;
+				        esDuplicado = stv.getCantidadCanales() == (Integer) spnCanales.getValue()
+				                   && stv.getCajitasIncluidas() == (Integer) spnCajitas.getValue()
+				                   && stv.isTieneHD() == rbHDSi.isSelected()
+				                   && stv.getPrecioServicio() == precio;
+				    }
+
+				    if (esDuplicado) {
+				        JOptionPane.showMessageDialog(null,
+				            "Ya existe un servicio de tipo " + tipoSeleccionado + " con exactamente las mismas características.",
+				            "Servicio duplicado", JOptionPane.WARNING_MESSAGE);
+				        return;
+				    }
+				}
 
 				if (rdbtnMovil.isSelected()) {
 

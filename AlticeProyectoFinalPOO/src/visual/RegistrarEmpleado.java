@@ -166,11 +166,22 @@ public class RegistrarEmpleado extends JDialog {
 							return;
 						}
 						
+						EmpresaAltice empresa = EmpresaAltice.getInstance();
+
+						for (Empleado emp : empresa.getMisEmpleados()) {
+						    if (miEmpleado != null && emp.getIdPersona().equals(miEmpleado.getIdPersona())) continue;
+						    if (emp.getCedula().equals(cedula)) {
+						        JOptionPane.showMessageDialog(null, 
+						            "Ya existe un empleado registrado con esa cédula.",
+						            "Cédula duplicada", JOptionPane.WARNING_MESSAGE);
+						        return;
+						    }
+						}
+						
 						float salario = ((Double) spnSalario.getValue()).floatValue();
 						float comisiones = ((Double) spnComisiones.getValue()).floatValue();
 						
-						EmpresaAltice empresa = EmpresaAltice.getInstance();
-
+						
 						if(miEmpleado == null) {
 							
 							Empleado nuevoEmpleado = new Empleado(null, nombre, cedula, salario, comisiones, 0f, 0f, rol);

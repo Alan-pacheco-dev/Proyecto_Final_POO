@@ -44,6 +44,12 @@ public class Login extends JDialog {
 		dim = getToolkit().getScreenSize();
 		setSize(403, 323);
 		setLocationRelativeTo(null);
+		setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+		addWindowListener(new java.awt.event.WindowAdapter() {
+		    public void windowClosing(java.awt.event.WindowEvent e) {
+		        System.exit(0);
+		    }
+		});
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);

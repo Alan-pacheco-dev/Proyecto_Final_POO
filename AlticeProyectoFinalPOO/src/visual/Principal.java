@@ -72,7 +72,22 @@ public class Principal extends JFrame {
 		final JMenu menuReportes = new JMenu("Reportes");
 		
 		setResizable(false);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE); 
+		addWindowListener(new java.awt.event.WindowAdapter() {
+		    public void windowClosing(java.awt.event.WindowEvent e) {
+		        EmpresaAltice empresa = EmpresaAltice.getInstance();
+		        empresa.GuardarDatos(
+		            empresa.getMisClientes(),
+		            empresa.getMisEmpleados(),
+		            empresa.getMisPlanes(),
+		            empresa.getMisServicios(),
+		            empresa.getMisUsuarios(),
+		            empresa.getMisContratos(),
+		            empresa.getPagos()
+		        );
+		        System.exit(0);
+		    }
+		});
 		setBounds(100, 100, 1071, 711);
 		dim = getToolkit().getScreenSize();
 		setSize(dim.width,dim.height);
@@ -307,7 +322,7 @@ public class Principal extends JFrame {
 				
 				if (confirm == JOptionPane.YES_OPTION) {
 					try {
-						java.net.Socket socket = new java.net.Socket("localhost", 7000);
+						java.net.Socket socket = new java.net.Socket("localhost", 7001);
 						java.io.ObjectOutputStream out = new java.io.ObjectOutputStream(new java.io.BufferedOutputStream(socket.getOutputStream()));
 						out.flush();
 						

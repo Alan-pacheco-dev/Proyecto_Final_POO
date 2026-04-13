@@ -300,6 +300,14 @@ public class RegistrarContrato extends JDialog {
 							return;
 						}
 						
+						for (Contrato c : clienteActual.getMisContratos()) {
+						    if (c.isActivo() && c.getPlanContrato().getIdPlan().equals(planEscogido.getIdPlan())) {
+						        JOptionPane.showMessageDialog(null, 
+						            "El cliente ya tiene un contrato activo con ese plan.","Error", JOptionPane.ERROR_MESSAGE);
+						        return;
+						    }
+						}
+						
 						EmpresaAltice empresa = EmpresaAltice.getInstance();
 						
 						float precioPlan = planEscogido.getPrecioTotal();

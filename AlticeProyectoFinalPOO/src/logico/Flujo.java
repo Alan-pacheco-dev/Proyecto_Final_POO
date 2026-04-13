@@ -32,7 +32,7 @@ public class Flujo extends Thread {
 
 				String fechaDelRespaldo = java.time.LocalDate.now().toString();
 				String nombreDelRespaldo = "EmpresaAltice_respaldo_" + fechaDelRespaldo + ".txt";
-
+				
 				datos.GuardarDatos(
 					datos.getMisClientes(),
 					datos.getMisEmpleados(),

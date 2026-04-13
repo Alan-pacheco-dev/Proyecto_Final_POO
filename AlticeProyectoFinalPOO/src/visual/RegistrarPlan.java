@@ -265,6 +265,14 @@ public class RegistrarPlan extends JDialog {
 						}
 
 						EmpresaAltice empresa = EmpresaAltice.getInstance();
+						
+						for (Plan p : empresa.getMisPlanes()) {
+						    if (p.getNombrePlan().equalsIgnoreCase(nombre)) {
+						        JOptionPane.showMessageDialog(null,
+						            "Ya existe un plan registrado con ese nombre.", "Nombre duplicado", JOptionPane.WARNING_MESSAGE);
+						        return;
+						    }
+						}
 
 						Plan nuevoPlan = new Plan(nombre, "", 0.0f);
 						nuevoPlan.setServiciosPlan(serviciosEscogidos);

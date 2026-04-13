@@ -141,6 +141,17 @@ public class RegistrarUsuario extends JDialog {
 						
 						EmpresaAltice empresa = EmpresaAltice.getInstance();
 						
+						for (Usuario u : empresa.getMisUsuarios()) {
+						    if (miUsuario != null && u.getIdUsuario().equals(miUsuario.getIdUsuario())) continue;
+						    
+						    if (u.getNombreUsuario().equalsIgnoreCase(nombreUsuario)) {
+						        JOptionPane.showMessageDialog(null,
+						            "Ya existe un usuario registrado con ese nombre de usuario.",
+						            "Usuario duplicado", JOptionPane.WARNING_MESSAGE);
+						        return;
+						    }
+						}
+						
 						if (miUsuario == null) {
 							if (empSeleccionado == null) {
 								JOptionPane.showMessageDialog(null, "Debe seleccionar un empleado para asignarle el usuario.", "Faltan datos", JOptionPane.WARNING_MESSAGE);

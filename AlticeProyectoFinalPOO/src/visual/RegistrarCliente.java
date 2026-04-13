@@ -241,6 +241,23 @@ public class RegistrarCliente extends JDialog {
 						}
 						
 						EmpresaAltice empresa = EmpresaAltice.getInstance();
+						
+						for (Cliente c : empresa.getMisClientes()) {
+						    if (miCliente != null && c.getIdPersona().equals(miCliente.getIdPersona())) continue;
+						    if (c.getRnc().equals(cedulaOrRNC)) {
+						        String tipoDoc2 = esEmpresa ? "RNC" : "Cédula";
+						        JOptionPane.showMessageDialog(null,
+						            "Ya existe un cliente registrado con ese " + tipoDoc2 + ".",
+						            tipoDoc2 + " duplicado", JOptionPane.WARNING_MESSAGE);
+						        return;
+						    }
+						    if (c.getEmail().equalsIgnoreCase(email)) {
+						        JOptionPane.showMessageDialog(null,
+						            "Ya existe un cliente registrado con ese email.",
+						            "Email duplicado", JOptionPane.WARNING_MESSAGE);
+						        return;
+						    }
+						}
 
 						if (miCliente == null) {
 							Cliente cli = new Cliente(null, nombre, direccion, email, 0, esEmpresa, cedulaOrRNC);
