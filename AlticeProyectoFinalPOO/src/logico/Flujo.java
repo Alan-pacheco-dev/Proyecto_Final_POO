@@ -12,7 +12,6 @@ public class Flujo extends Thread {
 	{
 		nsfd = sfd;
 		try {
-			// ObjectOutputStream primero, luego ObjectInputStream
 			FlujoEscritura = new ObjectOutputStream(new BufferedOutputStream(sfd.getOutputStream()));
 			FlujoEscritura.flush();
 			FlujoLectura = new ObjectInputStream(new BufferedInputStream(sfd.getInputStream()));
@@ -28,15 +27,12 @@ public class Flujo extends Thread {
 
 		while (true) {
 			try {
-				// Recibe el objeto EmpresaAltice
 				EmpresaAltice datos = (EmpresaAltice) FlujoLectura.readObject();
 				System.out.println("Datos recibidos de: " + nsfd.getInetAddress());
 
-				// --- GENERACIÓN DEL NOMBRE DEL RESPALDO ---
 				String fechaDelRespaldo = java.time.LocalDate.now().toString();
 				String nombreDelRespaldo = "EmpresaAltice_respaldo_" + fechaDelRespaldo + ".txt";
 
-				// Guarda el respaldo en el servidor (Usa el nuevo método de 8 parámetros)
 				datos.GuardarDatos(
 					datos.getMisClientes(),
 					datos.getMisEmpleados(),
@@ -63,7 +59,6 @@ public class Flujo extends Thread {
 	public void broadcast(EmpresaAltice datos) 
 	{
 		synchronized (Servidor.usuarios) {
-			// Usamos un for tradicional para iterar el Vector
 			for (int i = 0; i < Servidor.usuarios.size(); i++) {
 				Flujo f = (Flujo) Servidor.usuarios.get(i);
 				

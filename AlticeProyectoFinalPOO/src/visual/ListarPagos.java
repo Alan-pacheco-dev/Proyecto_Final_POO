@@ -59,7 +59,6 @@ public class ListarPagos extends JDialog {
         getContentPane().add(contentPanel, BorderLayout.CENTER);
         contentPanel.setLayout(new BorderLayout(0, 10));
 
-        // Panel de filtros
         JPanel panelFiltros = new JPanel();
         panelFiltros.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 0));
         contentPanel.add(panelFiltros, BorderLayout.NORTH);
@@ -89,7 +88,6 @@ public class ListarPagos extends JDialog {
         JButton btnLimpiar = new JButton("Limpiar filtros");
         panelFiltros.add(btnLimpiar);
 
-        // Panel de la tabla
         JPanel panelTabla = new JPanel();
         panelTabla.setLayout(new BorderLayout(0, 0));
         contentPanel.add(panelTabla, BorderLayout.CENTER);
@@ -142,7 +140,6 @@ public class ListarPagos extends JDialog {
             }
         });
 
-        // Panel de botones
         JPanel buttonPane = new JPanel();
         buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
         getContentPane().add(buttonPane, BorderLayout.SOUTH);

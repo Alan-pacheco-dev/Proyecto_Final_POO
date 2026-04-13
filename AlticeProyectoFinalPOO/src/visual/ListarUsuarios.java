@@ -35,7 +35,7 @@ public class ListarUsuarios extends JDialog {
     private TableRowSorter<DefaultTableModel> sorter;
     
     private JButton btnEliminar;
-    private JButton btnActualizar; // NUEVO BOTÓN
+    private JButton btnActualizar; 
     
     private Usuario selected = null;
     
@@ -58,8 +58,7 @@ public class ListarUsuarios extends JDialog {
         contentPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         getContentPane().add(contentPanel, BorderLayout.CENTER);
         contentPanel.setLayout(new BorderLayout(0, 10));
-
-        // --- PANEL DE BÚSQUEDA ---
+        
         JPanel panelBusqueda = new JPanel();
         panelBusqueda.setLayout(new BorderLayout(10, 0));
         contentPanel.add(panelBusqueda, BorderLayout.NORTH);
@@ -70,7 +69,6 @@ public class ListarUsuarios extends JDialog {
         txtBuscar = new JTextField();
         panelBusqueda.add(txtBuscar, BorderLayout.CENTER);
 
-        // --- PANEL DE LA TABLA ---
         JPanel panelTabla = new JPanel();
         panelTabla.setLayout(new BorderLayout(0, 0));
         contentPanel.add(panelTabla, BorderLayout.CENTER);
@@ -88,12 +86,10 @@ public class ListarUsuarios extends JDialog {
                 if (indexVisual != -1) {
                     int indexReal = table.convertRowIndexToModel(indexVisual);
                     
-                    // CORRECCIÓN: La columna 0 es el ID, así que lo guardamos como ID
                     String idUsuario = (String) model.getValueAt(indexReal, 0);
 
-                    // Buscamos iterando de forma tradicional
                     for (Usuario u : EmpresaAltice.getInstance().getMisUsuarios()) {
-                        if (u.getIdUsuario().equals(idUsuario)) { // Buscamos por el ID extraído
+                        if (u.getIdUsuario().equals(idUsuario)) { 
                             selected = u;
                             break;
                         }
@@ -101,7 +97,7 @@ public class ListarUsuarios extends JDialog {
                     
                     if (selected != null) {
                         btnEliminar.setEnabled(true);
-                        btnActualizar.setEnabled(true); // Encendemos el botón de actualizar
+                        btnActualizar.setEnabled(true);
                     }
                 }
             }
@@ -133,24 +129,20 @@ public class ListarUsuarios extends JDialog {
             }
         });
 
-        // --- PANEL DE BOTONES ---
         JPanel buttonPane = new JPanel();
         buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
         getContentPane().add(buttonPane, BorderLayout.SOUTH);
 
-        // 1. Botón Actualizar
         btnActualizar = new JButton("Actualizar");
         btnActualizar.setEnabled(false);
         btnActualizar.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (selected != null) {
                     
-                    // Abrimos la ventana pasándole el usuario a actualizar
                     RegistrarUsuario ventanaUpdate = new RegistrarUsuario(selected);
                     ventanaUpdate.setModal(true);
                     ventanaUpdate.setVisible(true);
                     
-                    // Sincronización visual al terminar
                     loadUsuarios();
                     btnActualizar.setEnabled(false);
                     btnEliminar.setEnabled(false);
@@ -160,7 +152,6 @@ public class ListarUsuarios extends JDialog {
         });
         buttonPane.add(btnActualizar);
 
-        // 2. Botón Eliminar
         btnEliminar = new JButton("Eliminar");
         btnEliminar.setEnabled(false);
         btnEliminar.addActionListener(new ActionListener() {
@@ -198,7 +189,7 @@ public class ListarUsuarios extends JDialog {
                         
                         loadUsuarios();
                         btnEliminar.setEnabled(false);
-                        btnActualizar.setEnabled(false); // Se apagan ambos botones
+                        btnActualizar.setEnabled(false);
                         selected = null;
                     }
                 }
@@ -206,7 +197,6 @@ public class ListarUsuarios extends JDialog {
         });
         buttonPane.add(btnEliminar);
 
-        // 3. Botón Cerrar
         JButton btnCerrar = new JButton("Cerrar");
         btnCerrar.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {

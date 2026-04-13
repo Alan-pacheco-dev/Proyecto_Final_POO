@@ -37,11 +37,9 @@ public class RegistrarContrato extends JDialog {
 	private JTextField txtAnNoHa;
 	private JTextField txtCodigoCliente;
 	
-	// Variables para guardar la selección de las otras ventanas
 	private Cliente clienteActual = null;
 	private Plan planEscogido = null;
 	
-	// Variables de seguridad para los empleados y comisiones
 	private Empleado empleadoLogueado = null; 
 	private Empleado empleadoComision = null; 
 	
@@ -49,7 +47,6 @@ public class RegistrarContrato extends JDialog {
 	private JTextField txtNombreEmpleadoCargo;
 	private JTextField txtPorcentajeAplicado;
 
-	// Constructor principal que recibe la data de quien lo llama (El menú principal)
 	public RegistrarContrato(Cliente cliente, Empleado empleadoSesion) {
 		
 		this.clienteActual = cliente;
@@ -71,7 +68,6 @@ public class RegistrarContrato extends JDialog {
 			contentPanel.add(panel, BorderLayout.CENTER);
 			panel.setLayout(null);
 			
-			// --- DATOS DEL CONTRATO ---
 			JLabel lblNewLabel = new JLabel("ID Contrato");
 			lblNewLabel.setBounds(20, 37, 117, 34);
 			panel.add(lblNewLabel);
@@ -94,7 +90,6 @@ public class RegistrarContrato extends JDialog {
 			txtAnNoHa.setBounds(315, 82, 185, 20);
 			panel.add(txtAnNoHa);
 			
-			// --- DATOS DEL CLIENTE ---
 			JLabel label = new JLabel("Código del Cliente");
 			label.setBounds(20, 129, 148, 34);
 			panel.add(label);
@@ -160,7 +155,6 @@ public class RegistrarContrato extends JDialog {
 			txtDireccionCliente.setBounds(20, 411, 490, 20);
 			panel.add(txtDireccionCliente);
 			
-			// --- SELECCIÓN DEL PLAN ---
 			JLabel lblPlan = new JLabel("Plan del contrato");
 			lblPlan.setBounds(20, 463, 222, 34);
 			panel.add(lblPlan);
@@ -201,7 +195,6 @@ public class RegistrarContrato extends JDialog {
 			btnVerServiciosPlan.setBounds(303, 539, 207, 23);
 			panel.add(btnVerServiciosPlan);
 			
-			// --- ASIGNACIÓN DEL EMPLEADO / COMISIÓN ---
 			JLabel lblEmpleadoACargo = new JLabel("Empleado a cargo del contrato");
 			lblEmpleadoACargo.setBounds(20, 585, 278, 34);
 			panel.add(lblEmpleadoACargo);
@@ -250,17 +243,15 @@ public class RegistrarContrato extends JDialog {
 			btnCrearPlan.setBounds(18, 539, 119, 23);
 			panel.add(btnCrearPlan);
 			
-			// Lógica de seguridad para Roles
 			if (empleadoLogueado != null) {
 				if (empleadoLogueado.getRolEmpleado().equalsIgnoreCase("Administrativo")) {
 					txtNombreEmpleadoCargo.setText("Seleccione un empleado...");
-					btnEscogerEmpleado.setVisible(true); // El admin puede buscar a quien sea
+					btnEscogerEmpleado.setVisible(true);
 				} else {
-					// Si es vendedor, se le asigna obligatoriamente a él
 					empleadoComision = empleadoLogueado;
 					txtNombreEmpleadoCargo.setText(empleadoComision.getNombre());
 					txtPorcentajeAplicado.setText(String.valueOf(empleadoComision.getComisiones()));
-					btnEscogerEmpleado.setVisible(false); // No puede cederle la venta a otro
+					btnEscogerEmpleado.setVisible(false); 
 				}
 			}
 		}
@@ -315,19 +306,15 @@ public class RegistrarContrato extends JDialog {
 						float comision = empleadoComision.getComisiones();
 						LocalDate fechaInicio = LocalDate.now();
 						
-						// Generamos el contrato
 						Contrato cto = new Contrato(clienteActual, empleadoComision, comision, precioPlan, fechaInicio, null, planEscogido);
 						
-						// Actualizamos los contadores del cliente
 						clienteActual.setCantContratosActivos(clienteActual.getCantContratosActivos() + 1);
 						clienteActual.getMisContratos().add(cto);
 						clienteActual.setDeuda(clienteActual.getDeuda() + cto.getPrecioMensualAcordado());
 						
-						// Sumamos las ventas al empleado
 						empleadoComision.setCantidadVentas(empleadoComision.getCantidadVentas() + 1);
 						empleadoComision.setMontoVentas(empleadoComision.getMontoVentas() + precioPlan);
 						
-						// Guardamos en el Singleton
 						empresa.getMisContratos().add(cto);
 						empresa.GuardarDatos(
 								empresa.getMisClientes(), 

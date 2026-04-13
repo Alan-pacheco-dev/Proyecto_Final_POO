@@ -40,13 +40,11 @@ public class RegistrarPlan extends JDialog {
 	private JTextField txtAnNoHa;
 	private JTextField txtNombrePlan;
 
-	// Los RadioButtons ahora los declaramos globales para poder acceder a ellos desde los métodos
 	private JRadioButton rdbtnInternet;
 	private JRadioButton rdbtnMovil;
 	private JRadioButton rdbtnTelefonia;
 	private JRadioButton rdbtnTelevision;
 
-	// === MEMORIA TEMPORAL PARA LOS SERVICIOS DEL PLAN ===
 	private ArrayList<Servicio> serviciosEscogidos;
 
 	public static void main(String[] args) {
@@ -70,7 +68,6 @@ public class RegistrarPlan extends JDialog {
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(new BorderLayout(0, 0));
 
-		// Inicializamos la lista temporal
 		serviciosEscogidos = new ArrayList<Servicio>();
 
 		{
@@ -102,7 +99,7 @@ public class RegistrarPlan extends JDialog {
 			txtPrecioTotalPlan = new JTextField();
 			txtPrecioTotalPlan.setEditable(false);
 			txtPrecioTotalPlan.setColumns(10);
-			txtPrecioTotalPlan.setText("$ 0.0"); // Empieza en 0
+			txtPrecioTotalPlan.setText("$ 0.0");
 			txtPrecioTotalPlan.setBounds(20, 537, 250, 20);
 			panel.add(txtPrecioTotalPlan);
 
@@ -144,16 +141,12 @@ public class RegistrarPlan extends JDialog {
 			lblPlanIncluye.setBounds(20, 397, 222, 34);
 			panel.add(lblPlanIncluye);
 
-			// ==============================================================
-			// INICIO DE BOTONES Y RADIO BUTTONS DE SERVICIOS
-			// ==============================================================
-
 			rdbtnInternet = new JRadioButton("Internet");
 			rdbtnInternet.setBounds(20, 443, 109, 23);
 			panel.add(rdbtnInternet);
 
 			rdbtnMovil = new JRadioButton("Móvil");
-			rdbtnMovil.setBounds(130, 443, 109, 23); // Ajusté las coordenadas "X" para que quepan
+			rdbtnMovil.setBounds(130, 443, 109, 23);
 			panel.add(rdbtnMovil);
 
 			rdbtnTelefonia = new JRadioButton("Telefonía");
@@ -164,7 +157,6 @@ public class RegistrarPlan extends JDialog {
 			rdbtnTelevision.setBounds(360, 443, 109, 23);
 			panel.add(rdbtnTelevision);
 
-			// EVENTOS DE LOS RADIOBUTTONS (Bloqueo de marcado manual)
 			rdbtnInternet.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					if (rdbtnInternet.isSelected()) {
@@ -221,38 +213,32 @@ public class RegistrarPlan extends JDialog {
 			btnCrear.setBounds(15, 354, 129, 23);
 			panel.add(btnCrear);
 
-			// BOTÓN: ESCOGER SERVICIO
 			JButton btnEscogerServicio = new JButton("Escoger servicio");
 			btnEscogerServicio.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					// Abrimos en modo Selector (true)
 					ListarServicios listarServis = new ListarServicios("Todos", true);
 					listarServis.setVisible(true);
 
-					// Cuando la ventana se cierra, atrapamos el servicio seleccionado
 					Servicio s = listarServis.getServicioSeleccionado();
 					if (s != null) {
 						agregarServicio(s);
 					}
 				}
 			});
-			btnEscogerServicio.setBounds(154, 354, 153, 23); // Ajusté posición
+			btnEscogerServicio.setBounds(154, 354, 153, 23);
 			panel.add(btnEscogerServicio);
-
-			// BOTÓN: VER SERVICIOS ESCOGIDOS
 			JButton btnVerServiciosEscogidos = new JButton("Ver servicios escogidos");
 			btnVerServiciosEscogidos.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					if (serviciosEscogidos.isEmpty()) {
 						JOptionPane.showMessageDialog(null, "Aún no ha escogido ningún servicio para este plan.", "Lista Vacía", JOptionPane.INFORMATION_MESSAGE);
 					}else {
-						// Llamamos a tu nueva clase dedicada
 						ListarServiciosXPlan ventanaVisor = new ListarServiciosXPlan(serviciosEscogidos);
 						ventanaVisor.setVisible(true);
 					}
 				}
 			});
-			btnVerServiciosEscogidos.setBounds(317, 354, 200, 23); // Ajusté posición
+			btnVerServiciosEscogidos.setBounds(317, 354, 200, 23);
 			panel.add(btnVerServiciosEscogidos);
 		}
 
@@ -269,7 +255,6 @@ public class RegistrarPlan extends JDialog {
 						String nombre = txtNombrePlan.getText().trim();
 						String descripcion = txtDescripcionPlan.getText().trim();
 
-						// VALIDACIONES
 						if (nombre.isEmpty()) {
 							JOptionPane.showMessageDialog(null, "Debe ingresar un nombre para el plan.", "Error", JOptionPane.WARNING_MESSAGE);
 							return;
@@ -281,19 +266,12 @@ public class RegistrarPlan extends JDialog {
 
 						EmpresaAltice empresa = EmpresaAltice.getInstance();
 
-						// Creación del Plan
-						Plan nuevoPlan = new Plan(nombre, "", 0.0f); // El tiempoCuota no se usa y el precio se recalcula luego
+						Plan nuevoPlan = new Plan(nombre, "", 0.0f);
 						nuevoPlan.setServiciosPlan(serviciosEscogidos);
 
-						// IMPORTANTE: En tu clase "Plan" no tienes atributo "descripcionPlan".
-						// Si se lo agregas luego en tu paquete lógico, descomenta esta línea:
-						// nuevoPlan.setDescripcionPlan(descripcion);
-
-						// Recalculamos el precio total internamente y lo asignamos
 						float precioTotalMensual = nuevoPlan.calcularPrecioTotal();
 						nuevoPlan.setPrecioTotal(precioTotalMensual);
 
-						// Marcamos los servicios como "En Uso" para que ya no aparezcan en el listado general
 						for (Servicio s : serviciosEscogidos) {
 							s.setEstaEnUso(true);
 						}
@@ -311,7 +289,7 @@ public class RegistrarPlan extends JDialog {
 								);
 
 						JOptionPane.showMessageDialog(null, "¡Plan registrado con éxito!", "Información", JOptionPane.INFORMATION_MESSAGE);
-						dispose(); // Cerramos la ventana al terminar
+						dispose();
 					}
 				});
 				btnRegistrar.setActionCommand("OK");
@@ -331,18 +309,11 @@ public class RegistrarPlan extends JDialog {
 		}
 	}
 
-	// =========================================================
-	// MÉTODOS AYUDANTES PARA GESTIONAR LA LÓGICA DE SERVICIOS
-	// =========================================================
-
 	private void agregarServicio(Servicio nuevoServicio) {
-		// 1. Borramos cualquier servicio del mismo tipo que ya estuviera en la lista (Para reemplazarlo)
 		removerServicioPorTipo(nuevoServicio.getTipoServicio());
 
-		// 2. Lo agregamos a la memoria temporal
 		serviciosEscogidos.add(nuevoServicio);
 
-		// 3. Encendemos el RadioButton correspondiente (Validando la clase padre o el String)
 		if (nuevoServicio instanceof ServicioInternet || nuevoServicio.getTipoServicio().equalsIgnoreCase("Internet")) {
 			rdbtnInternet.setSelected(true);
 		} else if (nuevoServicio instanceof ServicioMovil || nuevoServicio.getTipoServicio().equalsIgnoreCase("Móvil")) {
@@ -353,14 +324,12 @@ public class RegistrarPlan extends JDialog {
 			rdbtnTelevision.setSelected(true);
 		}
 
-		// 4. Sumamos el nuevo precio
 		actualizarPrecio();
 	}
 
 	private void removerServicioPorTipo(String tipoServicio) {
 		Servicio servicioAEliminar = null;
 
-		// Buscamos si existe un servicio de ese tipo en nuestra lista
 		for (Servicio s : serviciosEscogidos) {
 			if (s.getTipoServicio().equalsIgnoreCase(tipoServicio)) {
 				servicioAEliminar = s;
@@ -368,7 +337,6 @@ public class RegistrarPlan extends JDialog {
 			}
 		}
 
-		// Si lo encontramos, lo borramos
 		if (servicioAEliminar != null) {
 			serviciosEscogidos.remove(servicioAEliminar);
 			actualizarPrecio();

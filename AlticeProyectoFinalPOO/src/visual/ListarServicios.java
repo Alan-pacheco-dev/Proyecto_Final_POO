@@ -61,7 +61,6 @@ public class ListarServicios extends JDialog {
 
 	public ListarServicios(String tipoInicial, boolean modoSeleccion) {
 		
-		// Guardamos el modo en la variable global de la clase
 		this.modoSeleccionGlobal = modoSeleccion;
 		
 		setTitle("Catálogo de Servicios Disponibles");
@@ -74,19 +73,16 @@ public class ListarServicios extends JDialog {
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(new BorderLayout(0, 15));
 
-		// --- PANEL SUPERIOR: FILTROS ---
 		JPanel panelFiltros = new JPanel();
 		panelFiltros.setLayout(new BorderLayout(20, 0)); 
 		contentPanel.add(panelFiltros, BorderLayout.NORTH);
 
-		// 1. Barra de búsqueda
 		JPanel panelBuscadorTexto = new JPanel(new BorderLayout(5, 0));
 		panelBuscadorTexto.add(new JLabel("Buscar (ID, Precio): "), BorderLayout.WEST);
 		txtBuscar = new JTextField();
 		panelBuscadorTexto.add(txtBuscar, BorderLayout.CENTER);
 		panelFiltros.add(panelBuscadorTexto, BorderLayout.CENTER);
 
-		// 2. ComboBox para el tipo de servicio
 		JPanel panelComboBox = new JPanel(new BorderLayout(5, 0));
 		panelComboBox.add(new JLabel("Tipo: "), BorderLayout.WEST);
 		cbxFiltroTipo = new JComboBox<String>();
@@ -105,7 +101,6 @@ public class ListarServicios extends JDialog {
 		panelComboBox.add(cbxFiltroTipo, BorderLayout.CENTER);
 		panelFiltros.add(panelComboBox, BorderLayout.EAST);
 
-		// --- PANEL CENTRAL: TABLA ---
 		JPanel panelTabla = new JPanel();
 		panelTabla.setLayout(new BorderLayout(0, 0));
 		contentPanel.add(panelTabla, BorderLayout.CENTER);
@@ -124,7 +119,6 @@ public class ListarServicios extends JDialog {
 					int indexReal = table.convertRowIndexToModel(indexVisual);
 					String idServicio = (String) model.getValueAt(indexReal, 0);
 					
-					// Búsqueda manual sin lambdas
 					servicioSeleccionado = null;
 					for(Servicio s : EmpresaAltice.getInstance().getMisServicios()) {
 						if(s.getIdServicio().equalsIgnoreCase(idServicio)) {
@@ -170,7 +164,6 @@ public class ListarServicios extends JDialog {
 			}
 		});
 
-		// --- PANEL INFERIOR: BOTONES ---
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
@@ -224,7 +217,6 @@ public class ListarServicios extends JDialog {
 			}
 		});
 		
-		// Lógica IF tradicional para el Modo Dual
 		if(modoSeleccionGlobal == true) {
 			buttonPane.add(btnSeleccionar);
 			btnEliminar.setVisible(false);
@@ -241,7 +233,6 @@ public class ListarServicios extends JDialog {
 	private void loadServicios(String tipoFiltro) {
 		model.setRowCount(0);
 		
-		// 1. Configuramos los títulos de las columnas según la selección
 		if (tipoFiltro.equals("Internet")) {
 			model.setColumnIdentifiers(new String[]{"ID Servicio", "Precio ($)", "Velocidad (Mbps)", "Router", "En Uso"});
 		} else if (tipoFiltro.equals("Móvil")) {
@@ -254,18 +245,13 @@ public class ListarServicios extends JDialog {
 			model.setColumnIdentifiers(new String[]{"ID Servicio", "Tipo", "Precio Mensual ($)", "En Uso"});
 		}
 
-		// 2. Llenamos la tabla con los datos específicos
 		for (Servicio s : EmpresaAltice.getInstance().getMisServicios()) {
-			
-			// NUEVA LÓGICA: Si estamos en modo selección, saltamos los servicios usados.
-			// Si no estamos en modo selección (menú general), los mostramos todos.
 			if (modoSeleccionGlobal == true) {
 				if (s.isEstaEnUso() == true) {
 					continue; 
 				}
 			}
 
-			// Determinamos el string para saber si está en uso (para mostrarlo en la tabla general)
 			String textoEnUso = "";
 			if (s.isEstaEnUso() == true) {
 				textoEnUso = "Sí";
@@ -273,7 +259,6 @@ public class ListarServicios extends JDialog {
 				textoEnUso = "No";
 			}
 
-			// Vista General
 			if (tipoFiltro.equals("Todos")) {
 				Object[] row = new Object[4];
 				row[0] = s.getIdServicio(); 
@@ -282,7 +267,6 @@ public class ListarServicios extends JDialog {
 				row[3] = textoEnUso;
 				model.addRow(row);
 			} 
-			// Vista Internet
 			else if (tipoFiltro.equals("Internet") && s instanceof ServicioInternet) {
 				ServicioInternet net = (ServicioInternet) s;
 				
@@ -301,7 +285,6 @@ public class ListarServicios extends JDialog {
 				row[4] = textoEnUso;
 				model.addRow(row);
 			} 
-			// Vista Móvil
 			else if (tipoFiltro.equals("Móvil") && s instanceof ServicioMovil) {
 				ServicioMovil movil = (ServicioMovil) s;
 				
@@ -314,7 +297,6 @@ public class ListarServicios extends JDialog {
 				row[5] = textoEnUso;
 				model.addRow(row);
 			} 
-			// Vista Telefonía Fija
 			else if (tipoFiltro.equals("Telefonía") && s instanceof ServicioTelefonia) {
 				ServicioTelefonia tel = (ServicioTelefonia) s;
 				
@@ -334,7 +316,6 @@ public class ListarServicios extends JDialog {
 				row[5] = textoEnUso;
 				model.addRow(row);
 			}
-			// Vista Televisión
 			else if (tipoFiltro.equals("Televisión") && s instanceof ServicioTelevision) {
 				ServicioTelevision tv = (ServicioTelevision) s;
 				

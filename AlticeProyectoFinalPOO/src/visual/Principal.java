@@ -10,7 +10,9 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import logico.Empleado;
 import logico.EmpresaAltice;
+import logico.Usuario;
 
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
@@ -49,7 +51,6 @@ public class Principal extends JFrame {
 		empresa.refrescarConteosContratos();
 		empresa.actualizarDeudaClientes();
 		
-		// --- ALERTA DE PAGOS AL INICIO ---
 		int pagosGenerados = empresa.generarPagosMensuales();
 		if (pagosGenerados > 0) {
 			JOptionPane.showMessageDialog(null,
@@ -62,7 +63,13 @@ public class Principal extends JFrame {
 		Login login = new Login(this, empresa.getMisUsuarios());
 		login.setModal(true);
 		login.setVisible(true);
-		 */
+		*/
+		
+		final JMenu menuUsuarios = new JMenu("Usuarios");
+		final JMenu menuEmpleados = new JMenu("Empleados");
+		final JMenu menuServicios = new JMenu("Servicios");
+		final JMenu menuPlanes = new JMenu("Planes");
+		final JMenu menuReportes = new JMenu("Reportes");
 		
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -74,8 +81,7 @@ public class Principal extends JFrame {
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
 		
-		// --- MENÚ USUARIOS ---
-		JMenu menuUsuarios = new JMenu("Usuarios");
+		//  MENÚ USUARIOS
 		menuBar.add(menuUsuarios);
 		
 		JMenuItem mntmNewMenuItem_2 = new JMenuItem("Registrar");
@@ -98,8 +104,7 @@ public class Principal extends JFrame {
 			 }
 		});
 		
-		// --- MENÚ EMPLEADOS ---
-		JMenu menuEmpleados = new JMenu("Empleados");
+		// MENÚ EMPLEADOS
 		menuBar.add(menuEmpleados);
 		
 		JMenuItem mntmNewMenuItem_1 = new JMenuItem("Registrar");
@@ -122,7 +127,7 @@ public class Principal extends JFrame {
 			 }
 		});
 		
-		// --- MENÚ CLIENTES ---
+		// MENÚ CLIENTES
 		JMenu menuClientes = new JMenu("Clientes");
 		menuBar.add(menuClientes);
 		
@@ -146,14 +151,16 @@ public class Principal extends JFrame {
 			 }
 		});
 		
-		// --- MENÚ CONTRATOS ---
+		// MENÚ CONTRATOS
 		JMenu menuContratos = new JMenu("Contratos");
 		menuBar.add(menuContratos);
 		
 		JMenuItem menuItem_6 = new JMenuItem("Registrar");
 		menuItem_6.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				RegistrarContrato regisCon = new RegistrarContrato(null, null);
+				Usuario usuarioActual = EmpresaAltice.getLoginUser();
+		        Empleado empleadoSesion = EmpresaAltice.getInstance().buscarEmpleadoPorUsuario(usuarioActual);
+				RegistrarContrato regisCon = new RegistrarContrato(null, empleadoSesion);
 				regisCon.setModal(true);
 				regisCon.setVisible(true);
 			}
@@ -170,8 +177,7 @@ public class Principal extends JFrame {
 		});
 		menuContratos.add(menuItem_7);
 		
-		// --- MENÚ PLANES ---
-		JMenu menuPlanes = new JMenu("Planes");
+		// MENÚ PLANES
 		menuBar.add(menuPlanes);
 		
 		JMenuItem menuItem = new JMenuItem("Registrar");
@@ -193,8 +199,7 @@ public class Principal extends JFrame {
 		});
 		menuPlanes.add(menuItem_1);
 		
-		// --- MENÚ SERVICIOS ---
-		JMenu menuServicios = new JMenu("Servicios");
+		// MENÚ SERVICIOS
 		menuBar.add(menuServicios);
 		
 		JMenuItem menuItem_2 = new JMenuItem("Registrar");
@@ -217,7 +222,7 @@ public class Principal extends JFrame {
 		});
 		menuServicios.add(menuItem_3);
 		
-		// --- MENÚ PAGOS ---
+		// MENÚ PAGOS
 		JMenu menuPagos = new JMenu("Pagos");
 		menuBar.add(menuPagos);
 		
@@ -237,7 +242,6 @@ public class Principal extends JFrame {
 				int confirm = JOptionPane.showConfirmDialog(null, "¿Desea generar los pagos mensuales pendientes?", "Confirmación", 
 						JOptionPane.YES_NO_OPTION);
 				if (confirm == JOptionPane.YES_OPTION) {
-					// Guardamos el int que nos retorna y mostramos el resultado
 					int generadosManuales = EmpresaAltice.getInstance().generarPagosMensuales();
 					if (generadosManuales > 0) {
 						JOptionPane.showMessageDialog(null, "Se generaron " + generadosManuales + " pagos correctamente", "Información", JOptionPane.INFORMATION_MESSAGE);
@@ -260,8 +264,7 @@ public class Principal extends JFrame {
 			}
 		});
 		
-		// --- MENÚ REPORTES ---
-		JMenu menuReportes = new JMenu("Reportes");
+		// MENÚ REPORTES
 		menuBar.add(menuReportes);
 		
 		JMenuItem mntmReporteGeneral = new JMenuItem("Reporte General");
@@ -273,7 +276,7 @@ public class Principal extends JFrame {
 		JMenuItem mntmReporteDeEmpleados = new JMenuItem("Reporte de Mercado");
 		menuReportes.add(mntmReporteDeEmpleados);
 		
-		// --- MENÚ RESPALDO ---
+		// MENÚ RESPALDO
 		JMenu menuRespaldo = new JMenu("Respaldo");
 		menuBar.add(menuRespaldo);
 		
@@ -334,6 +337,15 @@ public class Principal extends JFrame {
 			}
 		});
 		menuRespaldo.add(menuItemRestaurar);
+		
+		Usuario usuarioActual = EmpresaAltice.getLoginUser();
+		if (usuarioActual != null && !usuarioActual.getRolEmpleado().equalsIgnoreCase("Administrativo")) {
+		    menuUsuarios.setVisible(false);
+		    menuEmpleados.setVisible(false);
+		    menuServicios.setVisible(false);
+		    menuPlanes.setVisible(false);
+		    menuReportes.setVisible(false);
+		}
 		
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));

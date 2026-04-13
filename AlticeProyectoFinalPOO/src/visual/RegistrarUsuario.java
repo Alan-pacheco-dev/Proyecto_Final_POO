@@ -32,7 +32,7 @@ public class RegistrarUsuario extends JDialog {
 	private JTextField txtDatosEmpleado;
 	
 	private Empleado empSeleccionado = null;
-	private Usuario miUsuario = null; // Variable para saber si actualizamos o registramos
+	private Usuario miUsuario = null;
 	
 	private JButton btnSeleccionarEmpleado;
 
@@ -41,7 +41,6 @@ public class RegistrarUsuario extends JDialog {
 		
 		this.miUsuario = user;
 		
-		// Lógica IF tradicional para el título
 		if (miUsuario != null) {
 			setTitle("Actualizar Usuario del Sistema");
 		} else {
@@ -123,7 +122,6 @@ public class RegistrarUsuario extends JDialog {
 			{
 				JButton btnRegistrar = new JButton();
 				
-				// Lógica IF tradicional para el nombre del botón
 				if (miUsuario != null) {
 					btnRegistrar.setText("Actualizar");
 				} else {
@@ -143,7 +141,6 @@ public class RegistrarUsuario extends JDialog {
 						
 						EmpresaAltice empresa = EmpresaAltice.getInstance();
 						
-						// --- MODO REGISTRO ---
 						if (miUsuario == null) {
 							if (empSeleccionado == null) {
 								JOptionPane.showMessageDialog(null, "Debe seleccionar un empleado para asignarle el usuario.", "Faltan datos", JOptionPane.WARNING_MESSAGE);
@@ -157,7 +154,6 @@ public class RegistrarUsuario extends JDialog {
 							
 							JOptionPane.showMessageDialog(null, "Usuario registrado y vinculado al empleado con éxito.", "Información", JOptionPane.INFORMATION_MESSAGE);
 						} 
-						// --- MODO ACTUALIZACIÓN ---
 						else {
 							miUsuario.setNombreUsuario(nombreUsuario);
 							miUsuario.setContrasenia(contrasenia);
@@ -192,16 +188,14 @@ public class RegistrarUsuario extends JDialog {
 		loadUsuario();
 	}
 
-	// Método para llenar los campos si estamos actualizando
+
 	private void loadUsuario() {
 		if (miUsuario != null) {
 			txtNombreDeUsuarioEmp.setText(miUsuario.getNombreUsuario());
 			txtContraseniaUsuarioEmp.setText(miUsuario.getContrasenia());
 			
-			// Si estamos actualizando, apagamos el botón de seleccionar empleado por seguridad
 			btnSeleccionarEmpleado.setEnabled(false);
 			
-			// Buscamos a qué empleado pertenece este usuario usando un for tradicional
 			for (Empleado emp : EmpresaAltice.getInstance().getMisEmpleados()) {
 				if (emp.getMiUsuario() != null) {
 					if (emp.getMiUsuario().getIdUsuario().equals(miUsuario.getIdUsuario())) {

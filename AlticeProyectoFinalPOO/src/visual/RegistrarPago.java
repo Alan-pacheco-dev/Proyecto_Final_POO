@@ -33,12 +33,10 @@ public class RegistrarPago extends JDialog {
 	private final JPanel contentPanel = new JPanel();
 	private JTextField txtBuscar;
 
-	// Tabla de contratos
 	private JTable tableContratos;
 	private DefaultTableModel modelContratos;
 	private TableRowSorter<DefaultTableModel> sorterContratos;
 
-	// Tabla de pagos pendientes
 	private JTable tablePagos;
 	private DefaultTableModel modelPagos;
 
@@ -56,7 +54,6 @@ public class RegistrarPago extends JDialog {
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(new BorderLayout(0, 10));
 
-		// --- PANEL SUPERIOR: BUSCADOR ---
 		JPanel panelBusqueda = new JPanel();
 		panelBusqueda.setLayout(null);
 		panelBusqueda.setPreferredSize(new java.awt.Dimension(950, 50));
@@ -70,12 +67,10 @@ public class RegistrarPago extends JDialog {
 		txtBuscar.setBounds(270, 12, 580, 30);
 		panelBusqueda.add(txtBuscar);
 
-		// --- PANEL CENTRAL: DOS TABLAS ---
 		JPanel panelCentral = new JPanel();
 		panelCentral.setLayout(new BorderLayout(0, 10));
 		contentPanel.add(panelCentral, BorderLayout.CENTER);
 
-		// Tabla de contratos
 		JPanel panelContratos = new JPanel();
 		panelContratos.setLayout(new BorderLayout());
 		panelContratos.setBorder(new TitledBorder("Contratos Activos"));
@@ -99,7 +94,6 @@ public class RegistrarPago extends JDialog {
 		sorterContratos = new TableRowSorter<>(modelContratos);
 		tableContratos.setRowSorter(sorterContratos);
 
-		// Al seleccionar un contrato cargar sus pagos pendientes
 		tableContratos.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -122,7 +116,6 @@ public class RegistrarPago extends JDialog {
 			}
 		});
 
-		// Tabla de pagos pendientes
 		JPanel panelPagos = new JPanel();
 		panelPagos.setLayout(new BorderLayout());
 		panelPagos.setBorder(new TitledBorder("Pagos Pendientes del Contrato Seleccionado"));
@@ -144,7 +137,6 @@ public class RegistrarPago extends JDialog {
 		tablePagos.setModel(modelPagos);
 		scrollPagos.setViewportView(tablePagos);
 
-		// Al seleccionar un pago habilitar el botón
 		tablePagos.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -163,7 +155,6 @@ public class RegistrarPago extends JDialog {
 			}
 		});
 
-		// Buscador en tiempo real sobre contratos
 		txtBuscar.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent e) {
@@ -176,7 +167,6 @@ public class RegistrarPago extends JDialog {
 			}
 		});
 
-		// --- PANEL INFERIOR: BOTONES ---
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);

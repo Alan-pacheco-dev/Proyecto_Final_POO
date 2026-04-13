@@ -22,10 +22,9 @@ public class ListarServiciosXPlan extends JDialog {
 	private JTable table;
 	private DefaultTableModel model;
 
-	// Constructor que recibe directamente la lista temporal
 	public ListarServiciosXPlan(ArrayList<Servicio> serviciosEscogidos) {
 		setTitle("Servicios actualmente en el Plan");
-		setModal(true); // Bloquea la ventana de atrás mientras esta esté abierta
+		setModal(true);
 		setResizable(false);
 		setBounds(100, 100, 500, 350);
 		setLocationRelativeTo(null);
@@ -34,7 +33,6 @@ public class ListarServiciosXPlan extends JDialog {
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(new BorderLayout(0, 0));
 
-		// --- PANEL CENTRAL: TABLA ---
 		JPanel panelTabla = new JPanel();
 		panelTabla.setLayout(new BorderLayout(0, 0));
 		contentPanel.add(panelTabla, BorderLayout.CENTER);
@@ -43,7 +41,7 @@ public class ListarServiciosXPlan extends JDialog {
 		panelTabla.add(scrollPane, BorderLayout.CENTER);
 
 		table = new JTable();
-		table.setEnabled(false); // Desactiva los clics, es solo lectura
+		table.setEnabled(false); 
 		
 		model = new DefaultTableModel();
 		String[] headers = {"ID Servicio", "Tipo", "Precio ($)"};
@@ -51,7 +49,6 @@ public class ListarServiciosXPlan extends JDialog {
 		table.setModel(model);
 		scrollPane.setViewportView(table);
 
-		// --- PANEL INFERIOR: BOTÓN CERRAR ---
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
@@ -59,12 +56,11 @@ public class ListarServiciosXPlan extends JDialog {
 		JButton btnCerrar = new JButton("Cerrar");
 		btnCerrar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				dispose(); // Solo cierra esta pequeña ventana
+				dispose(); 
 			}
 		});
 		buttonPane.add(btnCerrar);
-
-		// Llenamos la tabla al construir la ventana
+		
 		loadServicios(serviciosEscogidos);
 	}
 

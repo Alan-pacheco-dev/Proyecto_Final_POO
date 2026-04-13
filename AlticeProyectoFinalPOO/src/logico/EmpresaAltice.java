@@ -195,7 +195,16 @@ public class EmpresaAltice implements Serializable {
 		}
 	}
 	
-	// --- MÉTODO PARA RESTAURAR DESDE UN ARCHIVO ESPECÍFICO ---
+	public Empleado buscarEmpleadoPorUsuario(Usuario usuario) {
+	    for (Empleado emp : misEmpleados) {
+	        if (emp.getMiUsuario() != null && 
+	            emp.getMiUsuario().getNombreUsuario().equals(usuario.getNombreUsuario())) {
+	            return emp;
+	        }
+	    }
+	    return null;
+	}
+	
 	public boolean CargarDatosDesdeRespaldo(String rutaArchivo) {
 		File archivo = new File(rutaArchivo);
 
@@ -236,7 +245,6 @@ public class EmpresaAltice implements Serializable {
 		}
 	}
 	
-	// --- METODO DE GENERAR PAGOS (DEVUELVE INT) ---
 	public int generarPagosMensuales() {
 		int generados = 0;
 		LocalDate hoy = LocalDate.now();

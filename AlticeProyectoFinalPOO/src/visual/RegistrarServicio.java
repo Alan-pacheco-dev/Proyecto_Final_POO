@@ -59,7 +59,6 @@ public class RegistrarServicio extends JDialog {
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(null);
 
-		// ==================== PANEL SUPERIOR (DATOS GENERALES) ====================
 		JPanel panelRegistrarServicio = new JPanel();
 		panelRegistrarServicio.setBounds(5, 5, 499, 203);
 		panelRegistrarServicio.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
@@ -114,13 +113,11 @@ public class RegistrarServicio extends JDialog {
 		bgTipoServicio.add(rdbtnTelefonia);
 		bgTipoServicio.add(rdbtnTelevision);
 
-		// ==================== CARDLAYOUT CONTAINER ====================
 		cardLayout = new CardLayout();
 		panelCard = new JPanel(cardLayout);
 		panelCard.setBounds(5, 215, 499, 153);
 		contentPanel.add(panelCard);
 
-		// ==================== PANEL MÓVIL ====================
 		panelServicioMovil = new JPanel();
 		panelServicioMovil.setLayout(null);
 		panelServicioMovil.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
@@ -152,7 +149,6 @@ public class RegistrarServicio extends JDialog {
 		spnSms.setBounds(356, 92, 117, 20);
 		panelServicioMovil.add(spnSms);
 
-		// ==================== PANEL INTERNET ====================
 		panelServicioInternet = new JPanel();
 		panelServicioInternet.setLayout(null);
 		panelServicioInternet.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
@@ -185,7 +181,6 @@ public class RegistrarServicio extends JDialog {
 		spnVelocidad.setBounds(260, 97, 117, 20);
 		panelServicioInternet.add(spnVelocidad);
 
-		// ==================== PANEL TELEFONÍA FIJA ====================
 		panelServicioTelefonia = new JPanel();
 		panelServicioTelefonia.setLayout(null);
 		panelServicioTelefonia.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
@@ -225,7 +220,6 @@ public class RegistrarServicio extends JDialog {
 		spnCostoMinuto.setBounds(330, 97, 117, 20);
 		panelServicioTelefonia.add(spnCostoMinuto);
 
-		// ==================== PANEL TELEVISIÓN ====================
 		panelServicioTelevision = new JPanel();
 		panelServicioTelevision.setLayout(null);
 		panelServicioTelevision.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
@@ -264,13 +258,11 @@ public class RegistrarServicio extends JDialog {
 		bgHD.add(rbHDSi);
 		bgHD.add(rbHDNo);
 
-		// ==================== AGREGAR PANELES AL CARDLAYOUT ====================
 		panelCard.add(panelServicioMovil,     "MOVIL");
 		panelCard.add(panelServicioInternet,  "INTERNET");
 		panelCard.add(panelServicioTelefonia, "TELEFONIA");
 		panelCard.add(panelServicioTelevision,"TELEVISION");
 
-		// ==================== PANEL PRECIO ====================
 		JPanel panelPrecioDelServicio = new JPanel();
 		panelPrecioDelServicio.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		panelPrecioDelServicio.setBounds(5, 380, 499, 99);
@@ -285,7 +277,6 @@ public class RegistrarServicio extends JDialog {
 		spnPrecio.setBounds(10, 55, 117, 20);
 		panelPrecioDelServicio.add(spnPrecio);
 
-		// ==================== EVENTOS DE LOS RADIO BUTTONS ====================
 		rdbtnMovil.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				cardLayout.show(panelCard, "MOVIL");
@@ -310,11 +301,9 @@ public class RegistrarServicio extends JDialog {
 			}
 		});
 
-		// Por defecto mostramos Móvil
 		rdbtnMovil.setSelected(true);
 		cardLayout.show(panelCard, "MOVIL");
 
-		// ==================== BOTONES INFERIORES ====================
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
@@ -323,11 +312,9 @@ public class RegistrarServicio extends JDialog {
 		btnRegistrar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
-				// 1. Valores comunes
 				String idServicio = txtID.getText();
 				float precio = ((Double) spnPrecio.getValue()).floatValue();
 
-				// VALIDACIÓN GLOBAL
 				if (precio <= 0) {
 					JOptionPane.showMessageDialog(null, "El precio del servicio debe ser mayor a 0.", "Error", JOptionPane.ERROR_MESSAGE);
 					return;
@@ -335,7 +322,6 @@ public class RegistrarServicio extends JDialog {
 
 				EmpresaAltice empresa = EmpresaAltice.getInstance();
 
-				// 2. Evaluamos qué panel está activo
 				if (rdbtnMovil.isSelected()) {
 
 					int datos   = (Integer) spnDatos.getValue();
@@ -409,7 +395,6 @@ public class RegistrarServicio extends JDialog {
 
 				JOptionPane.showMessageDialog(null, "¡Servicio registrado con éxito!", "Información", JOptionPane.INFORMATION_MESSAGE);
 
-				// Limpieza general
 				txtID.setText("S - " + EmpresaAltice.getInstance().idServicios);
 				spnDatos.setValue(0);
 				spnMinutos.setValue(0);

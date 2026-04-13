@@ -24,7 +24,9 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
 import logico.Cliente;
+import logico.Empleado;
 import logico.EmpresaAltice;
+import logico.Usuario;
 
 public class ListarClientes extends JDialog {
 
@@ -98,7 +100,6 @@ public class ListarClientes extends JDialog {
 						btnActualizar.setEnabled(true);
 						btnEliminar.setEnabled(true);
 						
-						// ENCENDEMOS EL BOTÓN SOLO SI TIENE CONTRATOS
 						if (selected.getCantContratosActivos() > 0) {
 							btnVerContratos.setEnabled(true);
 							btnAgregarContrato.setEnabled(true);
@@ -155,13 +156,11 @@ public class ListarClientes extends JDialog {
 
 		} else {
 			
-			// --- NUEVO BOTÓN: VER CONTRATOS ---
 			btnVerContratos = new JButton("Ver Contratos");
 			btnVerContratos.setEnabled(false);
 			btnVerContratos.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					if (selected != null) {
-						// Llamamos a la clase que creaste, pasándole el cliente
 						ListarContratosXCliente visorHistorial = new ListarContratosXCliente(selected);
 						visorHistorial.setVisible(true);
 					}
@@ -174,7 +173,12 @@ public class ListarClientes extends JDialog {
 			btnAgregarContrato.addActionListener(new ActionListener() {
 			    public void actionPerformed(ActionEvent e) {
 			        if (selected != null) {
-			            RegistrarContrato regisCto = new RegistrarContrato(selected, null);
+			            Usuario usuarioActual = EmpresaAltice.getLoginUser();
+			            Empleado empleadoSesion = null;
+			            if (usuarioActual != null) {
+			                empleadoSesion = EmpresaAltice.getInstance().buscarEmpleadoPorUsuario(usuarioActual);
+			            }
+			            RegistrarContrato regisCto = new RegistrarContrato(selected, empleadoSesion);
 			            regisCto.setModal(true);
 			            regisCto.setVisible(true);
 			            loadClientes();
@@ -201,7 +205,7 @@ public class ListarClientes extends JDialog {
 						
 						btnActualizar.setEnabled(false);
 						btnEliminar.setEnabled(false);
-						btnVerContratos.setEnabled(false); // Apagamos por seguridad
+						btnVerContratos.setEnabled(false);
 						selected = null;
 					}
 				}
@@ -234,7 +238,7 @@ public class ListarClientes extends JDialog {
 							loadClientes();
 							btnEliminar.setEnabled(false);
 							btnActualizar.setEnabled(false);
-							btnVerContratos.setEnabled(false); // Apagamos por seguridad
+							btnVerContratos.setEnabled(false);
 							selected = null;
 						}
 					}

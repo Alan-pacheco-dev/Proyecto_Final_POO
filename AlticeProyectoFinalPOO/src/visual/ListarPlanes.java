@@ -37,13 +37,12 @@ public class ListarPlanes extends JDialog {
 	
 	private JButton btnSeleccionar;
 	private JButton btnEliminar;
-	private JButton btnVerServicios; // NUEVO BOTÓN
+	private JButton btnVerServicios;
 	
 	private Plan planSeleccionado = null;
 
 	public static void main(String[] args) {
 		try {
-			// Para probar la ventana la iniciamos en modo administrador (false)
 			ListarPlanes dialog = new ListarPlanes(false);
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
@@ -63,7 +62,6 @@ public class ListarPlanes extends JDialog {
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(new BorderLayout(0, 15));
 
-		// --- PANEL SUPERIOR: BUSCADOR ---
 		JPanel panelFiltros = new JPanel();
 		panelFiltros.setLayout(new BorderLayout(10, 0)); 
 		contentPanel.add(panelFiltros, BorderLayout.NORTH);
@@ -74,7 +72,6 @@ public class ListarPlanes extends JDialog {
 		txtBuscar = new JTextField();
 		panelFiltros.add(txtBuscar, BorderLayout.CENTER);
 
-		// --- PANEL CENTRAL: TABLA ---
 		JPanel panelTabla = new JPanel();
 		panelTabla.setLayout(new BorderLayout(0, 0));
 		contentPanel.add(panelTabla, BorderLayout.CENTER);
@@ -104,7 +101,7 @@ public class ListarPlanes extends JDialog {
 					if (planSeleccionado != null) {
 						btnSeleccionar.setEnabled(true);
 						btnEliminar.setEnabled(true);
-						btnVerServicios.setEnabled(true); // Encendemos el botón al seleccionar un plan
+						btnVerServicios.setEnabled(true); 
 					}
 				}
 			}
@@ -131,12 +128,10 @@ public class ListarPlanes extends JDialog {
 			}
 		});
 
-		// --- PANEL INFERIOR: BOTONES ---
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
 		
-		// --- CONFIGURACIÓN DEL NUEVO BOTÓN ---
 		btnVerServicios = new JButton("Ver Servicios del Plan");
 		btnVerServicios.setEnabled(false);
 		btnVerServicios.addActionListener(new ActionListener() {
@@ -145,7 +140,6 @@ public class ListarPlanes extends JDialog {
 					if(planSeleccionado.getServiciosPlan().isEmpty()) {
 						JOptionPane.showMessageDialog(null, "Este plan aún no tiene servicios asignados.", "Información", JOptionPane.INFORMATION_MESSAGE);
 					} else {
-						// Llamamos a la ventana que creamos para ver servicios, pasándole la lista del plan
 						ListarServiciosXPlan visor = new ListarServiciosXPlan(planSeleccionado.getServiciosPlan());
 						visor.setVisible(true);
 					}
@@ -198,7 +192,7 @@ public class ListarPlanes extends JDialog {
 						
 						loadPlanes(); 
 						btnEliminar.setEnabled(false);
-						btnVerServicios.setEnabled(false); // Apagamos el botón al eliminar
+						btnVerServicios.setEnabled(false);
 						planSeleccionado = null;
 					}
 				}
@@ -213,13 +207,12 @@ public class ListarPlanes extends JDialog {
 			}
 		});
 		
-		// Lógica IF tradicional para distribuir los botones según el modo
 		if (modoSeleccion == true) {
 			buttonPane.add(btnSeleccionar);
 			btnEliminar.setVisible(false);
-			btnVerServicios.setVisible(false); // Lo escondemos si solo estamos eligiendo un plan para el contrato
+			btnVerServicios.setVisible(false); 
 		} else {
-			buttonPane.add(btnVerServicios); // Lo mostramos en la vista de administrador
+			buttonPane.add(btnVerServicios); 
 			buttonPane.add(btnEliminar);
 			btnSeleccionar.setVisible(false);
 		}

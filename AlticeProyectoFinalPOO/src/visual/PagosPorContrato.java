@@ -207,7 +207,6 @@ public class PagosPorContrato extends JDialog {
 			}
 		}
 
-		// Cargar datos del contrato
 		loadContrato();
 	}
 

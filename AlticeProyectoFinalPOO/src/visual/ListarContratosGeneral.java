@@ -39,7 +39,7 @@ public class ListarContratosGeneral extends JDialog {
 	
 	private JButton btnSeleccionar;
 	private JButton btnCancelarContrato; 
-	private JButton btnReactivarContrato; // NUEVO BOTÓN
+	private JButton btnReactivarContrato; 
 	private JButton btnVerServiciosPlan; 
 	
 	private Contrato contratoSeleccionado = null;
@@ -55,19 +55,19 @@ public class ListarContratosGeneral extends JDialog {
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(new BorderLayout(0, 10));
 
-		// --- PANEL SUPERIOR: FILTROS Y BÚSQUEDA ---
+	
 		JPanel panelFiltros = new JPanel();
 		panelFiltros.setLayout(new BorderLayout(20, 0)); 
 		contentPanel.add(panelFiltros, BorderLayout.NORTH);
 
-		// 1. Barra de Búsqueda
+	
 		JPanel panelBuscadorTexto = new JPanel(new BorderLayout(5, 0));
 		panelBuscadorTexto.add(new JLabel("Buscar (ID, Cliente, Plan): "), BorderLayout.WEST);
 		txtBuscar = new JTextField();
 		panelBuscadorTexto.add(txtBuscar, BorderLayout.CENTER);
 		panelFiltros.add(panelBuscadorTexto, BorderLayout.CENTER);
 
-		// 2. ComboBox para Estado
+		
 		JPanel panelComboBox = new JPanel(new BorderLayout(5, 0));
 		panelComboBox.add(new JLabel("Estado: "), BorderLayout.WEST);
 		cbxFiltroEstado = new JComboBox<String>();
@@ -78,11 +78,12 @@ public class ListarContratosGeneral extends JDialog {
 		panelComboBox.add(cbxFiltroEstado, BorderLayout.CENTER);
 		panelFiltros.add(panelComboBox, BorderLayout.EAST);
 
-		// --- PANEL CENTRAL: TABLA ---
+		
 		JPanel panelTabla = new JPanel();
 		panelTabla.setLayout(new BorderLayout(0, 0));
 		contentPanel.add(panelTabla, BorderLayout.CENTER);
 
+		
 		JScrollPane scrollPane = new JScrollPane();
 		panelTabla.add(scrollPane, BorderLayout.CENTER);
 
@@ -96,7 +97,6 @@ public class ListarContratosGeneral extends JDialog {
 				if(indexVisual != -1) {
 					int indexReal = table.convertRowIndexToModel(indexVisual);
 					
-					// AHORA BUSCAMOS POR EL ID DEL CONTRATO (Columna 0) para que sea 100% exacto
 					String idCto = (String) model.getValueAt(indexReal, 0);
 					
 					contratoSeleccionado = null;
@@ -114,9 +114,9 @@ public class ListarContratosGeneral extends JDialog {
 						
 						if (contratoSeleccionado.isActivo() == true) {
 							btnCancelarContrato.setEnabled(true);
-							btnReactivarContrato.setEnabled(false); // Apagamos reactivar si ya está activo
+							btnReactivarContrato.setEnabled(false); 
 						} else {
-							btnCancelarContrato.setEnabled(false); // Apagamos desactivar si ya está inactivo
+							btnCancelarContrato.setEnabled(false); 
 							btnReactivarContrato.setEnabled(true);
 						}
 					}
@@ -125,7 +125,6 @@ public class ListarContratosGeneral extends JDialog {
 		});
 
 		model = new DefaultTableModel();
-		// AGREGAMOS EL ID AL PRINCIPIO
 		String[] headers = {"ID Contrato", "Cód. Cliente", "Nombre Cliente", "Plan", "Estado", "Vendedor", "Mensual. Total"};
 		model.setColumnIdentifiers(headers);
 		table.setModel(model);
@@ -159,7 +158,6 @@ public class ListarContratosGeneral extends JDialog {
 			}
 		});
 
-		// --- PANEL INFERIOR: BOTONES ---
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
@@ -183,7 +181,6 @@ public class ListarContratosGeneral extends JDialog {
 			}
 		});
 		
-		// NUEVO BOTÓN REACTIVAR
 		btnReactivarContrato = new JButton("Reactivar Contrato");
 		btnReactivarContrato.setEnabled(false);
 		btnReactivarContrato.addActionListener(new ActionListener() {
@@ -193,7 +190,7 @@ public class ListarContratosGeneral extends JDialog {
 							"¿Desea volver a activar el contrato " + contratoSeleccionado.getIdContrato() + "?", "Confirmar", JOptionPane.YES_NO_OPTION);
 					
 					if (opcion == JOptionPane.YES_OPTION) {
-						contratoSeleccionado.setActivo(true); // Lo activamos directo
+						contratoSeleccionado.setActivo(true);
 						
 						EmpresaAltice.getInstance().refrescarConteosContratos();
 						
@@ -295,7 +292,6 @@ public class ListarContratosGeneral extends JDialog {
 			float costoComision = c.getPrecioMensualAcordado() * porcentajeDecimal;
 			float totalMensual = c.getPrecioMensualAcordado() + costoComision;
 			
-			// EL ARREGLO AHORA TIENE 7 ESPACIOS POR EL ID
 			Object[] row = new Object[7];
 			row[0] = c.getIdContrato();
 			row[1] = c.getCliente().getCodigoCliente();

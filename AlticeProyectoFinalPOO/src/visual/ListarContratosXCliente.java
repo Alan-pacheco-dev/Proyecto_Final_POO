@@ -22,10 +22,8 @@ public class ListarContratosXCliente extends JDialog {
 	private JTable table;
 	private DefaultTableModel model;
 
-	// Recibe directamente el cliente del que queremos ver el historial
 	public ListarContratosXCliente(Cliente clienteActual) {
 		
-		// Personalizamos el título con el nombre del cliente
 		String nombreTitulo = "";
 		if (clienteActual != null) {
 			nombreTitulo = clienteActual.getNombre();
@@ -34,14 +32,13 @@ public class ListarContratosXCliente extends JDialog {
 		
 		setModal(true); 
 		setResizable(false);
-		setBounds(100, 100, 700, 400); // Un tamaño cómodo para leer
+		setBounds(100, 100, 700, 400);
 		setLocationRelativeTo(null);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(new BorderLayout(0, 0));
 
-		// --- PANEL CENTRAL: TABLA ---
 		JPanel panelTabla = new JPanel();
 		panelTabla.setLayout(new BorderLayout(0, 0));
 		contentPanel.add(panelTabla, BorderLayout.CENTER);
@@ -50,16 +47,14 @@ public class ListarContratosXCliente extends JDialog {
 		panelTabla.add(scrollPane, BorderLayout.CENTER);
 
 		table = new JTable();
-		table.setEnabled(false); // Es un visor histórico, solo lectura
+		table.setEnabled(false);
 		
 		model = new DefaultTableModel();
-		// Quitamos las columnas de cliente y agregamos Fecha
 		String[] headers = {"Id Contrato", "Plan Adquirido", "Fecha de Inicio", "Estado", "Vendedor", "Mensualidad Total"};
 		model.setColumnIdentifiers(headers);
 		table.setModel(model);
 		scrollPane.setViewportView(table);
 
-		// --- PANEL INFERIOR: BOTONES ---
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
@@ -72,7 +67,6 @@ public class ListarContratosXCliente extends JDialog {
 		});
 		buttonPane.add(btnCerrar);
 
-		// Llenamos la tabla al abrir la ventana, validando que el cliente no sea nulo
 		if (clienteActual != null) {
 			loadContratosCliente(clienteActual);
 		}
@@ -81,7 +75,6 @@ public class ListarContratosXCliente extends JDialog {
 	private void loadContratosCliente(Cliente cliente) {
 		model.setRowCount(0);
 		
-		// Iteramos SOLAMENTE sobre la lista de contratos de este cliente específico
 		for (Contrato c : cliente.getMisContratos()) {
 			
 			String estado = "";
@@ -91,12 +84,10 @@ public class ListarContratosXCliente extends JDialog {
 				estado = "Inactivo";
 			}
 			
-			// Cálculo del total mensual
 			float porcentajeDecimal = c.getPorcentajeComisionAplicado() / 100.0f;
 			float costoComision = c.getPrecioMensualAcordado() * porcentajeDecimal;
 			float totalMensual = c.getPrecioMensualAcordado() + costoComision;
 			
-			// Manejo de la fecha por si acaso viene nula
 			String fechaInicioStr = "Sin fecha";
 			if (c.getFechaInicioContrato() != null) {
 				fechaInicioStr = c.getFechaInicioContrato().toString();

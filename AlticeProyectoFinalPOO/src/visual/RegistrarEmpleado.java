@@ -37,7 +37,6 @@ public class RegistrarEmpleado extends JDialog {
 
 	public static void main(String[] args) {
 		try {
-			// Se envía null para probar el modo Registro
 			RegistrarEmpleado dialog = new RegistrarEmpleado(null);
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
@@ -46,13 +45,11 @@ public class RegistrarEmpleado extends JDialog {
 		}
 	}
 
-	// Constructor que recibe un Empleado (null = Registrar, Objeto = Actualizar)
 	public RegistrarEmpleado(Empleado empleado) {
 		
 		this.miEmpleado = empleado;
 		setResizable(false);
 		
-		// Lógica IF tradicional para el título
 		if(miEmpleado == null) {
 			setTitle("Registrar Nuevo Empleado");
 		} else {
@@ -72,7 +69,6 @@ public class RegistrarEmpleado extends JDialog {
 			contentPanel.add(panel, BorderLayout.CENTER);
 			panel.setLayout(null);
 
-			// --- ID ---
 			JLabel lblId = new JLabel("ID Persona:");
 			lblId.setBounds(20, 20, 174, 14);
 			panel.add(lblId);
@@ -84,7 +80,6 @@ public class RegistrarEmpleado extends JDialog {
 			panel.add(txtId);
 			txtId.setColumns(10);
 			
-			// --- CÓDIGO EMPLEADO ---
 			JLabel lblCodigo = new JLabel("Código Empleado:");
 			lblCodigo.setBounds(240, 20, 200, 14);
 			panel.add(lblCodigo);
@@ -96,7 +91,6 @@ public class RegistrarEmpleado extends JDialog {
 			txtCodigo.setBounds(240, 40, 200, 20);
 			panel.add(txtCodigo);
 
-			// --- NOMBRE ---
 			JLabel lblNombre = new JLabel("Nombre y Apellidos:");
 			lblNombre.setBounds(20, 80, 222, 14);
 			panel.add(lblNombre);
@@ -106,7 +100,6 @@ public class RegistrarEmpleado extends JDialog {
 			panel.add(txtNombre);
 			txtNombre.setColumns(10);
 			
-			// --- CÉDULA ---
 			JLabel lblCedula = new JLabel("Cédula:");
 			lblCedula.setBounds(20, 140, 150, 14);
 			panel.add(lblCedula);
@@ -116,7 +109,6 @@ public class RegistrarEmpleado extends JDialog {
 			panel.add(txtCedula);
 			txtCedula.setColumns(10);
 
-			// --- ROL ---
 			JLabel lblRol = new JLabel("Rol del Empleado:");
 			lblRol.setBounds(20, 200, 150, 14);
 			panel.add(lblRol);
@@ -126,23 +118,19 @@ public class RegistrarEmpleado extends JDialog {
 			cbxRol.setBounds(20, 220, 420, 20);
 			panel.add(cbxRol);
 
-			// --- SALARIO ---
 			JLabel lblSalario = new JLabel("Salario Base ($):");
 			lblSalario.setBounds(20, 260, 150, 14);
 			panel.add(lblSalario);
 
-			// Configurado para manejar decimales
 			spnSalario = new JSpinner();
 			spnSalario.setModel(new SpinnerNumberModel(0.0f, 0.0f, 1000000.0f, 500.0f));
 			spnSalario.setBounds(20, 280, 200, 20);
 			panel.add(spnSalario);
 			
-			// --- COMISIONES ---
 			JLabel lblComisiones = new JLabel("Comisión (%):");
 			lblComisiones.setBounds(240, 260, 141, 14);
 			panel.add(lblComisiones);
 
-			// Configurado para manejar porcentajes (0 a 100)
 			spnComisiones = new JSpinner();
 			spnComisiones.setModel(new SpinnerNumberModel(0.0f, 0.0f, 100.0f, 1.0f));
 			spnComisiones.setBounds(240, 280, 200, 20);
@@ -157,7 +145,6 @@ public class RegistrarEmpleado extends JDialog {
 			{
 				JButton btnAccion = new JButton("Registrar");
 				
-				// Lógica IF tradicional para el texto del botón
 				if(miEmpleado != null) {
 					btnAccion.setText("Actualizar");
 				}
@@ -165,7 +152,6 @@ public class RegistrarEmpleado extends JDialog {
 				btnAccion.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						
-						// 1. Validaciones básicas
 						String nombre = txtNombre.getText().trim();
 						String cedula = txtCedula.getText().trim();
 						String rol = cbxRol.getSelectedItem().toString();
@@ -180,23 +166,19 @@ public class RegistrarEmpleado extends JDialog {
 							return;
 						}
 						
-						// Capturamos los valores numéricos
 						float salario = ((Double) spnSalario.getValue()).floatValue();
 						float comisiones = ((Double) spnComisiones.getValue()).floatValue();
 						
 						EmpresaAltice empresa = EmpresaAltice.getInstance();
 
-						// --- MODO REGISTRO ---
 						if(miEmpleado == null) {
 							
-							// El constructor genera automáticamente el ID y el Código interno
 							Empleado nuevoEmpleado = new Empleado(null, nombre, cedula, salario, comisiones, 0f, 0f, rol);
 							
 							empresa.getMisEmpleados().add(nuevoEmpleado);
 							JOptionPane.showMessageDialog(null, "Empleado registrado con éxito", "Información", JOptionPane.INFORMATION_MESSAGE);
-							clean(); // Limpiamos para permitir otro registro
+							clean();
 						} 
-						// --- MODO ACTUALIZACIÓN ---
 						else {
 							miEmpleado.setNombre(nombre);
 							miEmpleado.setCedula(cedula);
@@ -205,10 +187,9 @@ public class RegistrarEmpleado extends JDialog {
 							miEmpleado.setComisiones(comisiones);
 							
 							JOptionPane.showMessageDialog(null, "Empleado actualizado con éxito", "Información", JOptionPane.INFORMATION_MESSAGE);
-							dispose(); // Si estamos actualizando, cerramos la ventana al terminar
+							dispose();
 						}
 						
-						// En ambos casos, guardamos los datos inmediatamente
 						empresa.GuardarDatos(
 								empresa.getMisClientes(), 
 								empresa.getMisEmpleados(), 
@@ -236,11 +217,9 @@ public class RegistrarEmpleado extends JDialog {
 			}
 		}
 		
-		// Llenamos los datos al arrancar si es modo actualización
 		loadEmpleado();
 	}
 
-	// Método para llenar la ventana con los datos del empleado a modificar
 	private void loadEmpleado() {
 		if(miEmpleado != null) {
 			txtId.setText(miEmpleado.getIdPersona());
@@ -253,7 +232,6 @@ public class RegistrarEmpleado extends JDialog {
 		}
 	}
 
-	// Método para resetear la ventana en modo registro
 	private void clean() {
 		txtNombre.setText("");
 		txtCedula.setText("");
@@ -261,7 +239,6 @@ public class RegistrarEmpleado extends JDialog {
 		spnSalario.setValue(0.0d);
 		spnComisiones.setValue(0.0d);
 		
-		// Actualizamos los visualizadores de ID para el próximo registro
 		txtId.setText("E - " + EmpresaAltice.getInstance().idEmpleados);
 		String anioActual = String.valueOf(LocalDate.now().getYear());
 		txtCodigo.setText("EMP-" + anioActual + "-" + EmpresaAltice.getInstance().idEmpleados);

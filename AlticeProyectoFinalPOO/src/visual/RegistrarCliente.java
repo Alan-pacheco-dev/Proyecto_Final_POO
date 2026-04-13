@@ -198,7 +198,6 @@ public class RegistrarCliente extends JDialog {
 				btnRegistrar.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						
-						// 1. Extraemos los datos
 						String nombre = txtNombreCliente.getText().trim();
 						String direccion = txtDireccionCliente.getText().trim();
 						String email = txtEmailCliente.getText().trim();
@@ -206,21 +205,17 @@ public class RegistrarCliente extends JDialog {
 						boolean esEmpresa = rdbtnSiEsEmpresa.isSelected();
 						String codigo = txtCodigoCliente.getText();
 
-						// --- VALIDACIONES ---
 						
-						// A. Campos vacíos
 						if (nombre.isEmpty() || email.isEmpty() || direccion.isEmpty() || cedulaOrRNC.isEmpty()) {
 							JOptionPane.showMessageDialog(null, "Por favor, complete todos los campos requeridos.", "Campos incompletos", JOptionPane.WARNING_MESSAGE);
 							return;
 						}
 
-						// B. Formato de correo
 						if (!email.contains("@") || !email.contains(".")) {
 							JOptionPane.showMessageDialog(null, "Por favor, ingrese un correo electrónico válido (ej: usuario@correo.com).", "Formato incorrecto", JOptionPane.WARNING_MESSAGE);
 							return;
 						}
 
-						// Determinamos el string para los mensajes de error
 						String tipoDoc = "";
 						if (esEmpresa == true) {
 							tipoDoc = "El RNC";
@@ -228,13 +223,11 @@ public class RegistrarCliente extends JDialog {
 							tipoDoc = "La Cédula";
 						}
 
-						// C. Cédula/RNC numérico
 						if (!cedulaOrRNC.matches("[0-9]+")) {
 							JOptionPane.showMessageDialog(null, tipoDoc + " debe contener únicamente números (sin guiones, espacios ni letras).", "Formato incorrecto", JOptionPane.WARNING_MESSAGE);
 							return;
 						}
 
-						// D. Longitud de Cédula/RNC
 						if (esEmpresa == true) {
 							if (cedulaOrRNC.length() != 9) {
 								JOptionPane.showMessageDialog(null, "El RNC debe tener exactamente 9 dígitos.", "Longitud incorrecta", JOptionPane.WARNING_MESSAGE);
@@ -246,8 +239,6 @@ public class RegistrarCliente extends JDialog {
 								return;
 							}
 						}
-
-						// --- FIN DE VALIDACIONES, PROCEDEMOS A GUARDAR ---
 						
 						EmpresaAltice empresa = EmpresaAltice.getInstance();
 

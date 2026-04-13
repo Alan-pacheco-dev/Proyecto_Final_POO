@@ -35,14 +35,13 @@ public class ListarEmpleados extends JDialog {
 	private TableRowSorter<DefaultTableModel> sorter;
 	
 	private JButton btnEliminar;
-	private JButton btnSeleccionar; // Nuevo botón para el modo dual
-	private JButton btnActualizar; // Nuevo botón para el modo dual
+	private JButton btnSeleccionar;
+	private JButton btnActualizar; 
 	
 	private Empleado selected = null;
 
 	public static void main(String[] args) {
 		try {
-			// Lo probamos en modo administrador (false)
 			ListarEmpleados dialog = new ListarEmpleados(false);
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
@@ -53,7 +52,7 @@ public class ListarEmpleados extends JDialog {
 
 	public ListarEmpleados(boolean modoSeleccion) {
 		setTitle("Listado de Empleados");
-		setModal(modoSeleccion); // Bloquea si es selector
+		setModal(modoSeleccion);
 		setResizable(false);
 		setBounds(100, 100, 850, 500);
 		setLocationRelativeTo(null);
@@ -62,7 +61,6 @@ public class ListarEmpleados extends JDialog {
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(new BorderLayout(0, 10));
 
-		// --- PANEL DE BÚSQUEDA ---
 		JPanel panelBusqueda = new JPanel();
 		panelBusqueda.setLayout(new BorderLayout(10, 0));
 		contentPanel.add(panelBusqueda, BorderLayout.NORTH);
@@ -73,7 +71,6 @@ public class ListarEmpleados extends JDialog {
 		txtBuscar = new JTextField();
 		panelBusqueda.add(txtBuscar, BorderLayout.CENTER);
 
-		// --- PANEL DE LA TABLA ---
 		JPanel panelTabla = new JPanel();
 		panelTabla.setLayout(new BorderLayout(0, 0));
 		contentPanel.add(panelTabla, BorderLayout.CENTER);
@@ -93,7 +90,6 @@ public class ListarEmpleados extends JDialog {
 					
 					String idEmpleado = (String) model.getValueAt(indexReal, 0);
 					
-					// Búsqueda manual clásica (sin lambdas)
 					selected = null;
 					for (Empleado emp : EmpresaAltice.getInstance().getMisEmpleados()) {
 						if (emp.getIdPersona().equalsIgnoreCase(idEmpleado)) {
@@ -201,7 +197,6 @@ public class ListarEmpleados extends JDialog {
 			}
 		});
 		
-		// Lógica IF tradicional para mostrar botones según el modo
 		if (modoSeleccion == true) {
 			buttonPane.add(btnSeleccionar);
 			btnEliminar.setVisible(false);
@@ -215,7 +210,7 @@ public class ListarEmpleados extends JDialog {
 		JButton btnCancelar = new JButton("Cerrar");
 		btnCancelar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				selected = null; // Limpiamos si el usuario cancela
+				selected = null;
 				dispose();
 			}
 		});
@@ -240,7 +235,6 @@ public class ListarEmpleados extends JDialog {
 		}
 	}
 	
-	// Método para devolver el empleado elegido
 	public Empleado getEmpleadoSeleccionado() {
 		return selected;
 	}
