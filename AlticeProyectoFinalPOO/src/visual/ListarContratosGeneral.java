@@ -290,7 +290,7 @@ public class ListarContratosGeneral extends JDialog {
 			
 			float porcentajeDecimal = c.getPorcentajeComisionAplicado() / 100.0f;
 			float costoComision = c.getPrecioMensualAcordado() * porcentajeDecimal;
-			float totalMensual = c.getPrecioMensualAcordado() + costoComision;
+			float totalMensual = c.getPrecioMensualAcordado();
 			
 			Object[] row = new Object[7];
 			row[0] = c.getIdContrato();
