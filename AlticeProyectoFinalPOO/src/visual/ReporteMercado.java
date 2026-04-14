@@ -214,7 +214,7 @@ public class ReporteMercado extends JDialog {
 		ventanaGrafico.setLocationRelativeTo(this);
 		ventanaGrafico.setVisible(true);
 	}
-
+	
 	private JButton primaryButton(String text) {
 		JButton btn = new JButton(text);
 		btn.setFont(new Font("SansSerif", Font.BOLD, 14));

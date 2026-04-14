@@ -71,6 +71,9 @@ public class ReporteGeneral extends JDialog {
 
 		contentPanel.setLayout(new GridLayout(4, 2, 20, 20));
 
+		// ==========================================
+		// 1. LÓGICA DE CÁLCULO DE DATOS (KPIs)
+		// ==========================================
 		EmpresaAltice empresa = EmpresaAltice.getInstance();
 
 		int totalClientesActivos = 0;
@@ -110,6 +113,10 @@ public class ReporteGeneral extends JDialog {
 
 		float totalEgresos = nominaBase + comisionesMensuales;
 		float ingresoNeto = ingresoBrutoMensual - impuestosTotales - totalEgresos;
+
+		// ==========================================
+		// 2. CREACIÓN DE LAS TARJETAS VISUALES (ESTILO ALTICE)
+		// ==========================================
 		
 		// Fila 1
 		contentPanel.add(crearTarjeta("Total de Clientes Activos", String.valueOf(totalClientesActivos)));
@@ -128,6 +135,9 @@ public class ReporteGeneral extends JDialog {
 		contentPanel.add(crearTarjeta("Egresos Variables (Comisiones)", "$ " + String.format("%.2f", comisionesMensuales)));
 		contentPanel.add(crearTarjeta("Ganancia Neta Estimada", "$ " + String.format("%.2f", ingresoNeto)));
 
+		// ==========================================
+		// 3. PANEL DE BOTONES (INFERIOR)
+		// ==========================================
 		JPanel buttonPane = new JPanel();
 		buttonPane.setBackground(bgWhite);
 		buttonPane.setBorder(new EmptyBorder(10, 20, 20, 20));

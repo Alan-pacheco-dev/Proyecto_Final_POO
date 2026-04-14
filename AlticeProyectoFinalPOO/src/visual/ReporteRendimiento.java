@@ -236,10 +236,7 @@ public class ReporteRendimiento extends JDialog {
 		ventanaGrafico.setLocationRelativeTo(this);
 		ventanaGrafico.setVisible(true);
 	}
-	
-	// ==========================================
-	// HERRAMIENTAS VISUALES DE BOTONES
-	// ==========================================
+
 	private JButton primaryButton(String text) {
 		JButton btn = new JButton(text);
 		btn.setFont(new Font("SansSerif", Font.BOLD, 14));
