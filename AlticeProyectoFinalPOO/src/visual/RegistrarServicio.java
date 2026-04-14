@@ -2,18 +2,27 @@ package visual;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.JLabel;
+import javax.swing.JRadioButton;
+import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
+import javax.swing.border.MatteBorder;
 import javax.swing.border.TitledBorder;
 
 import logico.EmpresaAltice;
@@ -22,23 +31,27 @@ import logico.ServicioMovil;
 import logico.ServicioTelefonia;
 import logico.ServicioTelevision;
 
-import javax.swing.JTextPane;
-import javax.swing.JRadioButton;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerNumberModel;
-
 public class RegistrarServicio extends JDialog {
+
+	private static final Color ALTICE_BLUE = Color.decode("#0066FF");
+	private static final Color ALTICE_LIGHT = new Color(245, 248, 255);
+	private static final Color ALTICE_BORDER = new Color(208, 223, 247);
+	private static final Font FONT_LABEL = new Font("SansSerif", Font.BOLD, 13);
+	private static final Font FONT_INPUT = new Font("SansSerif", Font.PLAIN, 13);
+	private static final Font FONT_BTN = new Font("SansSerif", Font.BOLD, 13);
 
 	private final JPanel contentPanel = new JPanel();
 	private JTextField txtID;
-	private JTextField txtAnNoHa;
+	private JTextField txtEstado;
+	private JSpinner spnPrecio;
 
-	private JPanel panelServicioMovil;
-	private JPanel panelServicioTelefonia;
-	private JPanel panelServicioInternet;
-	private JPanel panelServicioTelevision;
 	private JPanel panelCard;
 	private CardLayout cardLayout;
+
+	private JSpinner spnDatos, spnMinutos, spnSms;
+	private JSpinner spnVelocidad, spnMinutosIncluidos, spnCostoMinuto;
+	private JSpinner spnCanales, spnCajitas;
+	private JRadioButton rbRouterSi, rbIlimitadoSi, rbHDSi;
 
 	public static void main(String[] args) {
 		try {
@@ -51,439 +64,298 @@ public class RegistrarServicio extends JDialog {
 	}
 
 	public RegistrarServicio() {
-		setTitle("Registrar Servicio");
-		setBounds(100, 100, 530, 560);
+		setTitle("Configuración de Nuevo Servicio");
+		setSize(580, 700);
 		setLocationRelativeTo(null);
+		setResizable(false);
+
 		getContentPane().setLayout(new BorderLayout());
-		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		getContentPane().setBackground(Color.WHITE);
+
+		JPanel header = new JPanel(new BorderLayout());
+		header.setBackground(ALTICE_BLUE);
+		header.setBorder(new EmptyBorder(12, 18, 12, 18));
+		JLabel lblTitulo = new JLabel("Registrar Nuevo Servicio");
+		lblTitulo.setFont(new Font("SansSerif", Font.BOLD, 15));
+		lblTitulo.setForeground(Color.WHITE);
+		JLabel lblAltice = new JLabel("altice");
+		lblAltice.setFont(new Font("SansSerif", Font.BOLD, 17));
+		lblAltice.setForeground(new Color(255, 255, 255, 160));
+		header.add(lblTitulo, BorderLayout.WEST);
+		header.add(lblAltice, BorderLayout.EAST);
+		getContentPane().add(header, BorderLayout.NORTH);
+
+		contentPanel.setBackground(Color.WHITE);
+		contentPanel.setBorder(new EmptyBorder(15, 15, 5, 15));
+		contentPanel.setLayout(new BorderLayout());
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
-		contentPanel.setLayout(null);
 
-		JPanel panelRegistrarServicio = new JPanel();
-		panelRegistrarServicio.setBounds(5, 5, 499, 203);
-		panelRegistrarServicio.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		contentPanel.add(panelRegistrarServicio);
-		panelRegistrarServicio.setLayout(null);
+		JPanel panelPrincipal = new JPanel();
+		panelPrincipal.setBackground(Color.WHITE);
+		panelPrincipal.setBorder(BorderFactory.createTitledBorder(new LineBorder(Color.LIGHT_GRAY),
+				"Definición Técnica", TitledBorder.LEADING, TitledBorder.TOP, FONT_LABEL, ALTICE_BLUE));
+		panelPrincipal.setLayout(null);
+		contentPanel.add(panelPrincipal, BorderLayout.CENTER);
 
-		JLabel lblNewLabel = new JLabel("ID Servicio");
-		lblNewLabel.setBounds(21, 22, 117, 34);
-		panelRegistrarServicio.add(lblNewLabel);
+		JLabel lblID = new JLabel("ID Servicio:");
+		lblID.setFont(FONT_LABEL);
+		lblID.setBounds(25, 35, 120, 22);
+		panelPrincipal.add(lblID);
 
 		txtID = new JTextField();
 		txtID.setEditable(false);
+		txtID.setFont(FONT_INPUT);
+		txtID.setBackground(ALTICE_LIGHT);
 		txtID.setText("S - " + EmpresaAltice.getInstance().idServicios);
-		txtID.setBounds(21, 67, 160, 20);
-		panelRegistrarServicio.add(txtID);
-		txtID.setColumns(10);
+		txtID.setBounds(25, 60, 160, 30);
+		txtID.setBorder(new LineBorder(ALTICE_BORDER, 1, true));
+		panelPrincipal.add(txtID);
 
-		JLabel lblVigenciaDelContrato = new JLabel("¿Está activo este servicio?");
-		lblVigenciaDelContrato.setBounds(316, 22, 222, 34);
-		panelRegistrarServicio.add(lblVigenciaDelContrato);
+		JLabel lblEstadoLabel = new JLabel("Estado:");
+		lblEstadoLabel.setFont(FONT_LABEL);
+		lblEstadoLabel.setBounds(345, 35, 120, 22);
+		panelPrincipal.add(lblEstadoLabel);
 
-		txtAnNoHa = new JTextField();
-		txtAnNoHa.setEditable(false);
-		txtAnNoHa.setText("Está siendo registrado");
-		txtAnNoHa.setColumns(10);
-		txtAnNoHa.setBounds(316, 67, 175, 20);
-		panelRegistrarServicio.add(txtAnNoHa);
+		txtEstado = new JTextField("En Definición");
+		txtEstado.setEditable(false);
+		txtEstado.setFont(FONT_INPUT);
+		txtEstado.setBackground(ALTICE_LIGHT);
+		txtEstado.setBounds(345, 60, 175, 30);
+		txtEstado.setBorder(new LineBorder(ALTICE_BORDER, 1, true));
+		panelPrincipal.add(txtEstado);
 
-		JLabel lblTipoDeServicio = new JLabel("Tipo de Servicio");
-		lblTipoDeServicio.setBounds(21, 114, 148, 34);
-		panelRegistrarServicio.add(lblTipoDeServicio);
+		JPanel panelTipo = new JPanel(new FlowLayout(FlowLayout.CENTER, 25, 10));
+		panelTipo.setBackground(ALTICE_LIGHT);
+		panelTipo.setBorder(new LineBorder(ALTICE_BORDER, 1, true));
+		panelTipo.setBounds(25, 110, 495, 50);
+		panelPrincipal.add(panelTipo);
 
 		JRadioButton rdbtnMovil = new JRadioButton("Móvil");
-		rdbtnMovil.setBounds(21, 155, 75, 23);
-		panelRegistrarServicio.add(rdbtnMovil);
-
+		rdbtnMovil.setBackground(ALTICE_LIGHT);
+		rdbtnMovil.setFont(FONT_LABEL);
 		JRadioButton rdbtnInternet = new JRadioButton("Internet");
-		rdbtnInternet.setBounds(127, 155, 85, 23);
-		panelRegistrarServicio.add(rdbtnInternet);
-
+		rdbtnInternet.setBackground(ALTICE_LIGHT);
+		rdbtnInternet.setFont(FONT_LABEL);
 		JRadioButton rdbtnTelefonia = new JRadioButton("Telefonía");
-		rdbtnTelefonia.setBounds(250, 155, 90, 23);
-		panelRegistrarServicio.add(rdbtnTelefonia);
+		rdbtnTelefonia.setBackground(ALTICE_LIGHT);
+		rdbtnTelefonia.setFont(FONT_LABEL);
+		JRadioButton rdbtnTelevision = new JRadioButton("TV");
+		rdbtnTelevision.setBackground(ALTICE_LIGHT);
+		rdbtnTelevision.setFont(FONT_LABEL);
 
-		JRadioButton rdbtnTelevision = new JRadioButton("Televisión");
-		rdbtnTelevision.setBounds(376, 155, 100, 23);
-		panelRegistrarServicio.add(rdbtnTelevision);
-
-		ButtonGroup bgTipoServicio = new ButtonGroup();
-		bgTipoServicio.add(rdbtnMovil);
-		bgTipoServicio.add(rdbtnInternet);
-		bgTipoServicio.add(rdbtnTelefonia);
-		bgTipoServicio.add(rdbtnTelevision);
+		ButtonGroup bgTipo = new ButtonGroup();
+		bgTipo.add(rdbtnMovil);
+		bgTipo.add(rdbtnInternet);
+		bgTipo.add(rdbtnTelefonia);
+		bgTipo.add(rdbtnTelevision);
+		panelTipo.add(rdbtnMovil);
+		panelTipo.add(rdbtnInternet);
+		panelTipo.add(rdbtnTelefonia);
+		panelTipo.add(rdbtnTelevision);
 
 		cardLayout = new CardLayout();
 		panelCard = new JPanel(cardLayout);
-		panelCard.setBounds(5, 215, 499, 153);
-		contentPanel.add(panelCard);
+		panelCard.setBounds(25, 180, 495, 200);
+		panelCard.setBackground(Color.WHITE);
+		panelPrincipal.add(panelCard);
 
-		panelServicioMovil = new JPanel();
-		panelServicioMovil.setLayout(null);
-		panelServicioMovil.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		panelCard.add(crearPanelMovil(), "MOVIL");
+		panelCard.add(crearPanelInternet(), "INTERNET");
+		panelCard.add(crearPanelTelefonia(), "TELEFONIA");
+		panelCard.add(crearPanelTV(), "TV");
 
-		JTextPane txtpnServicioMvil = new JTextPane();
-		txtpnServicioMvil.setEditable(false);
-		txtpnServicioMvil.setText("SERVICIO MÓVIL");
-		txtpnServicioMvil.setBounds(202, 23, 126, 20);
-		panelServicioMovil.add(txtpnServicioMvil);
+		JPanel panelPrecio = new JPanel();
+		panelPrecio.setLayout(null);
+		panelPrecio.setBackground(ALTICE_LIGHT);
+		panelPrecio.setBorder(BorderFactory.createTitledBorder(new LineBorder(ALTICE_BORDER), "Costo del Servicio",
+				TitledBorder.LEADING, TitledBorder.TOP, FONT_LABEL, ALTICE_BLUE));
+		panelPrecio.setBounds(25, 400, 495, 90);
+		panelPrincipal.add(panelPrecio);
 
-		JLabel labelDatos = new JLabel("Datos en GB");
-		labelDatos.setBounds(10, 54, 148, 34);
-		panelServicioMovil.add(labelDatos);
-		JSpinner spnDatos = new JSpinner(new SpinnerNumberModel(0, 0, null, 1));
-		spnDatos.setBounds(10, 92, 117, 20);
-		panelServicioMovil.add(spnDatos);
+		JLabel lblMonto = new JLabel("Precio Base Mensual ($):");
+		lblMonto.setFont(FONT_LABEL);
+		lblMonto.setBounds(20, 40, 180, 22);
+		panelPrecio.add(lblMonto);
 
-		JLabel labelMinutos = new JLabel("Minutos");
-		labelMinutos.setBounds(182, 54, 148, 34);
-		panelServicioMovil.add(labelMinutos);
-		JSpinner spnMinutos = new JSpinner(new SpinnerNumberModel(0, 0, null, 1));
-		spnMinutos.setBounds(182, 92, 117, 20);
-		panelServicioMovil.add(spnMinutos);
+		spnPrecio = new JSpinner(new SpinnerNumberModel(0.0, 0.0, null, 100.0));
+		spnPrecio.setFont(new Font("SansSerif", Font.BOLD, 16));
+		spnPrecio.setBounds(200, 35, 180, 35);
+		panelPrecio.add(spnPrecio);
 
-		JLabel labelSms = new JLabel("SMS");
-		labelSms.setBounds(356, 54, 148, 34);
-		panelServicioMovil.add(labelSms);
-		JSpinner spnSms = new JSpinner(new SpinnerNumberModel(0, 0, null, 1));
-		spnSms.setBounds(356, 92, 117, 20);
-		panelServicioMovil.add(spnSms);
-
-		panelServicioInternet = new JPanel();
-		panelServicioInternet.setLayout(null);
-		panelServicioInternet.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-
-		JTextPane txtpnServicioInternet = new JTextPane();
-		txtpnServicioInternet.setEditable(false);
-		txtpnServicioInternet.setText("SERVICIO INTERNET");
-		txtpnServicioInternet.setBounds(202, 23, 148, 20);
-		panelServicioInternet.add(txtpnServicioInternet);
-
-		JLabel lbltieneRouter = new JLabel("¿Tiene Router?");
-		lbltieneRouter.setBounds(39, 59, 148, 34);
-		panelServicioInternet.add(lbltieneRouter);
-
-		JRadioButton rbRouterSi = new JRadioButton("Si");
-		rbRouterSi.setBounds(35, 96, 56, 23);
-		panelServicioInternet.add(rbRouterSi);
-		JRadioButton rbRouterNo = new JRadioButton("No");
-		rbRouterNo.setBounds(100, 96, 56, 23);
-		panelServicioInternet.add(rbRouterNo);
-
-		ButtonGroup bgRouter = new ButtonGroup();
-		bgRouter.add(rbRouterSi);
-		bgRouter.add(rbRouterNo);
-
-		JLabel lblVelocidadDeMbps = new JLabel("Velocidad de Mbps");
-		lblVelocidadDeMbps.setBounds(260, 59, 148, 34);
-		panelServicioInternet.add(lblVelocidadDeMbps);
-		JSpinner spnVelocidad = new JSpinner(new SpinnerNumberModel(0, 0, null, 1));
-		spnVelocidad.setBounds(260, 97, 117, 20);
-		panelServicioInternet.add(spnVelocidad);
-
-		panelServicioTelefonia = new JPanel();
-		panelServicioTelefonia.setLayout(null);
-		panelServicioTelefonia.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-
-		JTextPane txtpnTelefonia = new JTextPane();
-		txtpnTelefonia.setEditable(false);
-		txtpnTelefonia.setText("SERVICIO TELEFONÍA FIJA");
-		txtpnTelefonia.setBounds(180, 23, 170, 20);
-		panelServicioTelefonia.add(txtpnTelefonia);
-
-		JLabel lblLlamadasIlimitadas = new JLabel("¿Llamadas Ilimitadas?");
-		lblLlamadasIlimitadas.setBounds(10, 57, 148, 34);
-		panelServicioTelefonia.add(lblLlamadasIlimitadas);
-
-		JRadioButton rbIlimitadoSi = new JRadioButton("Si");
-		rbIlimitadoSi.setBounds(10, 94, 50, 23);
-		panelServicioTelefonia.add(rbIlimitadoSi);
-		JRadioButton rbIlimitadoNo = new JRadioButton("No");
-		rbIlimitadoNo.setBounds(65, 94, 50, 23);
-		panelServicioTelefonia.add(rbIlimitadoNo);
-
-		ButtonGroup bgIlimitado = new ButtonGroup();
-		bgIlimitado.add(rbIlimitadoSi);
-		bgIlimitado.add(rbIlimitadoNo);
-
-		JLabel lblMinIncluidos = new JLabel("Minutos Incluidos");
-		lblMinIncluidos.setBounds(170, 57, 120, 34);
-		panelServicioTelefonia.add(lblMinIncluidos);
-		JSpinner spnMinutosIncluidos = new JSpinner(new SpinnerNumberModel(0, 0, null, 1));
-		spnMinutosIncluidos.setBounds(170, 97, 100, 20);
-		panelServicioTelefonia.add(spnMinutosIncluidos);
-
-		JLabel lblCostoMinuto = new JLabel("Costo Minuto Extra");
-		lblCostoMinuto.setBounds(330, 57, 148, 34);
-		panelServicioTelefonia.add(lblCostoMinuto);
-		JSpinner spnCostoMinuto = new JSpinner(new SpinnerNumberModel(0.0, 0.0, null, 0.5));
-		spnCostoMinuto.setBounds(330, 97, 117, 20);
-		panelServicioTelefonia.add(spnCostoMinuto);
-
-		panelServicioTelevision = new JPanel();
-		panelServicioTelevision.setLayout(null);
-		panelServicioTelevision.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-
-		JTextPane txtpnTelevision = new JTextPane();
-		txtpnTelevision.setEditable(false);
-		txtpnTelevision.setText("SERVICIO TELEVISIÓN");
-		txtpnTelevision.setBounds(180, 23, 170, 20);
-		panelServicioTelevision.add(txtpnTelevision);
-
-		JLabel lblCanales = new JLabel("Cantidad de Canales");
-		lblCanales.setBounds(10, 57, 148, 34);
-		panelServicioTelevision.add(lblCanales);
-		JSpinner spnCanales = new JSpinner(new SpinnerNumberModel(0, 0, null, 1));
-		spnCanales.setBounds(10, 97, 117, 20);
-		panelServicioTelevision.add(spnCanales);
-
-		JLabel lblCajitas = new JLabel("Cajitas Incluidas");
-		lblCajitas.setBounds(180, 57, 148, 34);
-		panelServicioTelevision.add(lblCajitas);
-		JSpinner spnCajitas = new JSpinner(new SpinnerNumberModel(0, 0, null, 1));
-		spnCajitas.setBounds(180, 97, 117, 20);
-		panelServicioTelevision.add(spnCajitas);
-
-		JLabel lblHD = new JLabel("¿Tiene HD?");
-		lblHD.setBounds(350, 57, 148, 34);
-		panelServicioTelevision.add(lblHD);
-		JRadioButton rbHDSi = new JRadioButton("Si");
-		rbHDSi.setBounds(350, 97, 45, 23);
-		panelServicioTelevision.add(rbHDSi);
-		JRadioButton rbHDNo = new JRadioButton("No");
-		rbHDNo.setBounds(400, 97, 45, 23);
-		panelServicioTelevision.add(rbHDNo);
-
-		ButtonGroup bgHD = new ButtonGroup();
-		bgHD.add(rbHDSi);
-		bgHD.add(rbHDNo);
-
-		panelCard.add(panelServicioMovil,     "MOVIL");
-		panelCard.add(panelServicioInternet,  "INTERNET");
-		panelCard.add(panelServicioTelefonia, "TELEFONIA");
-		panelCard.add(panelServicioTelevision,"TELEVISION");
-
-		JPanel panelPrecioDelServicio = new JPanel();
-		panelPrecioDelServicio.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panelPrecioDelServicio.setBounds(5, 380, 499, 99);
-		contentPanel.add(panelPrecioDelServicio);
-		panelPrecioDelServicio.setLayout(null);
-
-		JLabel lblPrecio = new JLabel("Precio del servicio");
-		lblPrecio.setBounds(10, 30, 148, 14);
-		panelPrecioDelServicio.add(lblPrecio);
-
-		JSpinner spnPrecio = new JSpinner(new SpinnerNumberModel(0.0, 0.0, null, 50.0));
-		spnPrecio.setBounds(10, 55, 117, 20);
-		panelPrecioDelServicio.add(spnPrecio);
-
-		rdbtnMovil.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				cardLayout.show(panelCard, "MOVIL");
-			}
-		});
-
-		rdbtnInternet.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				cardLayout.show(panelCard, "INTERNET");
-			}
-		});
-
-		rdbtnTelefonia.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				cardLayout.show(panelCard, "TELEFONIA");
-			}
-		});
-
-		rdbtnTelevision.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				cardLayout.show(panelCard, "TELEVISION");
-			}
-		});
+		rdbtnMovil.addActionListener(e -> cardLayout.show(panelCard, "MOVIL"));
+		rdbtnInternet.addActionListener(e -> cardLayout.show(panelCard, "INTERNET"));
+		rdbtnTelefonia.addActionListener(e -> cardLayout.show(panelCard, "TELEFONIA"));
+		rdbtnTelevision.addActionListener(e -> cardLayout.show(panelCard, "TV"));
 
 		rdbtnMovil.setSelected(true);
 		cardLayout.show(panelCard, "MOVIL");
 
-		JPanel buttonPane = new JPanel();
-		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
+		JPanel buttonPane = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
+		buttonPane.setBackground(Color.WHITE);
+		buttonPane.setBorder(new MatteBorder(1, 0, 0, 0, ALTICE_BORDER));
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
 
-		JButton btnRegistrar = new JButton("Registrar");
+		JButton btnRegistrar = primaryButton("Registrar Servicio");
 		btnRegistrar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-
-				String idServicio = txtID.getText();
-				float precio = ((Double) spnPrecio.getValue()).floatValue();
-
-				if (precio <= 0) {
-					JOptionPane.showMessageDialog(null, "El precio del servicio debe ser mayor a 0.", "Error", JOptionPane.ERROR_MESSAGE);
-					return;
-				}
-
-				EmpresaAltice empresa = EmpresaAltice.getInstance();
-				
-				String tipoSeleccionado = "";
-				if (rdbtnMovil.isSelected()) tipoSeleccionado = "Móvil";
-				else if (rdbtnInternet.isSelected()) tipoSeleccionado = "Internet";
-				else if (rdbtnTelefonia.isSelected()) tipoSeleccionado = "Telefonía";
-				else if (rdbtnTelevision.isSelected()) tipoSeleccionado = "Televisión";
-
-				if (tipoSeleccionado.isEmpty()) {
-				    JOptionPane.showMessageDialog(null, "Debe seleccionar un tipo de servicio.", "Error", JOptionPane.ERROR_MESSAGE);
-				    return;
-				}
-				
-				for (logico.Servicio s : empresa.getMisServicios()) {
-				    if (!s.getTipoServicio().equalsIgnoreCase(tipoSeleccionado)) continue;
-
-				    boolean esDuplicado = false;
-
-				    if (rdbtnMovil.isSelected() && s instanceof ServicioMovil) {
-				        ServicioMovil sm = (ServicioMovil) s;
-				        esDuplicado = sm.getDatosGb() == (Integer) spnDatos.getValue()
-				                   && sm.getMinutos() == (Integer) spnMinutos.getValue()
-				                   && sm.getSms() == (Integer) spnSms.getValue()
-				                   && sm.getPrecioServicio() == precio;
-
-				    } else if (rdbtnInternet.isSelected() && s instanceof ServicioInternet) {
-				        ServicioInternet si = (ServicioInternet) s;
-				        esDuplicado = si.getVelocidadMbps() == (Integer) spnVelocidad.getValue()
-				                   && si.isTieneRouter() == rbRouterSi.isSelected()
-				                   && si.getPrecioServicio() == precio;
-
-				    } else if (rdbtnTelefonia.isSelected() && s instanceof ServicioTelefonia) {
-				        ServicioTelefonia st = (ServicioTelefonia) s;
-				        esDuplicado = st.getMinutosIncluidos() == (Integer) spnMinutosIncluidos.getValue()
-				                   && st.isLlamadasIlimitadas() == rbIlimitadoSi.isSelected()
-				                   && st.getCostoMinutoExtra() == ((Double) spnCostoMinuto.getValue()).floatValue()
-				                   && st.getPrecioServicio() == precio;
-
-				    } else if (rdbtnTelevision.isSelected() && s instanceof ServicioTelevision) {
-				        ServicioTelevision stv = (ServicioTelevision) s;
-				        esDuplicado = stv.getCantidadCanales() == (Integer) spnCanales.getValue()
-				                   && stv.getCajitasIncluidas() == (Integer) spnCajitas.getValue()
-				                   && stv.isTieneHD() == rbHDSi.isSelected()
-				                   && stv.getPrecioServicio() == precio;
-				    }
-
-				    if (esDuplicado) {
-				        JOptionPane.showMessageDialog(null,
-				            "Ya existe un servicio de tipo " + tipoSeleccionado + " con exactamente las mismas características.",
-				            "Servicio duplicado", JOptionPane.WARNING_MESSAGE);
-				        return;
-				    }
-				}
-
-				if (rdbtnMovil.isSelected()) {
-
-					int datos   = (Integer) spnDatos.getValue();
-					int minutos = (Integer) spnMinutos.getValue();
-					int sms     = (Integer) spnSms.getValue();
-
-					if (datos <= 0 || minutos <= 0 || sms <= 0) {
-						JOptionPane.showMessageDialog(null, "Los datos, minutos y SMS deben ser mayores a 0.", "Error", JOptionPane.ERROR_MESSAGE);
-						return;
-					}
-
-					ServicioMovil movil = new ServicioMovil("Móvil", precio, datos, minutos, sms);
-					empresa.getMisServicios().add(movil);
-
-				} else if (rdbtnInternet.isSelected()) {
-
-					if (!rbRouterSi.isSelected() && !rbRouterNo.isSelected()) {
-						JOptionPane.showMessageDialog(null, "Debe indicar si tiene o no Router.", "Error", JOptionPane.ERROR_MESSAGE);
-						return;
-					}
-
-					boolean tieneRouter = rbRouterSi.isSelected();
-					int velocidad = (Integer) spnVelocidad.getValue();
-
-					if (velocidad <= 0) {
-						JOptionPane.showMessageDialog(null, "La velocidad del internet debe ser mayor a 0 Mbps.", "Error", JOptionPane.ERROR_MESSAGE);
-						return;
-					}
-
-					ServicioInternet internet = new ServicioInternet("Internet", precio, velocidad, tieneRouter);
-					empresa.getMisServicios().add(internet);
-
-				} else if (rdbtnTelefonia.isSelected()) {
-
-					if (!rbIlimitadoSi.isSelected() && !rbIlimitadoNo.isSelected()) {
-						JOptionPane.showMessageDialog(null, "Debe indicar si las llamadas son ilimitadas.", "Error", JOptionPane.ERROR_MESSAGE);
-						return;
-					}
-
-					boolean llamadasIlimitadas  = rbIlimitadoSi.isSelected();
-					int     minutosIncluidos    = (Integer) spnMinutosIncluidos.getValue();
-					float   costoMinuto         = ((Double) spnCostoMinuto.getValue()).floatValue();
-
-					if (!llamadasIlimitadas && costoMinuto <= 0) {
-						JOptionPane.showMessageDialog(null, "Si las llamadas no son ilimitadas, el costo extra por minuto debe ser mayor a 0.", "Error", JOptionPane.ERROR_MESSAGE);
-						return;
-					}
-
-					ServicioTelefonia telefonia = new ServicioTelefonia("Telefonía", precio, minutosIncluidos, llamadasIlimitadas, costoMinuto);
-					empresa.getMisServicios().add(telefonia);
-
-				} else if (rdbtnTelevision.isSelected()) {
-
-					if (!rbHDSi.isSelected() && !rbHDNo.isSelected()) {
-						JOptionPane.showMessageDialog(null, "Debe indicar si el servicio cuenta con canales HD.", "Error", JOptionPane.ERROR_MESSAGE);
-						return;
-					}
-
-					int     canales  = (Integer) spnCanales.getValue();
-					int     cajitas  = (Integer) spnCajitas.getValue();
-					boolean tieneHD  = rbHDSi.isSelected();
-
-					if (canales <= 0 || cajitas <= 0) {
-						JOptionPane.showMessageDialog(null, "La cantidad de canales y cajitas debe ser mayor a 0.", "Error", JOptionPane.ERROR_MESSAGE);
-						return;
-					}
-
-					ServicioTelevision cable = new ServicioTelevision("Televisión", precio, canales, cajitas, tieneHD);
-					empresa.getMisServicios().add(cable);
-				}
-
-				JOptionPane.showMessageDialog(null, "¡Servicio registrado con éxito!", "Información", JOptionPane.INFORMATION_MESSAGE);
-
-				txtID.setText("S - " + EmpresaAltice.getInstance().idServicios);
-				spnDatos.setValue(0);
-				spnMinutos.setValue(0);
-				spnSms.setValue(0);
-				spnVelocidad.setValue(0);
-				spnMinutosIncluidos.setValue(0);
-				spnCostoMinuto.setValue(0.0);
-				spnCanales.setValue(0);
-				spnCajitas.setValue(0);
-				spnPrecio.setValue(0.0);
-
-				bgRouter.clearSelection();
-				bgIlimitado.clearSelection();
-				bgHD.clearSelection();
-				
-				empresa.GuardarDatos(
-						empresa.getMisClientes(), 
-						empresa.getMisEmpleados(),
-						empresa.getMisPlanes(), 
-						empresa.getMisServicios(),
-						empresa.getMisUsuarios(), 
-						empresa.getMisContratos(),
-						empresa.getPagos()
-				);
+				ejecutarRegistro(rdbtnMovil, rdbtnInternet, rdbtnTelefonia, rdbtnTelevision);
 			}
 		});
-		btnRegistrar.setActionCommand("OK");
 		buttonPane.add(btnRegistrar);
-		getRootPane().setDefaultButton(btnRegistrar);
 
-		JButton btnCancelar = new JButton("Cancelar");
-		btnCancelar.setActionCommand("Cancel");
-		btnCancelar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				dispose();
-			}
-		});
+		JButton btnCancelar = outlineButton("Cancelar");
+		btnCancelar.addActionListener(e -> dispose());
 		buttonPane.add(btnCancelar);
+	}
+
+	private JPanel crearPanelMovil() {
+		JPanel p = crearPanelBaseCard("Especificaciones de Red Móvil");
+		spnDatos = agregarCampoSpinner(p, "Datos (GB):", 20, 60);
+		spnMinutos = agregarCampoSpinner(p, "Minutos:", 170, 60);
+		spnSms = agregarCampoSpinner(p, "SMS:", 320, 60);
+		return p;
+	}
+
+	private JPanel crearPanelInternet() {
+		JPanel p = crearPanelBaseCard("Especificaciones de Banda Ancha");
+		spnVelocidad = agregarCampoSpinner(p, "Velocidad (Mbps):", 20, 60);
+
+		JLabel lbl = new JLabel("¿Incluye Router?");
+		lbl.setFont(FONT_LABEL);
+		lbl.setBounds(250, 40, 150, 22);
+		p.add(lbl);
+		rbRouterSi = new JRadioButton("Si");
+		rbRouterSi.setBackground(ALTICE_LIGHT);
+		rbRouterSi.setBounds(250, 65, 50, 25);
+		JRadioButton rbNo = new JRadioButton("No");
+		rbNo.setBackground(ALTICE_LIGHT);
+		rbNo.setBounds(310, 65, 50, 25);
+		ButtonGroup bg = new ButtonGroup();
+		bg.add(rbRouterSi);
+		bg.add(rbNo);
+		p.add(rbRouterSi);
+		p.add(rbNo);
+		return p;
+	}
+
+	private JPanel crearPanelTelefonia() {
+		JPanel p = crearPanelBaseCard("Especificaciones Voz Fija");
+		spnMinutosIncluidos = agregarCampoSpinner(p, "Minutos Incl.:", 20, 60);
+		spnCostoMinuto = agregarCampoSpinner(p, "Costo Min. Extra:", 320, 60);
+
+		JLabel lbl = new JLabel("Llamadas Ilimitadas:");
+		lbl.setFont(FONT_LABEL);
+		lbl.setBounds(160, 40, 150, 22);
+		p.add(lbl);
+		rbIlimitadoSi = new JRadioButton("Si");
+		rbIlimitadoSi.setBackground(ALTICE_LIGHT);
+		rbIlimitadoSi.setBounds(160, 65, 50, 25);
+		JRadioButton rbNo = new JRadioButton("No");
+		rbNo.setBackground(ALTICE_LIGHT);
+		rbNo.setBounds(220, 65, 50, 25);
+		ButtonGroup bg = new ButtonGroup();
+		bg.add(rbIlimitadoSi);
+		bg.add(rbNo);
+		p.add(rbIlimitadoSi);
+		p.add(rbNo);
+		return p;
+	}
+
+	private JPanel crearPanelTV() {
+		JPanel p = crearPanelBaseCard("Especificaciones de Televisión");
+		spnCanales = agregarCampoSpinner(p, "Cant. Canales:", 20, 60);
+		spnCajitas = agregarCampoSpinner(p, "Cajitas Incl.:", 170, 60);
+
+		JLabel lbl = new JLabel("¿Soporta HD?");
+		lbl.setFont(FONT_LABEL);
+		lbl.setBounds(330, 40, 100, 22);
+		p.add(lbl);
+		rbHDSi = new JRadioButton("Si");
+		rbHDSi.setBackground(ALTICE_LIGHT);
+		rbHDSi.setBounds(330, 65, 50, 25);
+		JRadioButton rbNo = new JRadioButton("No");
+		rbNo.setBackground(ALTICE_LIGHT);
+		rbNo.setBounds(390, 65, 50, 25);
+		ButtonGroup bg = new ButtonGroup();
+		bg.add(rbHDSi);
+		bg.add(rbNo);
+		p.add(rbHDSi);
+		p.add(rbNo);
+		return p;
+	}
+
+	private JPanel crearPanelBaseCard(String titulo) {
+		JPanel p = new JPanel(null);
+		p.setBackground(ALTICE_LIGHT);
+		p.setBorder(BorderFactory.createTitledBorder(new LineBorder(ALTICE_BORDER), titulo, TitledBorder.LEADING,
+				TitledBorder.TOP, FONT_LABEL, ALTICE_BLUE));
+		return p;
+	}
+
+	private JSpinner agregarCampoSpinner(JPanel p, String label, int x, int y) {
+		JLabel lbl = new JLabel(label);
+		lbl.setFont(FONT_LABEL);
+		lbl.setBounds(x, 40, 120, 22);
+		p.add(lbl);
+		JSpinner sp = new JSpinner(new SpinnerNumberModel(0, 0, null, 1));
+		sp.setBounds(x, 65, 110, 28);
+		p.add(sp);
+		return sp;
+	}
+
+	private void ejecutarRegistro(JRadioButton m, JRadioButton i, JRadioButton t, JRadioButton tv) {
+		float precio = ((Double) spnPrecio.getValue()).floatValue();
+		if (precio <= 0) {
+			JOptionPane.showMessageDialog(null, "El precio debe ser mayor a 0.", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+
+		EmpresaAltice emp = EmpresaAltice.getInstance();
+		if (m.isSelected()) {
+			emp.getMisServicios().add(new ServicioMovil("Móvil", precio, (Integer) spnDatos.getValue(),
+					(Integer) spnMinutos.getValue(), (Integer) spnSms.getValue()));
+		} else if (i.isSelected()) {
+			emp.getMisServicios().add(new ServicioInternet("Internet", precio, (Integer) spnVelocidad.getValue(),
+					rbRouterSi.isSelected()));
+		} else if (t.isSelected()) {
+			emp.getMisServicios()
+					.add(new ServicioTelefonia("Telefonía", precio, (Integer) spnMinutosIncluidos.getValue(),
+							rbIlimitadoSi.isSelected(), ((Double) spnCostoMinuto.getValue()).floatValue()));
+		} else if (tv.isSelected()) {
+			emp.getMisServicios().add(new ServicioTelevision("Televisión", precio, (Integer) spnCanales.getValue(),
+					(Integer) spnCajitas.getValue(), rbHDSi.isSelected()));
+		}
+
+		emp.GuardarDatos(emp.getMisClientes(), emp.getMisEmpleados(), emp.getMisPlanes(), emp.getMisServicios(),
+				emp.getMisUsuarios(), emp.getMisContratos(), emp.getPagos());
+		JOptionPane.showMessageDialog(null, "Servicio registrado correctamente.", "Éxito",
+				JOptionPane.INFORMATION_MESSAGE);
+		dispose();
+	}
+
+	private JButton primaryButton(String text) {
+		JButton btn = new JButton(text);
+		btn.setFont(FONT_BTN);
+		btn.setForeground(Color.WHITE);
+		btn.setBackground(ALTICE_BLUE);
+		btn.setOpaque(true);
+		btn.setContentAreaFilled(true);
+		btn.setBorderPainted(false);
+		btn.setFocusPainted(false);
+		btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		return btn;
+	}
+
+	private JButton outlineButton(String text) {
+		JButton btn = new JButton(text);
+		btn.setFont(FONT_BTN);
+		btn.setForeground(ALTICE_BLUE);
+		btn.setBackground(Color.WHITE);
+		btn.setOpaque(true);
+		btn.setContentAreaFilled(true);
+		btn.setFocusPainted(false);
+		btn.setBorder(new LineBorder(ALTICE_BLUE, 2, true));
+		btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		return btn;
 	}
 }
