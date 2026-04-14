@@ -38,7 +38,6 @@ public class ReporteGeneral extends JDialog {
 	private final JPanel contentPanel = new JPanel();
 	private Dimension dim;
 
-	// Paleta de colores Altice
 	private Color alticeBlue = Color.decode("#0066FF");
 	private Color bgWhite = Color.WHITE;
 	private Color alticeLight = new Color(245, 248, 255);
@@ -59,8 +58,7 @@ public class ReporteGeneral extends JDialog {
 		setTitle("Reporte General - Estado de la Empresa");
 		setModal(true);
 		setResizable(false);
-		// Cambia esta línea para hacerla más grande (Ancho: 1000, Alto: 600)
-		setBounds(100, 100, 1000, 600); 
+		setBounds(100, 100, 1000, 700); 
 		dim = getToolkit().getScreenSize();
 		setLocationRelativeTo(null);
 
@@ -71,11 +69,8 @@ public class ReporteGeneral extends JDialog {
 		contentPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 
-		contentPanel.setLayout(new GridLayout(3, 2, 20, 20)); // Mayor espaciado para que respire el diseño
+		contentPanel.setLayout(new GridLayout(4, 2, 20, 20));
 
-		// ==========================================
-		// 1. LÓGICA DE CÁLCULO DE DATOS (KPIs)
-		// ==========================================
 		EmpresaAltice empresa = EmpresaAltice.getInstance();
 
 		int totalClientesActivos = 0;
@@ -110,32 +105,35 @@ public class ReporteGeneral extends JDialog {
 			nominaBase += emp.getSalario();
 		}
 
+		float ingresoNetoSinImpuestos = ingresoBrutoMensual / 1.18f;
+		float impuestosTotales = ingresoBrutoMensual - ingresoNetoSinImpuestos;
+
 		float totalEgresos = nominaBase + comisionesMensuales;
-		float ingresoNeto = ingresoBrutoMensual - totalEgresos;
-
-		// ==========================================
-		// 2. CREACIÓN DE LAS TARJETAS VISUALES (ESTILO ALTICE)
-		// ==========================================
-		contentPanel.add(crearTarjeta("Total de Clientes activos", String.valueOf(totalClientesActivos)));
-
+		float ingresoNeto = ingresoBrutoMensual - impuestosTotales - totalEgresos;
+		
+		// Fila 1
+		contentPanel.add(crearTarjeta("Total de Clientes Activos", String.valueOf(totalClientesActivos)));
 		String textoContratos = "Activos: " + contratosActivos + "  |  Inactivos: " + contratosInactivos;
 		contentPanel.add(crearTarjeta("Estado de Contratos", textoContratos));
 
+		// Fila 2
 		contentPanel.add(crearTarjeta("Deuda Total a Cobrar", "$ " + String.format("%.2f", deudaTotal)));
 		contentPanel.add(crearTarjeta("Ingreso Bruto Mensual Estimado", "$ " + String.format("%.2f", ingresoBrutoMensual)));
-		contentPanel.add(crearTarjeta("Egresos (Nómina + Comisiones)", "$ " + String.format("%.2f", totalEgresos)));
+
+		// Fila 3: Egresos Fijos en la izquierda, Impuestos a la derecha
+		contentPanel.add(crearTarjeta("Egresos Fijos (Nómina Base)", "$ " + String.format("%.2f", nominaBase)));
+		contentPanel.add(crearTarjeta("Impuestos a Pagar (ITBIS 18%)", "$ " + String.format("%.2f", impuestosTotales)));
+
+		// Fila 4: Egresos Variables en la izquierda, Ganancia Neta a la derecha (Resultado Final)
+		contentPanel.add(crearTarjeta("Egresos Variables (Comisiones)", "$ " + String.format("%.2f", comisionesMensuales)));
 		contentPanel.add(crearTarjeta("Ganancia Neta Estimada", "$ " + String.format("%.2f", ingresoNeto)));
 
-		// ==========================================
-		// 3. PANEL DE BOTONES (INFERIOR)
-		// ==========================================
 		JPanel buttonPane = new JPanel();
 		buttonPane.setBackground(bgWhite);
 		buttonPane.setBorder(new EmptyBorder(10, 20, 20, 20));
 		buttonPane.setLayout(new BorderLayout());
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
 
-		// Botón de Gráfico (A la izquierda)
 		JButton btnGrafico = new JButton("Ver Gráfico Financiero");
 		btnGrafico.setFont(new Font("SansSerif", Font.BOLD, 14));
 		btnGrafico.setBackground(alticeBlue);
@@ -145,14 +143,14 @@ public class ReporteGeneral extends JDialog {
 		btnGrafico.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		btnGrafico.setPreferredSize(new Dimension(200, 40));
 
-		// Variables finales para pasarlas al evento del botón
 		final float finalIngresoBruto = ingresoBrutoMensual;
+		final float finalImpuestos = impuestosTotales;
 		final float finalEgresos = totalEgresos;
 		final float finalIngresoNeto = ingresoNeto;
 
 		btnGrafico.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				mostrarGraficoBalance(finalIngresoBruto, finalEgresos, finalIngresoNeto);
+				mostrarGraficoBalance(finalIngresoBruto, finalImpuestos, finalEgresos, finalIngresoNeto);
 			}
 		});
 
@@ -161,7 +159,6 @@ public class ReporteGeneral extends JDialog {
 		pnlIzquierda.add(btnGrafico);
 		buttonPane.add(pnlIzquierda, BorderLayout.WEST);
 
-		// Botón Cerrar (A la derecha)
 		JButton btnCerrar = new JButton("Cerrar");
 		btnCerrar.setFont(new Font("SansSerif", Font.BOLD, 14));
 		btnCerrar.setBackground(bgWhite);
@@ -183,9 +180,6 @@ public class ReporteGeneral extends JDialog {
 		buttonPane.add(pnlDerecha, BorderLayout.EAST);
 	}
 
-	// ==========================================
-	// HERRAMIENTA: CREAR TARJETAS ESTILO MODERNO
-	// ==========================================
 	private JPanel crearTarjeta(String titulo, String valor) {
 		JPanel tarjeta = new JPanel();
 		tarjeta.setLayout(new BorderLayout());
@@ -210,30 +204,25 @@ public class ReporteGeneral extends JDialog {
 		return tarjeta;
 	}
 
-	// ==========================================
-	// LÓGICA DE JFREECHART (GRÁFICO DE BARRAS)
-	// ==========================================
-	private void mostrarGraficoBalance(float ingresos, float egresos, float neto) {
+	private void mostrarGraficoBalance(float ingresos, float impuestos, float egresos, float neto) {
 
-		// 1. Preparamos los datos
 		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 		dataset.addValue(ingresos, "Finanzas", "Ingreso Bruto");
-		dataset.addValue(egresos, "Finanzas", "Egresos");
+		dataset.addValue(impuestos, "Finanzas", "Impuestos (ITBIS)");
+		dataset.addValue(egresos, "Finanzas", "Total Egresos");
 		dataset.addValue(neto, "Finanzas", "Ganancia Neta");
 
-		// 2. Creamos el gráfico usando ChartFactory
 		JFreeChart chart = ChartFactory.createBarChart(
-				"Balance Financiero Mensual", // Título
-				"",                           // Etiqueta Eje X
-				"Monto en $",                 // Etiqueta Eje Y
-				dataset,                      // Datos
-				PlotOrientation.VERTICAL,     // Orientación
-				false,                        // Incluir leyenda
-				true,                         // Tooltips (Al pasar el mouse)
-				false                         // URLs
+				"Balance Financiero Mensual",
+				"", 
+				"Monto en $",
+				dataset,
+				PlotOrientation.VERTICAL,
+				false, 
+				true, 
+				false 
 				);
 
-		// 3. Estilizamos el gráfico con los colores de Altice
 		chart.setBackgroundPaint(bgWhite);
 		chart.getTitle().setPaint(textColor);
 		chart.getTitle().setFont(new Font("SansSerif", Font.BOLD, 18));
@@ -243,16 +232,14 @@ public class ReporteGeneral extends JDialog {
 		plot.setRangeGridlinePaint(Color.LIGHT_GRAY);
 		plot.setOutlineVisible(false);
 
-		// Coloreamos las barras del azul de Altice y las hacemos planas (modernas)
 		BarRenderer renderer = (BarRenderer) plot.getRenderer();
 		renderer.setBarPainter(new StandardBarPainter()); 
 		renderer.setSeriesPaint(0, alticeBlue);
 		renderer.setDrawBarOutline(false);
 		renderer.setItemMargin(0.1);
 
-		// 4. Lo montamos en una nueva ventana (Dialog)
 		ChartPanel chartPanel = new ChartPanel(chart);
-		chartPanel.setPreferredSize(new Dimension(600, 400));
+		chartPanel.setPreferredSize(new Dimension(700, 450));
 
 		JDialog ventanaGrafico = new JDialog(this, "Gráfico Financiero", true);
 		ventanaGrafico.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
