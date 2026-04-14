@@ -247,11 +247,13 @@ public class RegistrarContrato extends JDialog {
 				if (empleadoLogueado.getRolEmpleado().equalsIgnoreCase("Administrativo")) {
 					txtNombreEmpleadoCargo.setText("Seleccione un empleado...");
 					btnEscogerEmpleado.setVisible(true);
+					btnCrearPlan.setVisible(true);
 				} else {
 					empleadoComision = empleadoLogueado;
 					txtNombreEmpleadoCargo.setText(empleadoComision.getNombre());
 					txtPorcentajeAplicado.setText(String.valueOf(empleadoComision.getComisiones()));
 					btnEscogerEmpleado.setVisible(false); 
+					btnCrearPlan.setVisible(false);
 				}
 			}
 		}

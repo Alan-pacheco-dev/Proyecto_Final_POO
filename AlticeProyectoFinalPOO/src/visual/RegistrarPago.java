@@ -68,12 +68,12 @@ public class RegistrarPago extends JDialog {
 		panelBusqueda.add(txtBuscar);
 
 		JPanel panelCentral = new JPanel();
-		panelCentral.setLayout(new BorderLayout(0, 10));
+		panelCentral.setLayout(new BorderLayout(10, 0));
 		contentPanel.add(panelCentral, BorderLayout.CENTER);
 
 		JPanel panelContratos = new JPanel();
 		panelContratos.setLayout(new BorderLayout());
-		panelContratos.setBorder(new TitledBorder("Contratos Activos"));
+		panelContratos.setBorder(new TitledBorder("Contratos Activos con Pagos Pendientes"));
 		panelCentral.add(panelContratos, BorderLayout.CENTER);
 
 		JScrollPane scrollContratos = new JScrollPane();
@@ -119,8 +119,8 @@ public class RegistrarPago extends JDialog {
 		JPanel panelPagos = new JPanel();
 		panelPagos.setLayout(new BorderLayout());
 		panelPagos.setBorder(new TitledBorder("Pagos Pendientes del Contrato Seleccionado"));
-		panelPagos.setPreferredSize(new java.awt.Dimension(950, 200));
-		panelCentral.add(panelPagos, BorderLayout.SOUTH);
+		panelPagos.setPreferredSize(new java.awt.Dimension(380, 0));
+		panelCentral.add(panelPagos, BorderLayout.EAST);
 
 		JScrollPane scrollPagos = new JScrollPane();
 		panelPagos.add(scrollPagos, BorderLayout.CENTER);
@@ -179,6 +179,8 @@ public class RegistrarPago extends JDialog {
 					PagosPorContrato ventanaPago = new PagosPorContrato(pagoSeleccionado);
 					ventanaPago.setModal(true);
 					ventanaPago.setVisible(true);
+					
+					loadContratos();
 					loadPagosPendientes();
 					btnProcesarPago.setEnabled(false);
 					pagoSeleccionado = null;
@@ -201,15 +203,24 @@ public class RegistrarPago extends JDialog {
 	private void loadContratos() {
 		modelContratos.setRowCount(0);
 		for (Contrato c : EmpresaAltice.getInstance().getMisContratos()) {
-			if (c.isActivo()) {
-				Object[] row = new Object[5];
-				row[0] = c.getIdContrato();
-				row[1] = c.getCliente().getNombre();
-				row[2] = c.getPlanContrato().getNombrePlan();
-				row[3] = "$ " + c.getPrecioMensualAcordado();
-				row[4] = c.getFechaInicioContrato();
-				modelContratos.addRow(row);
+			if (!c.isActivo()) continue;
+
+			boolean tienePendientes = false;
+			for (Pagos p : EmpresaAltice.getInstance().getPagos()) {
+				if (p.getContrato().getIdContrato().equals(c.getIdContrato()) && !p.isPagadoTotal()) {
+					tienePendientes = true;
+					break;
+				}
 			}
+			if (!tienePendientes) continue;
+
+			Object[] row = new Object[5];
+			row[0] = c.getIdContrato();
+			row[1] = c.getCliente().getNombre();
+			row[2] = c.getPlanContrato().getNombrePlan();
+			row[3] = "$ " + c.getPrecioMensualAcordado();
+			row[4] = c.getFechaInicioContrato();
+			modelContratos.addRow(row);
 		}
 	}
 

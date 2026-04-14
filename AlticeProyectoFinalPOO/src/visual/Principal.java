@@ -51,19 +51,14 @@ public class Principal extends JFrame {
 		empresa.refrescarConteosContratos();
 		empresa.actualizarDeudaClientes();
 		
-		int pagosGenerados = empresa.generarPagosMensuales();
-		if (pagosGenerados > 0) {
-			JOptionPane.showMessageDialog(null,
-				"Se generaron " + pagosGenerados + " nuevos pagos mensuales pendientes",
-				"Información", JOptionPane.INFORMATION_MESSAGE);
-		}
+		empresa.generarPagosMensuales();
 		
 		//Comentado para acceder directamente a la pantalla principal sin el login
-		/*
+		
 		Login login = new Login(this, empresa.getMisUsuarios());
 		login.setModal(true);
 		login.setVisible(true);
-		*/
+		
 		
 		final JMenu menuUsuarios = new JMenu("Usuarios");
 		final JMenu menuEmpleados = new JMenu("Empleados");
@@ -105,6 +100,8 @@ public class Principal extends JFrame {
 		JMenuItem menuItemListarUsuarios = new JMenuItem("Listar");
 		menuItemListarUsuarios.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				empresa.generarPagosMensuales();
+				empresa.actualizarDeudaClientes();
 				ListarUsuarios listarUsers = new ListarUsuarios();
 				listarUsers.setModal(true);
 				listarUsers.setVisible(true);
@@ -113,6 +110,8 @@ public class Principal extends JFrame {
 		menuUsuarios.add(menuItemListarUsuarios);
 		mntmNewMenuItem_2.addActionListener(new ActionListener() {
 			 public void actionPerformed(ActionEvent e) {
+				empresa.generarPagosMensuales();
+				empresa.actualizarDeudaClientes();
 				RegistrarUsuario regisUser = new RegistrarUsuario(null);
 				regisUser.setModal(true);
 				regisUser.setVisible(true);
@@ -128,6 +127,8 @@ public class Principal extends JFrame {
 		JMenuItem menuItemListarEmpleados = new JMenuItem("Listar");
 		menuItemListarEmpleados.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				empresa.generarPagosMensuales();
+				empresa.actualizarDeudaClientes();
 				ListarEmpleados listarEmps = new ListarEmpleados(false);
 				listarEmps.setModal(true);
 				listarEmps.setVisible(true);
@@ -136,6 +137,8 @@ public class Principal extends JFrame {
 		menuEmpleados.add(menuItemListarEmpleados);
 		mntmNewMenuItem_1.addActionListener(new ActionListener() {
 			 public void actionPerformed(ActionEvent e) {
+				empresa.generarPagosMensuales();
+				empresa.actualizarDeudaClientes();
 				RegistrarEmpleado regisEmp = new RegistrarEmpleado(null);
 				regisEmp.setModal(true);
 				regisEmp.setVisible(true);
@@ -152,6 +155,8 @@ public class Principal extends JFrame {
 		JMenuItem menuItemListarClientes = new JMenuItem("Listar");
 		menuItemListarClientes.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				empresa.generarPagosMensuales();
+				empresa.actualizarDeudaClientes();
 				ListarClientes listCli = new ListarClientes();
 				listCli.setModal(true);
 				listCli.setVisible(true);
@@ -160,6 +165,8 @@ public class Principal extends JFrame {
 		menuClientes.add(menuItemListarClientes);
 		mntmNewMenuItem.addActionListener(new ActionListener() {
 			 public void actionPerformed(ActionEvent e) {
+				empresa.generarPagosMensuales();
+				empresa.actualizarDeudaClientes();
 				RegistrarCliente regisCli = new RegistrarCliente(null);
 				regisCli.setModal(true);
 				regisCli.setVisible(true);
@@ -173,6 +180,8 @@ public class Principal extends JFrame {
 		JMenuItem menuItem_6 = new JMenuItem("Registrar");
 		menuItem_6.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				empresa.generarPagosMensuales();
+				empresa.actualizarDeudaClientes();
 				Usuario usuarioActual = EmpresaAltice.getLoginUser();
 		        Empleado empleadoSesion = EmpresaAltice.getInstance().buscarEmpleadoPorUsuario(usuarioActual);
 				RegistrarContrato regisCon = new RegistrarContrato(null, empleadoSesion);
@@ -185,6 +194,8 @@ public class Principal extends JFrame {
 		JMenuItem menuItem_7 = new JMenuItem("Listar");
 		menuItem_7.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				empresa.generarPagosMensuales();
+				empresa.actualizarDeudaClientes();
 				ListarContratosGeneral listarCtos = new ListarContratosGeneral(false);
 				listarCtos.setModal(true);
 				listarCtos.setVisible(true);
@@ -198,6 +209,8 @@ public class Principal extends JFrame {
 		JMenuItem menuItem = new JMenuItem("Registrar");
 		menuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				empresa.generarPagosMensuales();
+				empresa.actualizarDeudaClientes();
 				RegistrarPlan regisPlan = new RegistrarPlan();
 				regisPlan.setModal(true);
 				regisPlan.setVisible(true);
@@ -208,6 +221,8 @@ public class Principal extends JFrame {
 		JMenuItem menuItem_1 = new JMenuItem("Listar");
 		menuItem_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				empresa.generarPagosMensuales();
+				empresa.actualizarDeudaClientes();
 				ListarPlanes ventanaPlanes = new ListarPlanes(false);
 				ventanaPlanes.setVisible(true);
 			}
@@ -220,6 +235,8 @@ public class Principal extends JFrame {
 		JMenuItem menuItem_2 = new JMenuItem("Registrar");
 		menuItem_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				empresa.generarPagosMensuales();
+				empresa.actualizarDeudaClientes();
 				RegistrarServicio regisServi = new RegistrarServicio();
 				regisServi.setModal(true);
 				regisServi.setVisible(true);
@@ -230,6 +247,8 @@ public class Principal extends JFrame {
 		JMenuItem menuItem_3 = new JMenuItem("Listar");
 		menuItem_3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				empresa.generarPagosMensuales();
+				empresa.actualizarDeudaClientes();
 				ListarServicios listarServis = new ListarServicios("Todos", false);
 				listarServis.setModal(true);
 				listarServis.setVisible(true);
@@ -244,35 +263,22 @@ public class Principal extends JFrame {
 		JMenuItem menuItem_4 = new JMenuItem("Registrar");
 		menuItem_4.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				empresa.generarPagosMensuales();
+				empresa.actualizarDeudaClientes();
 				RegistrarPago regisPago = new RegistrarPago();
 				regisPago.setModal(true);
 				regisPago.setVisible(true);
 			}
 		});
 		
-		JMenuItem menuItemGenerarPagos = new JMenuItem("Generar");
-		menuItemGenerarPagos.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				int confirm = JOptionPane.showConfirmDialog(null, "¿Desea generar los pagos mensuales pendientes?", "Confirmación", 
-						JOptionPane.YES_NO_OPTION);
-				if (confirm == JOptionPane.YES_OPTION) {
-					int generadosManuales = EmpresaAltice.getInstance().generarPagosMensuales();
-					if (generadosManuales > 0) {
-						JOptionPane.showMessageDialog(null, "Se generaron " + generadosManuales + " pagos correctamente", "Información", JOptionPane.INFORMATION_MESSAGE);
-					} else {
-						JOptionPane.showMessageDialog(null, "El sistema está al día. No hay pagos nuevos por generar.", "Información", JOptionPane.INFORMATION_MESSAGE);
-					}
-				}
-			}
-		});
-		menuPagos.add(menuItemGenerarPagos);
 		menuPagos.add(menuItem_4);
 		
 		JMenuItem menuItem_5 = new JMenuItem("Listar");
 		menuPagos.add(menuItem_5);
 		menuItem_5.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				empresa.generarPagosMensuales();
+				empresa.actualizarDeudaClientes();
 				ListarPagos listPag= new ListarPagos();
 				listPag.setModal(true);
 				listPag.setVisible(true);
@@ -285,6 +291,8 @@ public class Principal extends JFrame {
 		JMenuItem mntmReporteGeneral = new JMenuItem("Reporte General");
 		mntmReporteGeneral.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				empresa.generarPagosMensuales();
+				empresa.actualizarDeudaClientes();
 				ReporteGeneral dashboard = new ReporteGeneral();
 				dashboard.setVisible(true);
 			}
@@ -294,6 +302,7 @@ public class Principal extends JFrame {
 		JMenuItem mntmReporteDeRendimiento = new JMenuItem("Reporte de Rendimiento");
 		mntmReporteDeRendimiento.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				empresa.generarPagosMensuales();
 				ReporteRendimiento ventanaRendimiento = new ReporteRendimiento();
 				ventanaRendimiento.setVisible(true);
 			}
@@ -303,6 +312,7 @@ public class Principal extends JFrame {
 		JMenuItem mntmReporteDeMercado = new JMenuItem("Reporte de Mercado");
 		mntmReporteDeMercado.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				empresa.generarPagosMensuales();
 				ReporteMercado ventanaMercado = new ReporteMercado();
 				ventanaMercado.setVisible(true);
 			}

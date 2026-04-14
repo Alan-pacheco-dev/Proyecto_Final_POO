@@ -119,7 +119,7 @@ public class EmpresaAltice implements Serializable {
 		return empresaAltice;
 	}
 
-	// --- 1. MÉTODO GUARDAR DATOS (USO LOCAL DIARIO) ---
+	
 	public void GuardarDatos(ArrayList<Cliente> clientes, ArrayList<Empleado> empleados, 
 			ArrayList<Plan> planes, ArrayList<Servicio> servicios, ArrayList<Usuario> usuarios, ArrayList<Contrato> contratos, 
 			ArrayList<Pagos> pagos) 
@@ -127,7 +127,7 @@ public class EmpresaAltice implements Serializable {
 		GuardarDatos(clientes, empleados, planes, servicios, usuarios, contratos, pagos, "Datos.txt");
 	}
 
-	// --- 2. MÉTODO GUARDAR DATOS (SOBRECARGADO PARA EL SERVIDOR) ---
+
 	public void GuardarDatos(ArrayList<Cliente> clientes, ArrayList<Empleado> empleados, 
 			ArrayList<Plan> planes, ArrayList<Servicio> servicios, ArrayList<Usuario> usuarios, ArrayList<Contrato> contratos, 
 			ArrayList<Pagos> pagos, String nombreArchivo) 
@@ -245,7 +245,7 @@ public class EmpresaAltice implements Serializable {
 		}
 	}
 	
-	public int generarPagosMensuales() {
+	public void generarPagosMensuales() {
 		int generados = 0;
 		LocalDate hoy = LocalDate.now();
 
@@ -293,8 +293,6 @@ public class EmpresaAltice implements Serializable {
 			GuardarDatos(misClientes, misEmpleados, misPlanes, misServicios,
 						 misUsuarios, misContratos, pagosClientes);
 		}
-
-		return generados;
 	}
 	
 	public void actualizarDeudaClientes() {
