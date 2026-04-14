@@ -70,7 +70,8 @@ public class Principal extends JFrame {
 		Color alticeBlue = Color.decode("#0066FF");
 		Font menuFont = new Font("SansSerif", Font.BOLD, 14);
 		Font itemFont = new Font("SansSerif", Font.PLAIN, 14);
-
+		
+		setIconImage(java.awt.Toolkit.getDefaultToolkit().getImage(getClass().getResource("/recursos/Altice_logo_azul_sin_letras.png")));
 		setTitle("Sistema de Gestión - Altice");
 		setResizable(true);
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
