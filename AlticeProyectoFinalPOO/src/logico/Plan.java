@@ -12,6 +12,7 @@ public class Plan implements Serializable {
 	private String nombrePlan;
 	//En el precio total se incluiría el cálculo por ITBIS 18%
 	private float precioMensual; //Este sería el total de la sumatoria de los servicios mensualmente
+	private float precioSinImpuestos;
 	private ArrayList<Servicio>serviciosPlan;
 	
 	public Plan(String nombrePlan, String tiempoCuota, float precioTotal) {
@@ -20,6 +21,7 @@ public class Plan implements Serializable {
 		this.nombrePlan = nombrePlan;
 		this.serviciosPlan = new ArrayList<Servicio>();
 		this.precioMensual = calcularPrecioTotal();
+		this.precioSinImpuestos = 0;
 	}
 	
 	public String getIdPlan() {
@@ -55,6 +57,7 @@ public class Plan implements Serializable {
 			}
 		}
 		//Calculado con el ITBIS
+		setPrecioSinImpuestos(precioTotal);
 		return precioTotal * 1.18f;
 	}
 	
@@ -88,6 +91,14 @@ public class Plan implements Serializable {
 	    }
 	    
 	    altice.getMisContratos().addAll(contratosRenovados);
+	}
+
+	public float getPrecioSinImpuestos() {
+		return precioSinImpuestos;
+	}
+
+	public void setPrecioSinImpuestos(float precioSinImpuestos) {
+		this.precioSinImpuestos = precioSinImpuestos;
 	}
 	
 }

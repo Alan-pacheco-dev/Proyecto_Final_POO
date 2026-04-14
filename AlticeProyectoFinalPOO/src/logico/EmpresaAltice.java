@@ -22,8 +22,10 @@ public class EmpresaAltice implements Serializable {
 	public static int idClientes = 1;
 	public static int idServicios = 1;
 	public static int idUsuarios = 1;
+	public int idTickets = 1;
 
 	private static EmpresaAltice empresaAltice = null;
+	private ArrayList<Ticket> misTickets;
 	private ArrayList<Cliente> misClientes;
 	private ArrayList<Empleado> misEmpleados;
 	private ArrayList<Plan> misPlanes;
@@ -42,6 +44,7 @@ public class EmpresaAltice implements Serializable {
 		this.misUsuarios = new ArrayList<Usuario>();
 		this.misContratos = new ArrayList<Contrato>();
 		this.pagosClientes = new ArrayList<Pagos>();
+		this.misTickets = new ArrayList<Ticket>();
 	}
 
 	public EmpresaAltice getEmpresaAltice() {
@@ -110,6 +113,14 @@ public class EmpresaAltice implements Serializable {
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+	
+	public ArrayList<Ticket> getMisTickets() {
+		return misTickets;
+	}
+
+	public void setMisTickets(ArrayList<Ticket> misTickets) {
+		this.misTickets = misTickets;
 	}
 
 	public static EmpresaAltice getInstance() {
@@ -512,4 +523,5 @@ public class EmpresaAltice implements Serializable {
 			}
 		}
 	}
+
 }

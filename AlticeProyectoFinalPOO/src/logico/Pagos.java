@@ -16,6 +16,7 @@ public class Pagos implements Serializable{
 	private boolean isPagadoTotal; //Boolean que si es falso indica que falta por pagar, y si es verdadero es que ha sido pagado totalmente
 	private LocalDate fechaPagoDelCliente;
 	private float pagoDelCliente;
+	private float montoADevolverCliente;
 	private float totalPorPagar;
 	
 	public Pagos(Contrato contrato, LocalDate fechaInicioPago, LocalDate fechaVencimientoPago,LocalDate fechaPagoDelCliente, float pagoAcumulado ,float pagoDelCliente, float totalPorPagar) {
@@ -28,6 +29,7 @@ public class Pagos implements Serializable{
 		this.fechaPagoDelCliente = fechaPagoDelCliente;
 		this.pagoDelCliente = pagoDelCliente;
 		this.totalPorPagar = totalPorPagar - pagoAcumulado;
+		this.montoADevolverCliente = 0;
 	}
 	
 	public String getIdPago() {
@@ -82,5 +84,13 @@ public class Pagos implements Serializable{
 
 	public void setPagadoTotal(boolean isPagadoTotal) {
 		this.isPagadoTotal = isPagadoTotal;
+	}
+
+	public float getMontoADevolverCliente() {
+		return Math.round(montoADevolverCliente * 100) / 100.0f;
+	}
+
+	public void setMontoADevolverCliente(float montoADevolverCliente) {
+		this.montoADevolverCliente = Math.round(montoADevolverCliente * 100) / 100.0f;
 	}
 }

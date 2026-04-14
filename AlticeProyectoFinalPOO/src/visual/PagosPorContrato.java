@@ -173,7 +173,9 @@ public class PagosPorContrato extends JDialog {
 				            return;
 				        }
 				        
+				        float montoADevolverCliente = montoPagado - miPago.getTotalPorPagar();
 				        miPago.setPagoDelCliente(montoPagado);
+				        miPago.setMontoADevolverCliente(montoADevolverCliente);
 				        miPago.setFechaPagoDelCliente(LocalDate.now());
 				        miPago.setPagadoTotal(true);
 				        
