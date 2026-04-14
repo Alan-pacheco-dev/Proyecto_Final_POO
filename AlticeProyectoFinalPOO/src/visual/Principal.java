@@ -402,13 +402,57 @@ public class Principal extends JFrame {
 		});
 		menuRespaldo.add(menuItemRespaldo);
 
+		JMenuItem menuItemRespaldoLocal = new JMenuItem("Generar Respaldo Local en PC...");
+		menuItemRespaldoLocal.setFont(itemFont);
+		menuItemRespaldoLocal.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				javax.swing.JFileChooser fileChooser = new javax.swing.JFileChooser();
+				fileChooser.setDialogTitle("Guardar respaldo de seguridad");
+
+				// Filtro para que se guarde como .dat
+				javax.swing.filechooser.FileNameExtensionFilter filtro = new javax.swing.filechooser.FileNameExtensionFilter("Respaldo Altice (*.dat)", "dat");
+				fileChooser.setFileFilter(filtro);
+
+				// Abre la ventana en modo "Guardar" en lugar de "Abrir"
+				int seleccion = fileChooser.showSaveDialog(null);
+
+				if (seleccion == javax.swing.JFileChooser.APPROVE_OPTION) {
+					java.io.File archivoDestino = fileChooser.getSelectedFile();
+					String rutaCompleta = archivoDestino.getAbsolutePath();
+
+					// Si al usuario se le olvida escribir ".dat" al final, el sistema se lo pone automáticamente
+					if (!rutaCompleta.toLowerCase().endsWith(".dat")) {
+						rutaCompleta += ".dat";
+					}
+
+					// Usamos tu método GuardarDatos, pero le pasamos la ruta que eligió el usuario
+					EmpresaAltice empresa = EmpresaAltice.getInstance();
+					empresa.GuardarDatos(
+							empresa.getMisClientes(), 
+							empresa.getMisEmpleados(),
+							empresa.getMisPlanes(), 
+							empresa.getMisServicios(),
+							empresa.getMisUsuarios(), 
+							empresa.getMisContratos(),
+							empresa.getPagos(),
+							empresa.getMisTickets(), // Ojo: incluimos la lista de tickets que agregamos antes
+							rutaCompleta
+							);
+
+					JOptionPane.showMessageDialog(null, "Copia de seguridad guardada exitosamente en:\n" + rutaCompleta, "Respaldo Local Exitoso", JOptionPane.INFORMATION_MESSAGE);
+				}
+			}
+		});
+		menuRespaldo.add(menuItemRespaldoLocal);
+
 		JMenuItem menuItemRestaurar = new JMenuItem("Restaurar desde archivo...");
 		menuItemRestaurar.setFont(itemFont);
 		menuItemRestaurar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				javax.swing.JFileChooser fileChooser = new javax.swing.JFileChooser();
 				fileChooser.setDialogTitle("Seleccione el archivo de respaldo (.dat)");
-				
+
 				javax.swing.filechooser.FileNameExtensionFilter filtro = new javax.swing.filechooser.FileNameExtensionFilter("Respaldo Altice (*.dat)", "dat");
 				fileChooser.setFileFilter(filtro);
 
@@ -542,13 +586,13 @@ public class Principal extends JFrame {
 		lblSubtitulo.setFont(new Font("SansSerif", Font.PLAIN, 22));
 		lblSubtitulo.setForeground(new Color(60, 60, 60));
 		pnlBienvenida.add(lblSubtitulo, gbc);
-		
+
 		gbc.gridy = 3;
 		gbc.insets = new Insets(30, 0, 0, 0); // Separación superior para los botones
-		
+
 		JPanel pnlAccesosRapidos = new JPanel(new java.awt.GridLayout(0, 3, 15, 15));
 		pnlAccesosRapidos.setOpaque(false);
-		
+
 		boolean isAdmon = usuarioActual == null || usuarioActual.getRolEmpleado().equalsIgnoreCase("Administrativo");
 		boolean isTecnico = usuarioActual != null && usuarioActual.getRolEmpleado().equalsIgnoreCase("Tecnico");
 		boolean isComercial = !isAdmon && !isTecnico; // Si no es admin ni técnico, es comercial/ventas
@@ -564,7 +608,7 @@ public class Principal extends JFrame {
 					regisCli.setVisible(true);
 				}
 			}));
-			
+
 			pnlAccesosRapidos.add(crearBotonDashboard("Nuevo Contrato", new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					empresa.generarPagosMensuales();
@@ -578,7 +622,7 @@ public class Principal extends JFrame {
 					regisCon.setVisible(true);
 				}
 			}));
-			
+
 			pnlAccesosRapidos.add(crearBotonDashboard("Cobrar Pago", new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					empresa.generarPagosMensuales();
@@ -598,7 +642,7 @@ public class Principal extends JFrame {
 					regisTicket.setVisible(true);
 				}
 			}));
-			
+
 			pnlAccesosRapidos.add(crearBotonDashboard("Panel Diagnóstico", new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					DashboardSoporte diag = new DashboardSoporte();
@@ -607,7 +651,7 @@ public class Principal extends JFrame {
 				}
 			}));
 		}
-		
+
 		// Botón exclusivo para Administrativo
 		if (isAdmon) {
 			pnlAccesosRapidos.add(crearBotonDashboard("Reporte General", new ActionListener() {
@@ -643,7 +687,7 @@ public class Principal extends JFrame {
 		btn.setBorder(new LineBorder(Color.decode("#0066FF"), 2, true));
 		btn.setPreferredSize(new Dimension(180, 60)); 
 		btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		
+
 		btn.addMouseListener(new java.awt.event.MouseAdapter() {
 			public void mouseEntered(java.awt.event.MouseEvent evt) {
 				btn.setBackground(Color.decode("#0066FF"));
@@ -654,7 +698,7 @@ public class Principal extends JFrame {
 				btn.setForeground(Color.decode("#0066FF"));
 			}
 		});
-		
+
 		btn.addActionListener(accion);
 		return btn;
 	}
