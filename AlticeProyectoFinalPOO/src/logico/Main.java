@@ -7,15 +7,9 @@ public class Main {
 	/*
     public static void main(String[] args) {
 
-        // ============================================================
-        // SECCION 1: Obtener instancia Singleton de EmpresaAltice
-        // ============================================================
         EmpresaAltice altice = EmpresaAltice.getInstance();
         System.out.println("=== Sistema Altice Iniciado ===\n");
 
-        // ============================================================
-        // SECCION 2: Crear empleados (Comercial, Administrativo, Trabajador)
-        // ============================================================
         Empleado empComercial     = new Empleado(null, "Maria Perez",   35000f, 5f, 0f, "Comercial");
         Empleado empAdministrativo = new Empleado(null, "Carlos Diaz",  45000f, 0f, 0f, "Administrativo");
         Empleado empTrabajador     = new Empleado(null, "Luis Martinez", 28000f, 0f, 0f, "Trabajador");
@@ -33,9 +27,6 @@ public class Main {
                 + " | Salario: RD$" + e.getSalario());
         }
 
-        // ============================================================
-        // SECCION 3: Asignar usuarios a empleados
-        // ============================================================
         Usuario usuComercial      = new Usuario("Comercial",      "mperez",   "pass123");
         Usuario usuAdministrativo = new Usuario("Administrativo", "cdiaz",    "pass456");
         Usuario usuTrabajador     = new Usuario("Trabajador",     "lmartinez","pass789");
@@ -55,9 +46,6 @@ public class Main {
                 + " | Rol: "      + e.getMiUsuario().getRolEmpleado());
         }
 
-        // ============================================================
-        // SECCION 4: Crear servicios disponibles
-        // ============================================================
         Servicio svcInternet  = new Servicio("Internet 100 Mbps", 1200f);
         Servicio svcMovil     = new Servicio("Movil 10 GB",        800f);
         Servicio svcTelefonia = new Servicio("Telefonia Fija",     500f);
@@ -81,9 +69,6 @@ public class Main {
                 + " | Activo: " + s.isActivo());
         }
 
-        // ============================================================
-        // SECCION 5: Crear planes y agregar servicios
-        // ============================================================
         Plan planBasico   = new Plan("Plan Basico",   "Mensual", 0f);
         Plan planCompleto = new Plan("Plan Completo", "Mensual", 0f);
 
@@ -109,10 +94,6 @@ public class Main {
                 + " | Precio mensual: RD$" + p.getPrecioTotal()
                 + " | Servicios incluidos: " + p.getServiciosPlan().size());
         }
-
-        // ============================================================
-        // SECCION 6: Registrar clientes (solo empleado Comercial puede hacerlo)
-        // ============================================================
 
         // Cliente persona fisica
         Cliente cliFisico = new Cliente(null, "Pedro Ramirez",
@@ -153,9 +134,6 @@ public class Main {
             System.out.println("  Excepcion esperada: " + ex.getMessage());
         }
 
-        // ============================================================
-        // SECCION 7: Crear contratos para los clientes
-        // ============================================================
         LocalDate hoy          = LocalDate.now();
         LocalDate fin1Anio     = hoy.plusYears(1);
         LocalDate fin6Meses    = hoy.plusMonths(6);
@@ -179,9 +157,6 @@ public class Main {
                 + " | Activo: "      + ct.isActivo());
         }
 
-        // ============================================================
-        // SECCION 8: Registrar pagos de los clientes
-        // ============================================================
         LocalDate vencimiento1 = hoy.plusDays(30);
         LocalDate vencimiento2 = hoy.plusDays(30);
 
@@ -219,9 +194,6 @@ public class Main {
                 + " | Vence: "        + pg.getFechaVencimientoPago());
         }
 
-        // ============================================================
-        // SECCION 9: Consultas - resumen de cliente y contratos activos
-        // ============================================================
         System.out.println("\n--- Resumen del cliente persona fisica ---");
         cliFisico.verResumenMiInfo(contFisico);
 
@@ -232,9 +204,6 @@ public class Main {
                 + " | Servicios activos: "     + c.getTotalServiciosActivos());
         }
 
-        // ============================================================
-        // SECCION 10: Cancelar y reactivar un contrato
-        // ============================================================
         System.out.println("\n--- Cancelar contrato del cliente fisico ---");
         boolean cancelado = cliFisico.cancelarContratoByID(contFisico.getIdContrato());
         System.out.println("  Contrato " + contFisico.getIdContrato()
@@ -247,9 +216,6 @@ public class Main {
                 + " reactivado: " + reactivado
                 + " | Activo ahora: " + contFisico.isActivo());
 
-        // ============================================================
-        // SECCION 11: Reporte por periodo - pagos entre fechas
-        // ============================================================
         System.out.println("\n--- Reporte de pagos del periodo actual ---");
         LocalDate inicioMes = hoy.withDayOfMonth(1);
         LocalDate finMes    = hoy.withDayOfMonth(hoy.lengthOfMonth());
@@ -269,9 +235,6 @@ public class Main {
         System.out.println("  Total recaudado: RD$"    + totalRecaudado);
         System.out.println("  Pagos pendientes: "      + pagosPendientes);
 
-        // ============================================================
-        // SECCION 12: Guardar datos en archivo
-        // ============================================================
         System.out.println("\n--- Guardando datos en archivo ---");
         altice.GuardarDatos(
                 altice.getMisClientes(),
@@ -284,7 +247,7 @@ public class Main {
         );
         System.out.println("  Datos guardados exitosamente.");
 
-        System.out.println("\n=== Pruebas finalizadas ===");
+        System.out.println("\nPruebas finalizadas");
     }
 */
 }
