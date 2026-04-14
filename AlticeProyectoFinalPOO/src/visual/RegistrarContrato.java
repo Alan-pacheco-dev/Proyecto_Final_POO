@@ -27,6 +27,7 @@ import logico.Contrato;
 import logico.Empleado;
 import logico.EmpresaAltice;
 import logico.Plan;
+import logico.Usuario;
 
 public class RegistrarContrato extends JDialog {
 
@@ -295,32 +296,32 @@ public class RegistrarContrato extends JDialog {
 			new LineBorder(ALTICE_BORDER), "Empleado a Cargo",
 			TitledBorder.LEADING, TitledBorder.TOP, FONT_LABEL, ALTICE_BLUE
 		));
-		panelEmpleado.setBounds(20, 465, 540, 100);
+		panelEmpleado.setBounds(20, 465, 540, 110);
 		panel.add(panelEmpleado);
 
 		txtNombreEmpleadoCargo = new JTextField();
 		txtNombreEmpleadoCargo.setEditable(false);
 		txtNombreEmpleadoCargo.setFont(FONT_INPUT);
 		txtNombreEmpleadoCargo.setBackground(Color.WHITE);
-		txtNombreEmpleadoCargo.setBounds(15, 25, 310, 28);
+		txtNombreEmpleadoCargo.setBounds(15, 30, 310, 28);
 		txtNombreEmpleadoCargo.setBorder(new LineBorder(ALTICE_BORDER, 1, true));
 		panelEmpleado.add(txtNombreEmpleadoCargo);
 
 		JLabel lblPorcentaje = new JLabel("Comisión (%):");
 		lblPorcentaje.setFont(FONT_LABEL);
-		lblPorcentaje.setBounds(335, 5, 120, 22);
+		lblPorcentaje.setBounds(335, 10, 120, 22);
 		panelEmpleado.add(lblPorcentaje);
 
 		txtPorcentajeAplicado = new JTextField();
 		txtPorcentajeAplicado.setEditable(false);
 		txtPorcentajeAplicado.setFont(FONT_INPUT);
 		txtPorcentajeAplicado.setBackground(Color.WHITE);
-		txtPorcentajeAplicado.setBounds(335, 25, 185, 28);
+		txtPorcentajeAplicado.setBounds(335, 30, 185, 28);
 		txtPorcentajeAplicado.setBorder(new LineBorder(ALTICE_BORDER, 1, true));
 		panelEmpleado.add(txtPorcentajeAplicado);
 
-		JButton btnEscogerEmpleado = primaryButton("Buscar Empleado");
-		btnEscogerEmpleado.setBounds(15, 60, 160, 28);
+		JButton btnEscogerEmpleado = primaryButton("Elegir Empleado");
+		btnEscogerEmpleado.setBounds(15, 70, 160, 28);
 		panelEmpleado.add(btnEscogerEmpleado);
 
 		btnEscogerEmpleado.addActionListener(new ActionListener() {
@@ -336,20 +337,26 @@ public class RegistrarContrato extends JDialog {
 			}
 		});
 
-		if (empleadoLogueado != null) {
-			if (empleadoLogueado.getRolEmpleado().equalsIgnoreCase("Administrativo")) {
-				txtNombreEmpleadoCargo.setText("Seleccione un empleado...");
-				btnEscogerEmpleado.setVisible(true);
-				btnCrearPlan.setVisible(true);
-			} else {
-				empleadoComision = empleadoLogueado;
-				txtNombreEmpleadoCargo.setText(empleadoComision.getNombre());
-				txtPorcentajeAplicado.setText(String.valueOf(empleadoComision.getComisiones()));
-				btnEscogerEmpleado.setVisible(false);
-				btnCrearPlan.setVisible(false);
-			}
-		} else {
+		Usuario userActual = EmpresaAltice.getLoginUser();
+		String rolUsuario = (userActual != null) ? userActual.getRolEmpleado() : "";
+
+		if (rolUsuario.equalsIgnoreCase("Administrativo")) {
+			btnCrearPlan.setVisible(true);
+			btnEscogerEmpleado.setVisible(true);
+			txtNombreEmpleadoCargo.setText("Seleccione un empleado...");
+		} 
+		else if (empleadoLogueado != null) {
+			String rolEmp = empleadoLogueado.getRolEmpleado();
+			btnCrearPlan.setVisible(!rolEmp.equalsIgnoreCase("Vendedor"));
+			
+			empleadoComision = empleadoLogueado;
+			txtNombreEmpleadoCargo.setText(empleadoComision.getNombre());
+			txtPorcentajeAplicado.setText(String.valueOf(empleadoComision.getComisiones()));
+			btnEscogerEmpleado.setVisible(false);
+		} 
+		else {
 			btnCrearPlan.setVisible(false);
+			btnEscogerEmpleado.setVisible(false);
 		}
 
 		JPanel buttonPane = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 8));

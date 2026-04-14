@@ -43,7 +43,8 @@ public class Principal extends JFrame {
 					Principal frame = new Principal();
 					frame.setVisible(true);
 				} catch (Exception e) {
-					JOptionPane.showMessageDialog(null, "Ha ocurrido un error, cierre el programa", "Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Ha ocurrido un error, cierre el programa", "Error",
+							JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
@@ -51,13 +52,8 @@ public class Principal extends JFrame {
 
 	public Principal() {
 		EmpresaAltice empresa = EmpresaAltice.getInstance();
-		empresa.CargarDatos(empresa.getMisClientes(), 
-				empresa.getMisEmpleados(), 
-				empresa.getMisPlanes(), 
-				empresa.getMisServicios(), 
-				empresa.getMisUsuarios(), 
-				empresa.getMisContratos(), 
-				empresa.getPagos());
+		empresa.CargarDatos(empresa.getMisClientes(), empresa.getMisEmpleados(), empresa.getMisPlanes(),
+				empresa.getMisServicios(), empresa.getMisUsuarios(), empresa.getMisContratos(), empresa.getPagos());
 
 		empresa.actualizarContadores();
 		empresa.refrescarConteosContratos();
@@ -74,27 +70,16 @@ public class Principal extends JFrame {
 
 		setTitle("Sistema de Gestión - Altice");
 		setResizable(true);
-		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE); 
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
 		addWindowListener(new java.awt.event.WindowAdapter() {
 			public void windowClosing(java.awt.event.WindowEvent e) {
-				int respuesta = JOptionPane.showConfirmDialog(
-						null,
-						"¿Está seguro de que desea cerrar el programa?",
-						"Confirmar cierre",
-						JOptionPane.YES_NO_OPTION,
-						JOptionPane.QUESTION_MESSAGE
-						);
+				int respuesta = JOptionPane.showConfirmDialog(null, "¿Está seguro de que desea cerrar el programa?",
+						"Confirmar cierre", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 				if (respuesta == JOptionPane.YES_OPTION) {
-					EmpresaAltice.getInstance().GuardarDatos(
-							empresa.getMisClientes(),
-							empresa.getMisEmpleados(),
-							empresa.getMisPlanes(),
-							empresa.getMisServicios(),
-							empresa.getMisUsuarios(),
-							empresa.getMisContratos(),
-							empresa.getPagos()
-							);
+					EmpresaAltice.getInstance().GuardarDatos(empresa.getMisClientes(), empresa.getMisEmpleados(),
+							empresa.getMisPlanes(), empresa.getMisServicios(), empresa.getMisUsuarios(),
+							empresa.getMisContratos(), empresa.getPagos());
 					System.exit(0);
 				}
 			}
@@ -102,17 +87,15 @@ public class Principal extends JFrame {
 
 		dim = getToolkit().getScreenSize();
 		setSize(dim.width, dim.height);
-		setExtendedState(JFrame.MAXIMIZED_BOTH); 
+		setExtendedState(JFrame.MAXIMIZED_BOTH);
 		setLocationRelativeTo(null);
 
 		JMenuBar menuBar = new JMenuBar();
 		menuBar.setBackground(alticeBlue);
 		menuBar.setOpaque(true);
-		menuBar.setBorder(new EmptyBorder(5, 10, 5, 10)); 
+		menuBar.setBorder(new EmptyBorder(5, 10, 5, 10));
 		setJMenuBar(menuBar);
 
-		// ========================== MENÚS ==========================
-		
 		JMenu menuUsuarios = createStyledMenu(" Usuarios ", menuFont);
 		menuBar.add(menuUsuarios);
 
@@ -311,16 +294,15 @@ public class Principal extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				empresa.generarPagosMensuales();
 				empresa.actualizarDeudaClientes();
-				ListarPagos listPag= new ListarPagos();
+				ListarPagos listPag = new ListarPagos();
 				listPag.setModal(true);
 				listPag.setVisible(true);
 			}
 		});
-		
-		// --- NUEVO MENÚ: SOPORTE TÉCNICO ---
+
 		JMenu menuSoporte = createStyledMenu(" Soporte ", menuFont);
 		menuBar.add(menuSoporte);
-		
+
 		JMenuItem mntmPanelDiagnostico = new JMenuItem("Panel de Diagnóstico");
 		mntmPanelDiagnostico.setFont(itemFont);
 		mntmPanelDiagnostico.addActionListener(new ActionListener() {
@@ -330,7 +312,7 @@ public class Principal extends JFrame {
 			}
 		});
 		menuSoporte.add(mntmPanelDiagnostico);
-		
+
 		JMenuItem mntmRegistrarTicket = new JMenuItem("Abrir Ticket Falla");
 		mntmRegistrarTicket.setFont(itemFont);
 		mntmRegistrarTicket.addActionListener(new ActionListener() {
@@ -385,26 +367,31 @@ public class Principal extends JFrame {
 		menuItemRespaldo.setFont(itemFont);
 		menuItemRespaldo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				int confirm = JOptionPane.showConfirmDialog(null, 
-						"¿Desea generar un respaldo de toda la base de datos en el servidor?", 
+				int confirm = JOptionPane.showConfirmDialog(null,
+						"¿Desea generar un respaldo de toda la base de datos en el servidor?",
 						"Confirmación de Respaldo", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 
 				if (confirm == JOptionPane.YES_OPTION) {
 					try {
 						java.net.Socket socket = new java.net.Socket("localhost", 7001);
-						java.io.ObjectOutputStream out = new java.io.ObjectOutputStream(new java.io.BufferedOutputStream(socket.getOutputStream()));
+						java.io.ObjectOutputStream out = new java.io.ObjectOutputStream(
+								new java.io.BufferedOutputStream(socket.getOutputStream()));
 						out.flush();
 
 						EmpresaAltice empresaParaEnviar = EmpresaAltice.getInstance();
 						out.writeObject(empresaParaEnviar);
 						out.flush();
 
-						JOptionPane.showMessageDialog(null, "El respaldo se ha enviado y guardado en el servidor exitosamente.", "Respaldo Completado", JOptionPane.INFORMATION_MESSAGE);
+						JOptionPane.showMessageDialog(null,
+								"El respaldo se ha enviado y guardado en el servidor exitosamente.",
+								"Respaldo Completado", JOptionPane.INFORMATION_MESSAGE);
 
 						out.close();
 						socket.close();
 					} catch (Exception ex) {
-						JOptionPane.showMessageDialog(null, "No se pudo conectar con el servidor. Verifique que esté encendido.", "Error de Conexión", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(null,
+								"No se pudo conectar con el servidor. Verifique que esté encendido.",
+								"Error de Conexión", JOptionPane.ERROR_MESSAGE);
 					}
 				}
 			}
@@ -423,17 +410,22 @@ public class Principal extends JFrame {
 				if (seleccion == javax.swing.JFileChooser.APPROVE_OPTION) {
 					java.io.File archivoSeleccionado = fileChooser.getSelectedFile();
 
-					int confirm = JOptionPane.showConfirmDialog(null, 
-							"ALERTA: ¿Está seguro de restaurar el sistema con este archivo?\nSe borrarán los datos actuales y se reemplazarán por los del respaldo.", 
+					int confirm = JOptionPane.showConfirmDialog(null,
+							"ALERTA: ¿Está seguro de restaurar el sistema con este archivo?\nSe borrarán los datos actuales y se reemplazarán por los del respaldo.",
 							"Confirmar Restauración", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 
 					if (confirm == JOptionPane.YES_OPTION) {
-						boolean exito = EmpresaAltice.getInstance().CargarDatosDesdeRespaldo(archivoSeleccionado.getAbsolutePath());
+						boolean exito = EmpresaAltice.getInstance()
+								.CargarDatosDesdeRespaldo(archivoSeleccionado.getAbsolutePath());
 
 						if (exito) {
-							JOptionPane.showMessageDialog(null, "Respaldo restaurado con éxito. El sistema ha vuelto al estado guardado.", "Restauración Exitosa", JOptionPane.INFORMATION_MESSAGE);
+							JOptionPane.showMessageDialog(null,
+									"Respaldo restaurado con éxito. El sistema ha vuelto al estado guardado.",
+									"Restauración Exitosa", JOptionPane.INFORMATION_MESSAGE);
 						} else {
-							JOptionPane.showMessageDialog(null, "Error al leer el archivo. Puede que esté corrupto o no sea un respaldo válido.", "Error", JOptionPane.ERROR_MESSAGE);
+							JOptionPane.showMessageDialog(null,
+									"Error al leer el archivo. Puede que esté corrupto o no sea un respaldo válido.",
+									"Error", JOptionPane.ERROR_MESSAGE);
 						}
 					}
 				}
@@ -441,43 +433,42 @@ public class Principal extends JFrame {
 		});
 		menuRespaldo.add(menuItemRestaurar);
 
-		// ========================== SEGURIDAD RBAC ==========================
 		Usuario usuarioActual = EmpresaAltice.getLoginUser();
 		if (usuarioActual != null) {
 			String rol = usuarioActual.getRolEmpleado();
-			
-			if (rol.equalsIgnoreCase("Comercial")) {
-				menuUsuarios.setVisible(false); 
-				menuEmpleados.setVisible(false); 
-				menuPlanes.setVisible(false); 
-				menuServicios.setVisible(false); 
-				menuReportes.setVisible(false); 
-				menuRespaldo.setVisible(false); 
-				menuSoporte.setVisible(false); // Comerciales no usan soporte
-			} 
-			else if (rol.equalsIgnoreCase("Soporte Técnico") || rol.equalsIgnoreCase("Soporte")) {
+
+			if (rol.equalsIgnoreCase("Tecnico")) {
+				menuUsuarios.setVisible(false);
+				menuEmpleados.setVisible(false);
+				menuClientes.setVisible(false);
+				menuContratos.setVisible(false);
+				menuPlanes.setVisible(false);
+				menuServicios.setVisible(false);
+				menuPagos.setVisible(false);
+				menuReportes.setVisible(false);
+				menuRespaldo.setVisible(false);
+				menuSoporte.setVisible(true);
+			} else if (!rol.equalsIgnoreCase("Administrativo")) {
 				menuUsuarios.setVisible(false);
 				menuEmpleados.setVisible(false);
 				menuPlanes.setVisible(false);
 				menuServicios.setVisible(false);
 				menuReportes.setVisible(false);
 				menuRespaldo.setVisible(false);
-				menuClientes.setVisible(false); 
-				menuContratos.setVisible(false); 
-				menuPagos.setVisible(false); 
-				// Soporte SOLO ve el menú Soporte.
+				menuSoporte.setVisible(false);
+
+				menuClientes.setVisible(true);
+				menuContratos.setVisible(true);
+				menuPagos.setVisible(true);
 			}
-			// Si es Administrativo no se oculta nada, tiene acceso total.
 		}
 
-		// Intentamos cargar la imagen de fondo
 		try {
 			imagenFondo = new ImageIcon(getClass().getResource("/recursos/fondo_pantalla_principal.jpg")).getImage();
 		} catch (Exception e) {
 			imagenFondo = null;
 		}
 
-		// Panel principal con imagen de fondo personalizada
 		contentPane = new JPanel() {
 			@Override
 			protected void paintComponent(Graphics g) {
@@ -485,7 +476,6 @@ public class Principal extends JFrame {
 				if (imagenFondo != null) {
 					g.drawImage(imagenFondo, 0, 0, getWidth(), getHeight(), this);
 				} else {
-					// Fallback: Si no hay imagen, pinta un degradado de azul claro a blanco
 					Graphics2D g2d = (Graphics2D) g;
 					GradientPaint gp = new GradientPaint(0, 0, Color.WHITE, 0, getHeight(), new Color(230, 240, 255));
 					g2d.setPaint(gp);
@@ -493,16 +483,15 @@ public class Principal extends JFrame {
 				}
 			}
 		};
-		contentPane.setLayout(new GridBagLayout()); // Para centrar la tarjeta de bienvenida
+		contentPane.setLayout(new GridBagLayout());
 		setContentPane(contentPane);
 
-		// Tarjeta de bienvenida central (Semi-transparente)
 		JPanel pnlBienvenida = new JPanel(new GridBagLayout()) {
 			@Override
 			protected void paintComponent(Graphics g) {
 				Graphics2D g2 = (Graphics2D) g.create();
 				g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-				g2.setColor(new Color(255, 255, 255, 220)); // Blanco con 85% de opacidad
+				g2.setColor(new Color(255, 255, 255, 220));
 				g2.fillRoundRect(0, 0, getWidth(), getHeight(), 40, 40);
 				g2.dispose();
 				super.paintComponent(g);
@@ -510,46 +499,44 @@ public class Principal extends JFrame {
 		};
 		pnlBienvenida.setOpaque(false);
 		pnlBienvenida.setBorder(new EmptyBorder(50, 80, 50, 80));
-		contentPane.add(pnlBienvenida); // Centrado gracias al GridBagLayout de contentPane
+		contentPane.add(pnlBienvenida);
 
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.insets = new Insets(10, 10, 10, 10);
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 
-		// Logo de Altice (Solo el ícono)
 		JLabel lblIconoLogo = new JLabel();
 		try {
-			ImageIcon iconoOriginal = new ImageIcon(getClass().getResource("/recursos/Altice_logo_azul_sin_letras.png"));
+			ImageIcon iconoOriginal = new ImageIcon(
+					getClass().getResource("/recursos/Altice_logo_azul_sin_letras.png"));
 			Image imagenEscalada = iconoOriginal.getImage().getScaledInstance(140, 140, Image.SCALE_SMOOTH);
 			lblIconoLogo.setIcon(new ImageIcon(imagenEscalada));
-		} catch (Exception e) {}
+		} catch (Exception e) {
+		}
 		pnlBienvenida.add(lblIconoLogo, gbc);
 
-		// Texto de Altice
 		gbc.gridy = 1;
 		JLabel lblLogoText = new JLabel("altice");
 		lblLogoText.setFont(new Font("SansSerif", Font.BOLD, 70));
 		lblLogoText.setForeground(alticeBlue);
 		pnlBienvenida.add(lblLogoText, gbc);
 
-		// Subtítulo / Bienvenida
 		gbc.gridy = 2;
-		String rol = "";
-		String nombre = "";
+		String rolActual = "";
+		String nombreActual = "";
 
 		if (usuarioActual != null) {
-			rol = usuarioActual.getRolEmpleado();
-			nombre = usuarioActual.getNombreUsuario();
+			rolActual = usuarioActual.getRolEmpleado();
+			nombreActual = usuarioActual.getNombreUsuario();
 		}
 
-		JLabel lblSubtitulo = new JLabel("Bienvenido al sistema, " + rol + ": " + nombre);
+		JLabel lblSubtitulo = new JLabel("Bienvenido al sistema, " + rolActual + ": " + nombreActual);
 		lblSubtitulo.setFont(new Font("SansSerif", Font.PLAIN, 22));
 		lblSubtitulo.setForeground(new Color(60, 60, 60));
 		pnlBienvenida.add(lblSubtitulo, gbc);
 	}
 
-	// Método auxiliar para estilizar los menús principales
 	private JMenu createStyledMenu(String text, Font font) {
 		JMenu menu = new JMenu(text);
 		menu.setFont(font);
