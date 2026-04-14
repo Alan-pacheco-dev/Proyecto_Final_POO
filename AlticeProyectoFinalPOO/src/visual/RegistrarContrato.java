@@ -65,7 +65,8 @@ public class RegistrarContrato extends JDialog {
 
 		setTitle("Generar Nuevo Contrato");
 		dim = getToolkit().getScreenSize();
-		setSize(600, 830);
+		// Aumentamos tamaño de la ventana para que los bordes respiren
+		setSize(630, 800); 
 		setLocationRelativeTo(null);
 		setResizable(false);
 
@@ -115,7 +116,7 @@ public class RegistrarContrato extends JDialog {
 
 		JLabel lblVigencia = new JLabel("Vigencia:");
 		lblVigencia.setFont(FONT_LABEL);
-		lblVigencia.setBounds(380, 30, 180, 22);
+		lblVigencia.setBounds(395, 30, 175, 22);
 		panel.add(lblVigencia);
 
 		txtAnNoHa = new JTextField();
@@ -123,10 +124,13 @@ public class RegistrarContrato extends JDialog {
 		txtAnNoHa.setFont(FONT_INPUT);
 		txtAnNoHa.setBackground(ALTICE_LIGHT);
 		txtAnNoHa.setText("Inicia al registrar");
-		txtAnNoHa.setBounds(380, 55, 175, 28);
+		txtAnNoHa.setBounds(395, 55, 175, 28);
 		txtAnNoHa.setBorder(new LineBorder(ALTICE_BORDER, 1, true));
 		panel.add(txtAnNoHa);
 
+		// ===============================================
+		// PANEL CLIENTE
+		// ===============================================
 		JPanel panelCliente = new JPanel();
 		panelCliente.setLayout(null);
 		panelCliente.setBackground(ALTICE_LIGHT);
@@ -134,7 +138,8 @@ public class RegistrarContrato extends JDialog {
 			new LineBorder(ALTICE_BORDER), "Información del Cliente",
 			TitledBorder.LEADING, TitledBorder.TOP, FONT_LABEL, ALTICE_BLUE
 		));
-		panelCliente.setBounds(20, 100, 540, 240);
+		// Ancho ajustado a 550
+		panelCliente.setBounds(20, 100, 550, 240);
 		panel.add(panelCliente);
 
 		JButton btnEscogerCliente = primaryButton("Buscar Cliente");
@@ -157,7 +162,7 @@ public class RegistrarContrato extends JDialog {
 
 		JLabel lblDeuda = new JLabel("Deuda Actual:");
 		lblDeuda.setFont(FONT_LABEL);
-		lblDeuda.setBounds(300, 65, 130, 22);
+		lblDeuda.setBounds(310, 65, 130, 22);
 		panelCliente.add(lblDeuda);
 
 		txtDeudaCliente = new JTextField();
@@ -165,7 +170,7 @@ public class RegistrarContrato extends JDialog {
 		txtDeudaCliente.setFont(FONT_INPUT);
 		txtDeudaCliente.setBackground(Color.WHITE);
 		if (clienteActual != null) txtDeudaCliente.setText("$ " + String.format("%.2f", clienteActual.calcularDeuda()));
-		txtDeudaCliente.setBounds(300, 88, 220, 28);
+		txtDeudaCliente.setBounds(310, 88, 220, 28);
 		txtDeudaCliente.setBorder(new LineBorder(ALTICE_BORDER, 1, true));
 		panelCliente.add(txtDeudaCliente);
 
@@ -179,7 +184,7 @@ public class RegistrarContrato extends JDialog {
 		txtNombreCliente.setFont(FONT_INPUT);
 		txtNombreCliente.setBackground(Color.WHITE);
 		if (clienteActual != null) txtNombreCliente.setText(clienteActual.getNombre());
-		txtNombreCliente.setBounds(15, 148, 505, 28);
+		txtNombreCliente.setBounds(15, 148, 515, 28);
 		txtNombreCliente.setBorder(new LineBorder(ALTICE_BORDER, 1, true));
 		panelCliente.add(txtNombreCliente);
 
@@ -199,7 +204,7 @@ public class RegistrarContrato extends JDialog {
 
 		JLabel lblDir = new JLabel("Dirección:");
 		lblDir.setFont(FONT_LABEL);
-		lblDir.setBounds(270, 183, 120, 22);
+		lblDir.setBounds(280, 183, 120, 22);
 		panelCliente.add(lblDir);
 
 		txtDireccionCliente = new JTextField();
@@ -207,7 +212,7 @@ public class RegistrarContrato extends JDialog {
 		txtDireccionCliente.setFont(FONT_INPUT);
 		txtDireccionCliente.setBackground(Color.WHITE);
 		if (clienteActual != null) txtDireccionCliente.setText(clienteActual.getDireccion());
-		txtDireccionCliente.setBounds(270, 206, 250, 28);
+		txtDireccionCliente.setBounds(280, 206, 250, 28);
 		txtDireccionCliente.setBorder(new LineBorder(ALTICE_BORDER, 1, true));
 		panelCliente.add(txtDireccionCliente);
 
@@ -228,6 +233,9 @@ public class RegistrarContrato extends JDialog {
 			}
 		});
 
+		// ===============================================
+		// PANEL PLAN
+		// ===============================================
 		JPanel panelPlan = new JPanel();
 		panelPlan.setLayout(null);
 		panelPlan.setBackground(ALTICE_LIGHT);
@@ -235,32 +243,33 @@ public class RegistrarContrato extends JDialog {
 			new LineBorder(ALTICE_BORDER), "Plan del Contrato",
 			TitledBorder.LEADING, TitledBorder.TOP, FONT_LABEL, ALTICE_BLUE
 		));
-		panelPlan.setBounds(20, 355, 540, 100);
+		panelPlan.setBounds(20, 355, 550, 105);
 		panel.add(panelPlan);
 
 		txtPlanNombre = new JTextField();
 		txtPlanNombre.setEditable(false);
 		txtPlanNombre.setFont(FONT_INPUT);
 		txtPlanNombre.setBackground(Color.WHITE);
-		txtPlanNombre.setBounds(15, 25, 505, 28);
+		txtPlanNombre.setBounds(15, 25, 515, 28);
 		txtPlanNombre.setBorder(new LineBorder(ALTICE_BORDER, 1, true));
 		panelPlan.add(txtPlanNombre);
 
 		JButton btnCrearPlan = outlineButton("Crear Plan");
-		btnCrearPlan.setBounds(15, 60, 120, 28);
+		btnCrearPlan.setBounds(15, 63, 120, 28);
 		panelPlan.add(btnCrearPlan);
 
 		JButton btnEscogerPlan = primaryButton("Escoger Plan");
-		btnEscogerPlan.setBounds(145, 60, 130, 28);
+		btnEscogerPlan.setBounds(145, 63, 130, 28);
 		panelPlan.add(btnEscogerPlan);
 
 		JButton btnVerServiciosPlan = outlineButton("Ver Servicios");
-		btnVerServiciosPlan.setBounds(285, 60, 130, 28);
+		btnVerServiciosPlan.setBounds(285, 63, 130, 28);
 		panelPlan.add(btnVerServiciosPlan);
 
 		btnEscogerPlan.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ListarPlanes ventanaPlanes = new ListarPlanes(true);
+				ventanaPlanes.setModal(true);
 				ventanaPlanes.setVisible(true);
 				Plan planElegido = ventanaPlanes.getPlanSeleccionado();
 				if (planElegido != null) {
@@ -289,6 +298,9 @@ public class RegistrarContrato extends JDialog {
 			}
 		});
 
+		// ===============================================
+		// PANEL EMPLEADO
+		// ===============================================
 		JPanel panelEmpleado = new JPanel();
 		panelEmpleado.setLayout(null);
 		panelEmpleado.setBackground(ALTICE_LIGHT);
@@ -296,7 +308,7 @@ public class RegistrarContrato extends JDialog {
 			new LineBorder(ALTICE_BORDER), "Empleado a Cargo",
 			TitledBorder.LEADING, TitledBorder.TOP, FONT_LABEL, ALTICE_BLUE
 		));
-		panelEmpleado.setBounds(20, 465, 540, 110);
+		panelEmpleado.setBounds(20, 475, 550, 110);
 		panel.add(panelEmpleado);
 
 		txtNombreEmpleadoCargo = new JTextField();
@@ -309,14 +321,14 @@ public class RegistrarContrato extends JDialog {
 
 		JLabel lblPorcentaje = new JLabel("Comisión (%):");
 		lblPorcentaje.setFont(FONT_LABEL);
-		lblPorcentaje.setBounds(335, 10, 120, 22);
+		lblPorcentaje.setBounds(345, 10, 120, 22);
 		panelEmpleado.add(lblPorcentaje);
 
 		txtPorcentajeAplicado = new JTextField();
 		txtPorcentajeAplicado.setEditable(false);
 		txtPorcentajeAplicado.setFont(FONT_INPUT);
 		txtPorcentajeAplicado.setBackground(Color.WHITE);
-		txtPorcentajeAplicado.setBounds(335, 30, 185, 28);
+		txtPorcentajeAplicado.setBounds(345, 30, 185, 28);
 		txtPorcentajeAplicado.setBorder(new LineBorder(ALTICE_BORDER, 1, true));
 		panelEmpleado.add(txtPorcentajeAplicado);
 
@@ -327,6 +339,7 @@ public class RegistrarContrato extends JDialog {
 		btnEscogerEmpleado.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ListarEmpleados listEmps = new ListarEmpleados(true);
+				listEmps.setModal(true);
 				listEmps.setVisible(true);
 				Empleado empElegido = listEmps.getEmpleadoSeleccionado();
 				if (empElegido != null) {
@@ -347,7 +360,7 @@ public class RegistrarContrato extends JDialog {
 		} 
 		else if (empleadoLogueado != null) {
 			String rolEmp = empleadoLogueado.getRolEmpleado();
-			btnCrearPlan.setVisible(!rolEmp.equalsIgnoreCase("Vendedor"));
+			btnCrearPlan.setVisible(!rolEmp.equalsIgnoreCase("Vendedor") && !rolEmp.equalsIgnoreCase("Comercial"));
 			
 			empleadoComision = empleadoLogueado;
 			txtNombreEmpleadoCargo.setText(empleadoComision.getNombre());

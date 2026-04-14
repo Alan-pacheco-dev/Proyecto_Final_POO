@@ -56,6 +56,7 @@ public class ListarEmpleados extends JDialog {
 	private JButton btnActualizar;
 
 	private Empleado selected = null;
+	private String filtroRol = null; // Nuevo atributo para filtrar por rol
 
 	public static void main(String[] args) {
 		try {
@@ -67,8 +68,21 @@ public class ListarEmpleados extends JDialog {
 		}
 	}
 
+	// Constructor original para mantener compatibilidad con el resto del sistema
 	public ListarEmpleados(boolean modoSeleccion) {
-		setTitle("Listado de Empleados");
+		this(modoSeleccion, null);
+	}
+
+	// Constructor sobrecargado que acepta un filtro de rol
+	public ListarEmpleados(boolean modoSeleccion, String filtroRol) {
+		this.filtroRol = filtroRol;
+		
+		if (filtroRol != null) {
+			setTitle("Seleccionar " + filtroRol);
+		} else {
+			setTitle("Listado de Empleados");
+		}
+		
 		setModal(modoSeleccion);
 		setResizable(false);
 
@@ -82,7 +96,7 @@ public class ListarEmpleados extends JDialog {
 		JPanel header = new JPanel(new BorderLayout());
 		header.setBackground(ALTICE_BLUE);
 		header.setBorder(new EmptyBorder(12, 18, 12, 18));
-		JLabel lblTitulo = new JLabel("Listado de Empleados");
+		JLabel lblTitulo = new JLabel(filtroRol != null ? "Seleccionar " + filtroRol : "Listado de Empleados");
 		lblTitulo.setFont(new Font("SansSerif", Font.BOLD, 15));
 		lblTitulo.setForeground(Color.WHITE);
 		JLabel lblAltice = new JLabel("altice");
@@ -265,6 +279,14 @@ public class ListarEmpleados extends JDialog {
 	private void loadEmpleados() {
 		model.setRowCount(0);
 		for (Empleado emp : EmpresaAltice.getInstance().getMisEmpleados()) {
+			
+			// NUEVO: Verificamos si existe un filtro de rol antes de agregar a la tabla
+			if (filtroRol != null && !filtroRol.isEmpty()) {
+				if (!emp.getRolEmpleado().equalsIgnoreCase(filtroRol)) {
+					continue; // Si no es el rol que buscamos, saltamos al siguiente
+				}
+			}
+			
 			model.addRow(new Object[]{
 				emp.getIdPersona(),
 				emp.getCodigoEmpleado(),

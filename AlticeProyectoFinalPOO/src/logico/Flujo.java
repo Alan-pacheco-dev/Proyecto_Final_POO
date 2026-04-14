@@ -41,6 +41,7 @@ public class Flujo extends Thread {
 					datos.getMisUsuarios(),
 					datos.getMisContratos(),
 					datos.getPagos(),
+					datos.getMisTickets(),
 					nombreDelRespaldo 
 				);
 				

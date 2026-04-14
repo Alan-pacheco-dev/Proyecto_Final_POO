@@ -1,4 +1,3 @@
-
 package logico;
 
 import java.io.File;
@@ -22,7 +21,7 @@ public class EmpresaAltice implements Serializable {
 	public static int idClientes = 1;
 	public static int idServicios = 1;
 	public static int idUsuarios = 1;
-	public int idTickets = 1;
+	public static int idTickets = 1;
 
 	private static EmpresaAltice empresaAltice = null;
 	private ArrayList<Ticket> misTickets;
@@ -130,18 +129,18 @@ public class EmpresaAltice implements Serializable {
 		return empresaAltice;
 	}
 
-	
+	// Mantenemos la firma antigua para no romper las otras ventanas, pero ahora guarda TICKETS también
 	public void GuardarDatos(ArrayList<Cliente> clientes, ArrayList<Empleado> empleados, 
 			ArrayList<Plan> planes, ArrayList<Servicio> servicios, ArrayList<Usuario> usuarios, ArrayList<Contrato> contratos, 
 			ArrayList<Pagos> pagos) 
 	{
-		GuardarDatos(clientes, empleados, planes, servicios, usuarios, contratos, pagos, "Datos.txt");
+		GuardarDatos(clientes, empleados, planes, servicios, usuarios, contratos, pagos, this.misTickets, "Datos.txt");
 	}
 
-
+	// Nueva firma que incluye los tickets
 	public void GuardarDatos(ArrayList<Cliente> clientes, ArrayList<Empleado> empleados, 
 			ArrayList<Plan> planes, ArrayList<Servicio> servicios, ArrayList<Usuario> usuarios, ArrayList<Contrato> contratos, 
-			ArrayList<Pagos> pagos, String nombreArchivo) 
+			ArrayList<Pagos> pagos, ArrayList<Ticket> tickets, String nombreArchivo) 
 	{
 		try(ObjectOutputStream file = new ObjectOutputStream(new FileOutputStream(nombreArchivo)))
 		{
@@ -152,6 +151,8 @@ public class EmpresaAltice implements Serializable {
 			file.writeObject(usuarios);
 			file.writeObject(contratos);
 			file.writeObject(pagos);
+			// NUEVO: Guardando los tickets
+			file.writeObject(tickets);
 
 		}catch(IOException e) {
 			System.out.println("No se pudo guardar los datos: " + e.getMessage());
@@ -182,6 +183,14 @@ public class EmpresaAltice implements Serializable {
 				usuarios.addAll((ArrayList<Usuario>) file.readObject());
 				contratos.addAll((ArrayList<Contrato>) file.readObject());
 				pagos.addAll((ArrayList<Pagos>) file.readObject());
+				
+				// NUEVO: Intentar cargar tickets. Usamos un try interno por si el archivo es viejo y no tiene tickets aún.
+				try {
+					misTickets.clear();
+					misTickets.addAll((ArrayList<Ticket>) file.readObject());
+				} catch (Exception e) {
+					System.out.println("Archivo antiguo: inicializando lista de tickets vacía.");
+				}
 
 			}catch (Exception e) {
 				System.out.println("No se pudo cargar los datos");
@@ -207,13 +216,13 @@ public class EmpresaAltice implements Serializable {
 	}
 	
 	public Empleado buscarEmpleadoPorUsuario(Usuario usuario) {
-	    for (Empleado emp : misEmpleados) {
-	        if (emp.getMiUsuario() != null && 
-	            emp.getMiUsuario().getNombreUsuario().equals(usuario.getNombreUsuario())) {
-	            return emp;
-	        }
-	    }
-	    return null;
+		for (Empleado emp : misEmpleados) {
+			if (emp.getMiUsuario() != null && 
+				emp.getMiUsuario().getNombreUsuario().equals(usuario.getNombreUsuario())) {
+				return emp;
+			}
+		}
+		return null;
 	}
 	
 	public boolean CargarDatosDesdeRespaldo(String rutaArchivo) {
@@ -240,6 +249,11 @@ public class EmpresaAltice implements Serializable {
 			misUsuarios.addAll((ArrayList<Usuario>) file.readObject());
 			misContratos.addAll((ArrayList<Contrato>) file.readObject());
 			pagosClientes.addAll((ArrayList<Pagos>) file.readObject());
+			
+			try {
+				misTickets.clear();
+				misTickets.addAll((ArrayList<Ticket>) file.readObject());
+			} catch (Exception e) {}
 
 			actualizarContadores();
 			refrescarConteosContratos();
@@ -523,5 +537,4 @@ public class EmpresaAltice implements Serializable {
 			}
 		}
 	}
-
 }

@@ -21,11 +21,14 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
 
 import logico.Cliente;
 import logico.Contrato;
+import logico.Empleado;
 import logico.EmpresaAltice;
 import logico.Ticket;
+import logico.Usuario;
 
 public class RegistrarTicket extends JDialog {
 
@@ -34,16 +37,20 @@ public class RegistrarTicket extends JDialog {
 	private JComboBox<String> cbxContratos;
 	private JComboBox<String> cbxPrioridad;
 	private JTextArea txtDescripcion;
+	private JTextField txtTecnicoInfo;
 	
 	private Cliente clienteSeleccionado = null;
+	private Empleado tecnicoSeleccionado = null;
 	
 	private Color alticeBlue = Color.decode("#0066FF");
 	private Color bgWhite = Color.WHITE;
+	private Color alticeLight = new Color(245, 248, 255);
+	private Color alticeBorder = new Color(208, 223, 247);
 
 	public RegistrarTicket() {
 		setTitle("Abrir Nuevo Ticket de Soporte");
 		setModal(true);
-		setBounds(100, 100, 500, 500);
+		setBounds(100, 100, 520, 620);
 		setLocationRelativeTo(null);
 		setResizable(false);
 		getContentPane().setLayout(new BorderLayout());
@@ -56,9 +63,12 @@ public class RegistrarTicket extends JDialog {
 		Font fontLabel = new Font("SansSerif", Font.BOLD, 14);
 		Font fontInput = new Font("SansSerif", Font.PLAIN, 14);
 
-		// ==========================================
-		// CLIENTE
-		// ==========================================
+		Usuario userActual = EmpresaAltice.getLoginUser();
+		Empleado empLogueado = null;
+		if (userActual != null) {
+			empLogueado = EmpresaAltice.getInstance().buscarEmpleadoPorUsuario(userActual);
+		}
+
 		JLabel lblCliente = new JLabel("Cliente Afectado:");
 		lblCliente.setFont(fontLabel);
 		lblCliente.setBounds(20, 20, 150, 25);
@@ -68,7 +78,7 @@ public class RegistrarTicket extends JDialog {
 		txtClienteInfo.setEditable(false);
 		txtClienteInfo.setFont(fontInput);
 		txtClienteInfo.setBorder(new LineBorder(Color.LIGHT_GRAY, 1, true));
-		txtClienteInfo.setBounds(20, 50, 260, 30);
+		txtClienteInfo.setBounds(20, 50, 280, 30);
 		contentPanel.add(txtClienteInfo);
 		
 		JButton btnBuscarCliente = new JButton("Buscar");
@@ -77,7 +87,7 @@ public class RegistrarTicket extends JDialog {
 		btnBuscarCliente.setForeground(Color.WHITE);
 		btnBuscarCliente.setFocusPainted(false);
 		btnBuscarCliente.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		btnBuscarCliente.setBounds(290, 50, 150, 30);
+		btnBuscarCliente.setBounds(310, 50, 150, 30);
 		btnBuscarCliente.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ListarClientes ventanaClientes = new ListarClientes(true);
@@ -88,15 +98,12 @@ public class RegistrarTicket extends JDialog {
 				if (clienteElegido != null) {
 					clienteSeleccionado = clienteElegido;
 					txtClienteInfo.setText(clienteSeleccionado.getNombre() + " (" + clienteSeleccionado.getCodigoCliente() + ")");
-					cargarContratosDelCliente(); // Llenamos el ComboBox
+					cargarContratosDelCliente(); 
 				}
 			}
 		});
 		contentPanel.add(btnBuscarCliente);
 
-		// ==========================================
-		// CONTRATO AFECTADO
-		// ==========================================
 		JLabel lblContrato = new JLabel("Contrato / Servicio a Revisar:");
 		lblContrato.setFont(fontLabel);
 		lblContrato.setBounds(20, 100, 250, 25);
@@ -104,13 +111,10 @@ public class RegistrarTicket extends JDialog {
 		
 		cbxContratos = new JComboBox<String>();
 		cbxContratos.setFont(fontInput);
-		cbxContratos.setEnabled(false); // Se habilita cuando escogen cliente
-		cbxContratos.setBounds(20, 130, 420, 30);
+		cbxContratos.setEnabled(false); 
+		cbxContratos.setBounds(20, 130, 440, 30);
 		contentPanel.add(cbxContratos);
 
-		// ==========================================
-		// PRIORIDAD
-		// ==========================================
 		JLabel lblPrioridad = new JLabel("Nivel de Prioridad:");
 		lblPrioridad.setFont(fontLabel);
 		lblPrioridad.setBounds(20, 180, 150, 25);
@@ -122,9 +126,6 @@ public class RegistrarTicket extends JDialog {
 		cbxPrioridad.setBounds(20, 210, 150, 30);
 		contentPanel.add(cbxPrioridad);
 
-		// ==========================================
-		// DESCRIPCIÓN DE LA FALLA
-		// ==========================================
 		JLabel lblDescripcion = new JLabel("Descripción de la avería / queja:");
 		lblDescripcion.setFont(fontLabel);
 		lblDescripcion.setBounds(20, 260, 250, 25);
@@ -136,13 +137,79 @@ public class RegistrarTicket extends JDialog {
 		txtDescripcion.setWrapStyleWord(true);
 		
 		JScrollPane scrollPane = new JScrollPane(txtDescripcion);
-		scrollPane.setBounds(20, 290, 420, 100);
+		scrollPane.setBounds(20, 290, 440, 100);
 		scrollPane.setBorder(new LineBorder(Color.LIGHT_GRAY, 1, true));
 		contentPanel.add(scrollPane);
 
-		// ==========================================
-		// PANEL DE BOTONES INFERIOR
-		// ==========================================
+		JPanel panelTecnico = new JPanel();
+		panelTecnico.setLayout(null);
+		panelTecnico.setBackground(alticeLight);
+		panelTecnico.setBorder(BorderFactory.createTitledBorder(
+			new LineBorder(alticeBorder), "Técnico Asignado",
+			TitledBorder.LEADING, TitledBorder.TOP, fontLabel, alticeBlue
+		));
+		panelTecnico.setBounds(20, 410, 440, 90);
+		contentPanel.add(panelTecnico);
+
+		txtTecnicoInfo = new JTextField();
+		txtTecnicoInfo.setEditable(false);
+		txtTecnicoInfo.setFont(fontInput);
+		txtTecnicoInfo.setBackground(Color.WHITE);
+		txtTecnicoInfo.setBounds(15, 30, 260, 30);
+		txtTecnicoInfo.setBorder(new LineBorder(Color.LIGHT_GRAY, 1, true));
+		panelTecnico.add(txtTecnicoInfo);
+
+		JButton btnBuscarTecnico = new JButton("Buscar Técnico");
+		btnBuscarTecnico.setFont(new Font("SansSerif", Font.BOLD, 12));
+		btnBuscarTecnico.setBackground(alticeBlue);
+		btnBuscarTecnico.setForeground(Color.WHITE);
+		btnBuscarTecnico.setFocusPainted(false);
+		btnBuscarTecnico.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		btnBuscarTecnico.setBounds(285, 30, 140, 30);
+		panelTecnico.add(btnBuscarTecnico);
+
+		btnBuscarTecnico.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ListarEmpleados listEmps = new ListarEmpleados(true, "Tecnico");
+				listEmps.setVisible(true);
+				Empleado empElegido = listEmps.getEmpleadoSeleccionado();
+				if (empElegido != null) {
+					tecnicoSeleccionado = empElegido;
+					txtTecnicoInfo.setText(tecnicoSeleccionado.getNombre() + " (" + tecnicoSeleccionado.getCodigoEmpleado() + ")");
+				}
+			}
+		});
+
+		String rolUsuario = (userActual != null && userActual.getRolEmpleado() != null) ? userActual.getRolEmpleado().toLowerCase() : "";
+
+		// Validamos conteniendo palabras clave para evitar errores por espacios o tildes
+		boolean isAdministrador = rolUsuario.contains("admin");
+		boolean isTecnico = rolUsuario.contains("tecnico") || rolUsuario.contains("técnico") || rolUsuario.contains("soporte");
+
+		if (isAdministrador) {
+			btnBuscarTecnico.setVisible(true);
+			btnBuscarTecnico.setEnabled(true);
+			txtTecnicoInfo.setText("Sin asignar (Opcional)...");
+		} 
+		else if (isTecnico) {
+			// Es técnico: Ocultamos y desactivamos el botón
+			btnBuscarTecnico.setVisible(false);
+			btnBuscarTecnico.setEnabled(false);
+			
+			if (empLogueado != null) {
+				tecnicoSeleccionado = empLogueado;
+				txtTecnicoInfo.setText(tecnicoSeleccionado.getNombre() + " (" + tecnicoSeleccionado.getCodigoEmpleado() + ")");
+			} else {
+				txtTecnicoInfo.setText(userActual.getNombreUsuario() + " (Falta vincular empleado)");
+			}
+		} 
+		else {
+			// Por si entra algún otro rol no previsto
+			btnBuscarTecnico.setVisible(false);
+			btnBuscarTecnico.setEnabled(false);
+			txtTecnicoInfo.setText("Sin permisos para asignar.");
+		}
+
 		JPanel buttonPane = new JPanel();
 		buttonPane.setBackground(bgWhite);
 		buttonPane.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.LIGHT_GRAY));
@@ -177,16 +244,12 @@ public class RegistrarTicket extends JDialog {
 		buttonPane.add(btnCancelar);
 	}
 	
-	// ==========================================
-	// LÓGICA DE LA INTERFAZ
-	// ==========================================
 	private void cargarContratosDelCliente() {
 		cbxContratos.removeAllItems();
 		if (clienteSeleccionado != null) {
 			boolean tieneContratos = false;
 			for (Contrato c : clienteSeleccionado.getMisContratos()) {
 				if (c.isActivo()) {
-					// Formato: "Cto-1 | Internet Fibra 100Mbps"
 					cbxContratos.addItem(c.getIdContrato() + " | " + c.getPlanContrato().getNombrePlan());
 					tieneContratos = true;
 				}
@@ -202,7 +265,6 @@ public class RegistrarTicket extends JDialog {
 	}
 	
 	private void guardarTicket() {
-		// Validaciones
 		if (clienteSeleccionado == null) {
 			JOptionPane.showMessageDialog(this, "Debe seleccionar un cliente.", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
@@ -216,11 +278,9 @@ public class RegistrarTicket extends JDialog {
 			return;
 		}
 		
-		// Extraer el ID del contrato del ComboBox (Ej. "Cto-1 | Plan" -> Extraemos "Cto-1")
 		String seleccionComboBox = cbxContratos.getSelectedItem().toString();
 		String idContrato = seleccionComboBox.split(" \\| ")[0]; 
 		
-		// Buscar el contrato real en la lógica
 		Contrato contratoAfectado = null;
 		for (Contrato c : clienteSeleccionado.getMisContratos()) {
 			if (c.getIdContrato().equals(idContrato)) {
@@ -229,16 +289,18 @@ public class RegistrarTicket extends JDialog {
 			}
 		}
 		
-		// Crear el Ticket y guardarlo en la Empresa
 		String prioridad = cbxPrioridad.getSelectedItem().toString();
 		String queja = txtDescripcion.getText().trim();
 		
 		Ticket nuevoTicket = new Ticket(clienteSeleccionado, contratoAfectado, queja, prioridad);
 		
-		EmpresaAltice empresa = EmpresaAltice.getInstance();
-		empresa.getMisTickets().add(nuevoTicket); // Asumiendo que le pusiste getMisTickets() a la lista en EmpresaAltice
+		if (tecnicoSeleccionado != null) {
+			nuevoTicket.setTecnicoAsignado(tecnicoSeleccionado);
+		}
 		
-		// Guardar datos
+		EmpresaAltice empresa = EmpresaAltice.getInstance();
+		empresa.getMisTickets().add(nuevoTicket); 
+		
 		empresa.GuardarDatos(
 				empresa.getMisClientes(), 
 				empresa.getMisEmpleados(),
@@ -247,7 +309,7 @@ public class RegistrarTicket extends JDialog {
 				empresa.getMisUsuarios(), 
 				empresa.getMisContratos(),
 				empresa.getPagos()
-		); // Aquí, si actualizaste el método GuardarDatos para que incluya misTickets, excelente. Si no, lo arreglaremos.
+		);
 		
 		JOptionPane.showMessageDialog(this, "¡Ticket " + nuevoTicket.getIdTicket() + " generado con éxito!", "Información", JOptionPane.INFORMATION_MESSAGE);
 		dispose();

@@ -2,6 +2,7 @@ package visual;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
@@ -17,6 +18,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -25,6 +27,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 
 import logico.Empleado;
 import logico.EmpresaAltice;
@@ -309,6 +312,7 @@ public class Principal extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				DashboardSoporte diag = new DashboardSoporte();
 				diag.setVisible(true);
+				//JOptionPane.showMessageDialog(null, "Módulo en construcción.");
 			}
 		});
 		menuSoporte.add(mntmPanelDiagnostico);
@@ -403,7 +407,10 @@ public class Principal extends JFrame {
 		menuItemRestaurar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				javax.swing.JFileChooser fileChooser = new javax.swing.JFileChooser();
-				fileChooser.setDialogTitle("Seleccione el archivo de respaldo (.txt)");
+				fileChooser.setDialogTitle("Seleccione el archivo de respaldo (.dat)");
+				
+				javax.swing.filechooser.FileNameExtensionFilter filtro = new javax.swing.filechooser.FileNameExtensionFilter("Respaldo Altice (*.dat)", "dat");
+				fileChooser.setFileFilter(filtro);
 
 				int seleccion = fileChooser.showOpenDialog(null);
 
@@ -448,7 +455,7 @@ public class Principal extends JFrame {
 				menuReportes.setVisible(false);
 				menuRespaldo.setVisible(false);
 				menuSoporte.setVisible(true);
-			} else if (!rol.equalsIgnoreCase("Administrativo")) {
+			} else if (!rol.equalsIgnoreCase("Administrativo")) { // Asume Comercial o Ventas
 				menuUsuarios.setVisible(false);
 				menuEmpleados.setVisible(false);
 				menuPlanes.setVisible(false);
@@ -535,8 +542,88 @@ public class Principal extends JFrame {
 		lblSubtitulo.setFont(new Font("SansSerif", Font.PLAIN, 22));
 		lblSubtitulo.setForeground(new Color(60, 60, 60));
 		pnlBienvenida.add(lblSubtitulo, gbc);
+		
+		gbc.gridy = 3;
+		gbc.insets = new Insets(30, 0, 0, 0); // Separación superior para los botones
+		
+		JPanel pnlAccesosRapidos = new JPanel(new java.awt.GridLayout(0, 3, 15, 15));
+		pnlAccesosRapidos.setOpaque(false);
+		
+		boolean isAdmon = usuarioActual == null || usuarioActual.getRolEmpleado().equalsIgnoreCase("Administrativo");
+		boolean isTecnico = usuarioActual != null && usuarioActual.getRolEmpleado().equalsIgnoreCase("Tecnico");
+		boolean isComercial = !isAdmon && !isTecnico; // Si no es admin ni técnico, es comercial/ventas
+
+		// Botones para Administrativos y Comerciales
+		if (isAdmon || isComercial) {
+			pnlAccesosRapidos.add(crearBotonDashboard("Registrar Cliente", new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					empresa.generarPagosMensuales();
+					empresa.actualizarDeudaClientes();
+					RegistrarCliente regisCli = new RegistrarCliente(null);
+					regisCli.setModal(true);
+					regisCli.setVisible(true);
+				}
+			}));
+			
+			pnlAccesosRapidos.add(crearBotonDashboard("Nuevo Contrato", new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					empresa.generarPagosMensuales();
+					empresa.actualizarDeudaClientes();
+					Empleado empleadoSesion = null;
+					if (usuarioActual != null) {
+						empleadoSesion = EmpresaAltice.getInstance().buscarEmpleadoPorUsuario(usuarioActual);
+					}
+					RegistrarContrato regisCon = new RegistrarContrato(null, empleadoSesion);
+					regisCon.setModal(true);
+					regisCon.setVisible(true);
+				}
+			}));
+			
+			pnlAccesosRapidos.add(crearBotonDashboard("Cobrar Pago", new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					empresa.generarPagosMensuales();
+					empresa.actualizarDeudaClientes();
+					RegistrarPago regisPago = new RegistrarPago();
+					regisPago.setModal(true);
+					regisPago.setVisible(true);
+				}
+			}));
+		}
+
+		// Botones para Administrativos y Técnicos de Soporte
+		if (isAdmon || isTecnico) {
+			pnlAccesosRapidos.add(crearBotonDashboard("Abrir Ticket Falla", new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					RegistrarTicket regisTicket = new RegistrarTicket();
+					regisTicket.setVisible(true);
+				}
+			}));
+			
+			pnlAccesosRapidos.add(crearBotonDashboard("Panel Diagnóstico", new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					DashboardSoporte diag = new DashboardSoporte();
+					diag.setVisible(true);
+					//JOptionPane.showMessageDialog(null, "Módulo de panel en construcción.");
+				}
+			}));
+		}
+		
+		// Botón exclusivo para Administrativo
+		if (isAdmon) {
+			pnlAccesosRapidos.add(crearBotonDashboard("Reporte General", new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					empresa.generarPagosMensuales();
+					empresa.actualizarDeudaClientes();
+					ReporteGeneral dashboard = new ReporteGeneral();
+					dashboard.setVisible(true);
+				}
+			}));
+		}
+
+		pnlBienvenida.add(pnlAccesosRapidos, gbc);
 	}
 
+	// Método auxiliar para estilizar los menús principales
 	private JMenu createStyledMenu(String text, Font font) {
 		JMenu menu = new JMenu(text);
 		menu.setFont(font);
@@ -544,5 +631,31 @@ public class Principal extends JFrame {
 		menu.setOpaque(true);
 		menu.setBackground(Color.decode("#0066FF"));
 		return menu;
+	}
+
+	// Método auxiliar para crear los botones grandes del Dashboard
+	private JButton crearBotonDashboard(String texto, ActionListener accion) {
+		JButton btn = new JButton(texto);
+		btn.setFont(new Font("SansSerif", Font.BOLD, 15));
+		btn.setForeground(Color.decode("#0066FF")); 
+		btn.setBackground(Color.WHITE);
+		btn.setFocusPainted(false);
+		btn.setBorder(new LineBorder(Color.decode("#0066FF"), 2, true));
+		btn.setPreferredSize(new Dimension(180, 60)); 
+		btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		
+		btn.addMouseListener(new java.awt.event.MouseAdapter() {
+			public void mouseEntered(java.awt.event.MouseEvent evt) {
+				btn.setBackground(Color.decode("#0066FF"));
+				btn.setForeground(Color.WHITE);
+			}
+			public void mouseExited(java.awt.event.MouseEvent evt) {
+				btn.setBackground(Color.WHITE);
+				btn.setForeground(Color.decode("#0066FF"));
+			}
+		});
+		
+		btn.addActionListener(accion);
+		return btn;
 	}
 }
